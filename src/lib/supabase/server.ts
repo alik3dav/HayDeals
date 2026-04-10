@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-import { publicEnv } from '@/lib/env/public';
+import { getPublicEnv } from '@/lib/env/public';
 
 type CookieToSet = {
   name: string;
@@ -11,6 +11,7 @@ type CookieToSet = {
 
 export async function createClient() {
   const cookieStore = await cookies();
+  const publicEnv = getPublicEnv();
 
   return createServerClient(
     publicEnv.NEXT_PUBLIC_SUPABASE_URL,
