@@ -22,11 +22,22 @@ export default async function PublicHomePage({
   let deals: Awaited<ReturnType<typeof getPublicDealsFeed>> = { items: [], hasMore: false, nextCursor: null };
   let loadError = false;
 
-  try {
-    [facets, deals] = await Promise.all([getFeedFacets(), getPublicDealsFeed({ sort, cursor, filters })]);
-  } catch (error) {
+  const [facetsResult, dealsResult] = await Promise.allSettled([
+    getFeedFacets(),
+    getPublicDealsFeed({ sort, cursor, filters }),
+  ]);
+
+  if (facetsResult.status === 'fulfilled') {
+    facets = facetsResult.value;
+  } else {
+    console.error('Failed to load feed facets.', facetsResult.reason);
+  }
+
+  if (dealsResult.status === 'fulfilled') {
+    deals = dealsResult.value;
+  } else {
     loadError = true;
-    console.error('Failed to load public feed data.', error);
+    console.error('Failed to load public deals feed.', dealsResult.reason);
   }
 
   return (
