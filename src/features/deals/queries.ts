@@ -115,7 +115,7 @@ export async function getPublicDealsFeed({
       currency_code,
       stores:stores!deals_store_id_fkey(name, slug),
       categories:categories!deals_category_id_fkey(name, slug),
-      deal_types:deal_types!deals_type_id_fkey(name, code)
+      deal_types:deal_types!deals_deal_type_id_fkey(name, code)
     `,
     )
     .eq('moderation_status', 'approved')
