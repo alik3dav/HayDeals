@@ -118,7 +118,6 @@ export async function getPublicDealsFeed({
       deal_types:deal_types!deals_deal_type_id_fkey(name, code)
     `,
     )
-    .eq('moderation_status', 'approved')
     .limit(safePageSize + 1);
 
   if (filters.category) {
