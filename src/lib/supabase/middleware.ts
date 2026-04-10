@@ -1,12 +1,18 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { publicEnv } from '@/lib/env/public';
+import { getOptionalPublicEnv } from '@/lib/env/public';
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
     request,
   });
+
+  const publicEnv = getOptionalPublicEnv();
+
+  if (!publicEnv) {
+    return response;
+  }
 
   const supabase = createServerClient(publicEnv.NEXT_PUBLIC_SUPABASE_URL, publicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
     cookies: {
