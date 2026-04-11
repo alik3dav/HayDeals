@@ -1,0 +1,360 @@
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import {
+  Bell,
+  ChevronDown,
+  FolderTree,
+  Grid2x2,
+  LayoutGrid,
+  LogIn,
+  LogOut,
+  Menu,
+  Search,
+  Tag,
+  User,
+  X,
+} from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+
+type HeaderCategory = {
+  value: string;
+  label: string;
+};
+
+type HeaderNavClientProps = {
+  isAuthenticated: boolean;
+  userEmail?: string;
+  categories: HeaderCategory[];
+  onSignOut: () => Promise<void>;
+};
+
+function useDropdownState() {
+  const [openKey, setOpenKey] = useState<string | null>(null);
+
+  const open = (key: string) => setOpenKey(key);
+  const close = () => setOpenKey(null);
+  const toggle = (key: string) => setOpenKey((prev) => (prev === key ? null : key));
+
+  return { openKey, open, close, toggle };
+}
+
+export function HeaderNavClient({ categories, isAuthenticated, onSignOut, userEmail }: HeaderNavClientProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [categoriesExpanded, setCategoriesExpanded] = useState(false);
+
+  const { openKey, open, close, toggle } = useDropdownState();
+
+  const categoriesRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+  const mobileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        close();
+        setMobileOpen(false);
+      }
+    }
+
+    function onOutsideClick(event: MouseEvent) {
+      const target = event.target as Node;
+
+      if (openKey === 'categories' && categoriesRef.current && !categoriesRef.current.contains(target)) {
+        close();
+      }
+
+      if (openKey === 'profile' && profileRef.current && !profileRef.current.contains(target)) {
+        close();
+      }
+
+      if (mobileOpen && mobileRef.current && !mobileRef.current.contains(target)) {
+        setMobileOpen(false);
+      }
+    }
+
+    document.addEventListener('keydown', onEscape);
+    document.addEventListener('mousedown', onOutsideClick);
+
+    return () => {
+      document.removeEventListener('keydown', onEscape);
+      document.removeEventListener('mousedown', onOutsideClick);
+    };
+  }, [close, mobileOpen, openKey]);
+
+  const topCategories = useMemo(() => categories.slice(0, 12), [categories]);
+  const categoryGroups = useMemo(
+    () => [topCategories.slice(0, 6), topCategories.slice(6, 12)].filter((group) => group.length > 0),
+    [topCategories],
+  );
+
+  const avatarFallback = useMemo(() => {
+    if (!userEmail) return 'U';
+    return userEmail.charAt(0).toUpperCase();
+  }, [userEmail]);
+
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    if (mobileOpen) {
+      setMobileOpen(false);
+    }
+    event.currentTarget.submit();
+  };
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="container flex h-14 items-center gap-3">
+        <Link className="shrink-0 text-sm font-semibold tracking-tight" href="/">
+          HayDeals
+        </Link>
+
+        <div
+          className="relative hidden lg:block"
+          onMouseEnter={() => open('categories')}
+          onMouseLeave={() => close()}
+          ref={categoriesRef}
+        >
+          <button
+            aria-expanded={openKey === 'categories'}
+            className="inline-flex h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            onClick={() => toggle('categories')}
+            type="button"
+          >
+            <LayoutGrid className="h-3.5 w-3.5" />
+            Categories
+            <ChevronDown className={cn('h-3.5 w-3.5 transition-transform duration-150', openKey === 'categories' && 'rotate-180')} />
+          </button>
+
+          <div
+            className={cn(
+              'absolute left-0 top-[calc(100%+8px)] w-[420px] origin-top-left rounded-xl border border-border/70 bg-popover p-3 shadow-lg transition-all duration-150',
+              openKey === 'categories'
+                ? 'pointer-events-auto translate-y-0 scale-100 opacity-100'
+                : 'pointer-events-none -translate-y-1 scale-[0.98] opacity-0',
+            )}
+          >
+            <div className="mb-2 flex items-center gap-1.5 px-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+              <FolderTree className="h-3.5 w-3.5" />
+              Browse categories
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              {categoryGroups.map((group, idx) => (
+                <ul className="space-y-1" key={idx}>
+                  {group.map((category) => (
+                    <li key={category.value}>
+                      <Link
+                        className="flex h-8 items-center gap-2 rounded-md px-2 text-xs text-foreground/90 transition-colors duration-150 hover:bg-muted/45 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        href={`/?category=${encodeURIComponent(category.value)}`}
+                        onClick={() => close()}
+                      >
+                        <Tag className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="truncate">{category.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <form className="hidden flex-1 lg:block" method="get" onSubmit={handleSearchSubmit}>
+          <label className="sr-only" htmlFor="header-search">
+            Search deals
+          </label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              className="h-8 border-border/70 bg-muted/20 pl-8 pr-2 text-xs shadow-none transition-colors duration-150 placeholder:text-muted-foreground/80 hover:bg-muted/30 focus-visible:bg-background"
+              id="header-search"
+              name="q"
+              placeholder="Search deals"
+            />
+          </div>
+        </form>
+
+        <div className="ml-auto hidden items-center gap-1.5 lg:flex">
+          {isAuthenticated ? (
+            <>
+              <Button asChild className="h-8 px-3 text-xs" size="sm" variant="secondary">
+                <Link href="/dashboard/submit-deal">Post deal</Link>
+              </Button>
+
+              <button
+                aria-label="Notifications"
+                className="relative inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-muted/45 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                type="button"
+              >
+                <Bell className="h-4 w-4" />
+                <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+              </button>
+
+              <div
+                className="relative"
+                onMouseEnter={() => open('profile')}
+                onMouseLeave={() => close()}
+                ref={profileRef}
+              >
+                <button
+                  aria-expanded={openKey === 'profile'}
+                  aria-label="Profile menu"
+                  className="inline-flex h-8 items-center gap-1.5 rounded-md pl-1 pr-1.5 text-xs text-muted-foreground transition-colors duration-150 hover:bg-muted/45 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  onClick={() => toggle('profile')}
+                  type="button"
+                >
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-[11px] font-semibold text-foreground">
+                    {avatarFallback}
+                  </span>
+                  <ChevronDown className={cn('h-3.5 w-3.5 transition-transform duration-150', openKey === 'profile' && 'rotate-180')} />
+                </button>
+
+                <div
+                  className={cn(
+                    'absolute right-0 top-[calc(100%+8px)] w-44 origin-top-right rounded-xl border border-border/70 bg-popover p-1.5 shadow-lg transition-all duration-150',
+                    openKey === 'profile'
+                      ? 'pointer-events-auto translate-y-0 scale-100 opacity-100'
+                      : 'pointer-events-none -translate-y-1 scale-[0.98] opacity-0',
+                  )}
+                >
+                  <Link
+                    className="flex h-8 items-center gap-2 rounded-md px-2 text-xs transition-colors duration-150 hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    href="/dashboard"
+                    onClick={() => close()}
+                  >
+                    <User className="h-3.5 w-3.5 text-muted-foreground" />
+                    Dashboard
+                  </Link>
+                  <form action={onSignOut}>
+                    <button
+                      className="mt-1 flex h-8 w-full items-center gap-2 rounded-md px-2 text-left text-xs transition-colors duration-150 hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      type="submit"
+                    >
+                      <LogOut className="h-3.5 w-3.5 text-muted-foreground" />
+                      Sign out
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <Button asChild className="h-8 px-2.5 text-xs" size="sm" variant="ghost">
+                <Link href="/sign-in">Sign in</Link>
+              </Button>
+              <Button asChild className="h-8 px-3 text-xs" size="sm">
+                <Link href="/sign-up">Sign up</Link>
+              </Button>
+            </>
+          )}
+        </div>
+
+        <button
+          aria-expanded={mobileOpen}
+          aria-label="Toggle menu"
+          className="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-muted/45 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring lg:hidden"
+          onClick={() => setMobileOpen((prev) => !prev)}
+          type="button"
+        >
+          {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+        </button>
+      </div>
+
+      <div
+        className={cn(
+          'overflow-hidden border-t border-border/60 bg-background transition-[max-height,opacity] duration-150 lg:hidden',
+          mobileOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0',
+        )}
+        ref={mobileRef}
+      >
+        <div className="container space-y-2 py-2.5">
+          <form className="pb-1" method="get" onSubmit={handleSearchSubmit}>
+            <label className="sr-only" htmlFor="mobile-header-search">
+              Search deals
+            </label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                className="h-9 border-border/70 bg-muted/25 pl-8 pr-2 text-sm shadow-none"
+                id="mobile-header-search"
+                name="q"
+                placeholder="Search deals"
+              />
+            </div>
+          </form>
+
+          <div className="rounded-lg border border-border/70 bg-muted/15 p-1">
+            <button
+              aria-expanded={categoriesExpanded}
+              className="flex h-9 w-full items-center justify-between rounded-md px-2.5 text-sm font-medium"
+              onClick={() => setCategoriesExpanded((prev) => !prev)}
+              type="button"
+            >
+              <span className="inline-flex items-center gap-2">
+                <Grid2x2 className="h-4 w-4 text-muted-foreground" />
+                Categories
+              </span>
+              <ChevronDown className={cn('h-4 w-4 text-muted-foreground transition-transform duration-150', categoriesExpanded && 'rotate-180')} />
+            </button>
+
+            <div className={cn('overflow-hidden transition-[max-height,opacity] duration-150', categoriesExpanded ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0')}>
+              <ul className="grid grid-cols-1 gap-1 px-1 pb-1">
+                {topCategories.map((category) => (
+                  <li key={category.value}>
+                    <Link
+                      className="flex h-9 items-center rounded-md px-2.5 text-sm text-foreground/90 transition-colors duration-150 hover:bg-muted/50"
+                      href={`/?category=${encodeURIComponent(category.value)}`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {category.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-1">
+            {isAuthenticated ? (
+              <>
+                <Button asChild className="h-9 justify-start text-sm" variant="secondary">
+                  <Link href="/dashboard/submit-deal" onClick={() => setMobileOpen(false)}>
+                    Post deal
+                  </Link>
+                </Button>
+                <Button asChild className="h-9 justify-start text-sm" variant="ghost">
+                  <Link href="/dashboard" onClick={() => setMobileOpen(false)}>
+                    <User className="h-4 w-4" />
+                    Dashboard
+                  </Link>
+                </Button>
+                <form action={onSignOut}>
+                  <Button className="h-9 w-full justify-start text-sm" type="submit" variant="ghost">
+                    <LogOut className="h-4 w-4" />
+                    Sign out
+                  </Button>
+                </form>
+              </>
+            ) : (
+              <>
+                <Button asChild className="h-9 justify-start text-sm" variant="ghost">
+                  <Link href="/sign-in" onClick={() => setMobileOpen(false)}>
+                    <LogIn className="h-4 w-4" />
+                    Sign in
+                  </Link>
+                </Button>
+                <Button asChild className="h-9 justify-start text-sm">
+                  <Link href="/sign-up" onClick={() => setMobileOpen(false)}>
+                    Sign up
+                  </Link>
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
