@@ -104,32 +104,57 @@ export function DealCard({ deal }: DealCardProps) {
           <div className="min-w-0 text-left">
             <DealValueDisplay deal={deal} />
           </div>
+          <div className="w-full rounded-xl border border-sky-400/20 bg-[#061835] px-3 py-2.5 text-[#d6e6ff]">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="inline-flex items-center overflow-hidden rounded-lg border border-cyan-400/40 bg-[#071b3a] text-xs">
+                <span className="inline-flex items-center px-3 py-1.5 font-semibold uppercase tracking-[0.16em] text-cyan-300">
+                  {deal.coupon_code?.trim() || 'No Code'}
+                </span>
+                <button
+                  aria-label="Copy coupon code"
+                  className="border-l border-cyan-400/30 px-2.5 py-1.5 text-cyan-100 transition-colors hover:bg-cyan-500/15"
+                  type="button"
+                >
+                  Copy
+                </button>
+              </div>
 
-          <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
-            <button aria-label="Upvote deal" className="inline-flex items-center rounded-md p-1 transition-colors hover:bg-emerald-500/15">
-              <ThumbsUp className="h-4 w-4" />
-            </button>
-            <span className="text-base font-semibold">{deal.score}</span>
-            <button aria-label="Downvote deal" className="inline-flex items-center rounded-md p-1 text-rose-500 transition-colors hover:bg-rose-500/15">
-              <ThumbsDown className="h-4 w-4" />
-            </button>
-            <span className="ml-2 inline-flex items-center gap-1.5 text-muted-foreground">
-              <MessageSquare className="h-4 w-4" />
-              <span className="text-sm">{deal.comments_count}</span>
-            </span>
+              <div className="ml-auto flex items-center gap-2">
+                <div className="inline-flex items-center gap-2 rounded-full border border-sky-300/20 bg-sky-300/5 px-3 py-1.5 text-sm">
+                  <button aria-label="Upvote deal" className="inline-flex items-center rounded-full p-1 text-sky-100 transition-colors hover:bg-sky-400/20">
+                    <ThumbsUp className="h-4 w-4" />
+                  </button>
+                  <span className="min-w-6 text-center text-base font-semibold text-white">{deal.score}</span>
+                  <button aria-label="Downvote deal" className="inline-flex items-center rounded-full p-1 text-sky-100 transition-colors hover:bg-sky-400/20">
+                    <ThumbsDown className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <span className="inline-flex items-center gap-1.5 text-sm text-sky-100/90">
+                  <MessageSquare className="h-4 w-4" />
+                  <span>{deal.comments_count}</span>
+                </span>
+
+                <Button
+                  aria-label="Save deal"
+                  className="h-8 w-8 shrink-0 rounded-md border border-sky-300/25 bg-sky-400/10 text-sky-100 hover:bg-sky-400/20 hover:text-white"
+                  size="icon"
+                  variant="ghost"
+                >
+                  <Bookmark className="h-4 w-4" />
+                </Button>
+
+                <Link
+                  className="inline-flex items-center rounded-full bg-white px-5 py-1.5 text-sm font-semibold text-slate-900 transition-colors hover:bg-white/90"
+                  href={deal.deal_url}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  See Deal
+                </Link>
+              </div>
+            </div>
           </div>
-
-          <Button aria-label="Save deal" className="h-9 w-9 shrink-0 border border-border bg-secondary/70 text-muted-foreground hover:bg-secondary hover:text-foreground" size="icon" variant="ghost">
-            <Bookmark className="h-4 w-4" />
-          </Button>
-          <Link
-            className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-            href={deal.deal_url}
-            rel="noreferrer"
-            target="_blank"
-          >
-            See Deal
-          </Link>
         </div>
       </div>
     </article>
