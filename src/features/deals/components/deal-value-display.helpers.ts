@@ -1,5 +1,20 @@
 import type { PublicDeal } from '@/features/deals/types';
 
+function normalizeDealTypeCode(typeCode: string | null) {
+  if (!typeCode) {
+    return null;
+  }
+
+  switch (typeCode) {
+    case 'discount':
+      return 'price_drop';
+    case 'free_shipping':
+      return 'info';
+    default:
+      return typeCode;
+  }
+}
+
 export function formatDealPrice(value: number | null, currencyCode: string) {
   if (value === null) {
     return null;
@@ -50,7 +65,7 @@ export type DealValueModel = {
 };
 
 export function buildDealValueModel(deal: PublicDeal): DealValueModel {
-  const typeCode = deal.deal_types?.code ?? null;
+  const typeCode = normalizeDealTypeCode(deal.deal_types?.code ?? null);
   const couponCode = deal.coupon_code?.trim() || null;
   const bundleText = deal.bundle_text?.trim() || null;
   const resolvedOriginalPriceValue =
