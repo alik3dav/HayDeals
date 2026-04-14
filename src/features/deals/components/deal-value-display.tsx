@@ -30,6 +30,7 @@ function PriceBlock({ currentPrice, originalPrice, discountBadgeLabel }: { curre
 
 export function DealValueDisplay({ deal }: DealValueDisplayProps) {
   const value = buildDealValueModel(deal);
+  const shouldShowPriceDropMeta = value.typeCode === 'price_drop' && Boolean(value.originalPrice || value.discountBadgeLabel);
 
   switch (value.typeCode) {
     case 'price':
@@ -38,7 +39,17 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
 
     case 'price_drop':
       if (!value.currentPrice) return null;
-      return <PriceBlock currentPrice={value.currentPrice} originalPrice={value.originalPrice} discountBadgeLabel={value.discountBadgeLabel} />;
+      return (
+        <div className="flex min-w-0 flex-col gap-1">
+          <PriceBlock currentPrice={value.currentPrice} originalPrice={value.originalPrice} discountBadgeLabel={value.discountBadgeLabel} />
+          {shouldShowPriceDropMeta ? (
+            <div className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
+              {value.originalPrice ? <span>Was {value.originalPrice}</span> : null}
+              {value.discountBadgeLabel ? <span>{value.discountBadgeLabel.replace('-', '')} off</span> : null}
+            </div>
+          ) : null}
+        </div>
+      );
 
     case 'coupon':
       return (
