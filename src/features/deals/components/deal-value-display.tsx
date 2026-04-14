@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import type { PublicDeal } from '@/features/deals/types';
 
-import { buildDealValueModel } from './deal-value-display.helpers';
+import { buildDealValueModel, getDiscountPercentage, formatDealPrice } from './deal-value-display.helpers';
 
 type DealValueDisplayProps = {
   deal: PublicDeal;
@@ -18,32 +18,48 @@ function CouponCodeBlock({ code }: { code: string }) {
   );
 }
 
-function PriceBlock({ currentPrice, originalPrice, discountBadgeLabel }: { currentPrice: string; originalPrice?: string | null; discountBadgeLabel?: string | null }) {
+function PriceBlock({
+  salePrice,
+  originalPrice,
+  discountPercent,
+  currencyCode,
+}: {
+  salePrice: number | null;
+  originalPrice: number | null;
+  discountPercent: number | null;
+  currencyCode: string;
+}) {
+  const salePriceLabel = formatDealPrice(salePrice, currencyCode);
+  const originalPriceLabel = formatDealPrice(originalPrice, currencyCode);
+
   return (
-    <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5">
-      <span className="text-2xl font-semibold leading-none text-emerald-400">{currentPrice}</span>
-      {originalPrice ? <span className="text-sm text-muted-foreground line-through">{originalPrice}</span> : null}
-      {discountBadgeLabel ? <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-400">{discountBadgeLabel}</span> : null}
-    </div>
+    <section className="rounded-lg border border-border/60 bg-card/70 p-4">
+      <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
+        {salePriceLabel ? <span className="text-base font-semibold text-foreground">{salePriceLabel}</span> : <span className="font-semibold text-foreground">See deal page</span>}
+        {originalPriceLabel ? <span className="text-muted-foreground line-through">{originalPriceLabel}</span> : null}
+        {discountPercent !== null ? <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-xs text-emerald-400">-{discountPercent}%</span> : null}
+      </div>
+    </section>
   );
 }
 
 function PriceDropBlock({
-  currentPrice,
+  salePrice,
   originalPrice,
-  discountBadgeLabel,
+  discountPercent,
+  currencyCode,
 }: {
-  currentPrice: string;
-  originalPrice: string | null;
-  discountBadgeLabel: string | null;
+  salePrice: number | null;
+  originalPrice: number | null;
+  discountPercent: number | null;
+  currencyCode: string;
 }) {
-  return (
-    <PriceBlock currentPrice={currentPrice} discountBadgeLabel={discountBadgeLabel} originalPrice={originalPrice} />
-  );
+  return <PriceBlock currencyCode={currencyCode} discountPercent={discountPercent} originalPrice={originalPrice} salePrice={salePrice} />;
 }
 
 export function DealValueDisplay({ deal }: DealValueDisplayProps) {
   const value = buildDealValueModel(deal);
+  const discountPercent = getDiscountPercentage(deal.original_price, deal.sale_price) ?? deal.discount_percent;
 
   if (process.env.NODE_ENV !== 'production' && value.typeCode === 'price_drop') {
     console.debug('DealValueDisplay price_drop debug', {
@@ -58,18 +74,20 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
 
   switch (value.typeCode) {
     case 'price':
-      if (!value.currentPrice) return null;
-      return <PriceBlock currentPrice={value.currentPrice} discountBadgeLabel={value.discountBadgeLabel} originalPrice={value.originalPrice} />;
+      return <PriceBlock currencyCode={deal.currency_code} discountPercent={discountPercent} originalPrice={deal.original_price} salePrice={deal.sale_price} />;
 
     case 'price_drop':
-      if (!value.currentPrice) return null;
-      return <PriceDropBlock currentPrice={value.currentPrice} discountBadgeLabel={value.discountBadgeLabel} originalPrice={value.originalPrice} />;
+      return (
+        <PriceDropBlock currencyCode={deal.currency_code} discountPercent={discountPercent} originalPrice={deal.original_price} salePrice={deal.sale_price} />
+      );
 
     case 'coupon':
       return (
         <div className="flex min-w-0 flex-wrap items-end gap-3">
           {value.couponCode ? <CouponCodeBlock code={value.couponCode} /> : null}
-          {value.currentPrice ? <PriceBlock currentPrice={value.currentPrice} originalPrice={value.originalPrice} discountBadgeLabel={value.discountBadgeLabel} /> : null}
+          {value.currentPrice ? (
+            <PriceBlock currencyCode={deal.currency_code} discountPercent={discountPercent} originalPrice={deal.original_price} salePrice={deal.sale_price} />
+          ) : null}
           {!value.couponCode && !value.currentPrice ? (
             <Badge className="border-primary/30 bg-primary/10 text-xs text-primary" variant="outline">
               COUPON
