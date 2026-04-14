@@ -99,12 +99,12 @@ export function DealCard({ deal }: DealCardProps) {
 
         <p className="mt-2 line-clamp-2 text-sm leading-snug text-muted-foreground">{deal.description?.trim() || 'Brief description of the deal goes here for preview.'}</p>
 
-        <div className="mt-4">
-          <DealValueDisplay deal={deal} />
-        </div>
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-3">
+          <div className="min-w-0 text-left">
+            <DealValueDisplay deal={deal} />
+          </div>
 
-        <div className="mt-auto flex flex-wrap items-center justify-end gap-3 border-t border-border/60 pt-3 text-emerald-600">
-          <div className="flex items-center gap-2.5">
+          <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
             <button aria-label="Upvote deal" className="inline-flex items-center rounded-md p-1 transition-colors hover:bg-emerald-500/15">
               <ThumbsUp className="h-4 w-4" />
             </button>
