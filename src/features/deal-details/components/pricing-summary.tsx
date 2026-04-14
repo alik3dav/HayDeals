@@ -16,8 +16,19 @@ function calculateDiscountPercentage(originalPrice: number | null, salePrice: nu
 export function PricingSummary({ deal }: { deal: DealDetail }) {
   const salePrice = formatPrice(deal.sale_price, deal.currency_code);
   const originalPrice = formatPrice(deal.original_price, deal.currency_code);
+  const couponCode = deal.coupon_code?.trim() || null;
   const isCoupon = deal.deal_types?.code === 'coupon';
   const discountPercent = calculateDiscountPercentage(deal.original_price, deal.sale_price) ?? deal.discount_percent;
+
+  if (isCoupon) {
+    return couponCode ? (
+      <section className="rounded-lg border border-border/60 bg-card/70 p-4">
+        <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-emerald-500/60 bg-emerald-500/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-emerald-400">
+          <span className="truncate">{couponCode}</span>
+        </div>
+      </section>
+    ) : null;
+  }
 
   return (
     <section className="rounded-lg border border-border/60 bg-card/70 p-4">
@@ -27,13 +38,9 @@ export function PricingSummary({ deal }: { deal: DealDetail }) {
         {discountPercent !== null ? <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-xs text-emerald-400">-{discountPercent}%</span> : null}
       </div>
 
-      {isCoupon ? (
-        <div className="mt-3 rounded border border-amber-400/30 bg-amber-500/10 px-2 py-1.5 text-xs text-amber-300">
-          Coupon: <span className="font-semibold">{deal.coupon_code ?? 'Shown on merchant page'}</span>
-        </div>
-      ) : deal.coupon_code ? (
+      {couponCode ? (
         <div className="text-xs text-muted-foreground">
-         <span className="font-medium text-foreground">{deal.coupon_code}</span>
+         <span className="font-medium text-foreground">{couponCode}</span>
         </div>
       ) : null}
     </section>
