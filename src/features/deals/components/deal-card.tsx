@@ -72,13 +72,7 @@ export function DealCard({ deal }: DealCardProps) {
       <div className="flex min-w-0 flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-3">
-              <Link className="line-clamp-1 text-lg font-semibold leading-tight text-foreground hover:text-primary" href={`/deals/${deal.id}`}>
-                {deal.title}
-              </Link>
-              {expiryLabel ? <span className="rounded-md border border-rose-500/30 bg-rose-500/10 px-2 py-0.5 text-xs font-medium text-rose-300">{expiryLabel}</span> : null}
-            </div>
-            <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <Store className="h-3 w-3" />
                 {deal.stores?.name ?? 'Unknown store'}
@@ -94,6 +88,13 @@ export function DealCard({ deal }: DealCardProps) {
               <span>•</span>
               <span>{formatRelativeTime(deal.created_at)}</span>
             </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link className="line-clamp-1 text-lg font-semibold leading-tight text-foreground hover:text-primary" href={`/deals/${deal.id}`}>
+                {deal.title}
+              </Link>
+              {expiryLabel ? <span className="rounded-md border border-rose-500/30 bg-rose-500/10 px-2 py-0.5 text-xs font-medium text-rose-300">{expiryLabel}</span> : null}
+            </div>
+           
           </div>
         </div>
 
