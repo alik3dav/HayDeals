@@ -60,14 +60,59 @@ function formatExpiry(expiresAt: string | null) {
   return `Expires in ${diffDays} days`;
 }
 
+function getDealValueSummary(deal: PublicDeal) {
+  const salePrice = formatPrice(deal.sale_price, deal.currency_code);
+  const originalPrice = formatPrice(deal.original_price, deal.currency_code);
+  const couponCode = deal.coupon_code?.trim() || null;
+  const bundleText = deal.bundle_text?.trim() || null;
+  const discountPercent = deal.discount_percent;
+
+  switch (deal.deal_types?.code) {
+    case 'coupon':
+      return {
+        primary: couponCode ? `Code: ${couponCode}` : 'Coupon available',
+        secondary: salePrice,
+        strike: originalPrice,
+        badge: discountPercent !== null ? `-${discountPercent}%` : null,
+      };
+    case 'percentage':
+      return {
+        primary: discountPercent !== null ? `-${discountPercent}%` : null,
+        secondary: null,
+        strike: null,
+        badge: null,
+      };
+    case 'free':
+      return {
+        primary: 'FREE',
+        secondary: couponCode ? `Code: ${couponCode}` : null,
+        strike: null,
+        badge: null,
+      };
+    case 'bundle':
+      return {
+        primary: bundleText || 'Bundle offer',
+        secondary: salePrice,
+        strike: originalPrice,
+        badge: null,
+      };
+    default:
+      return {
+        primary: salePrice,
+        secondary: null,
+        strike: originalPrice,
+        badge: discountPercent !== null ? `-${discountPercent}%` : null,
+      };
+  }
+}
+
 type DealCardProps = {
   deal: PublicDeal;
 };
 
 export function DealCard({ deal }: DealCardProps) {
-  const salePrice = formatPrice(deal.sale_price, deal.currency_code);
-  const originalPrice = formatPrice(deal.original_price, deal.currency_code);
   const expiryLabel = formatExpiry(deal.expires_at);
+  const valueSummary = getDealValueSummary(deal);
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40">
@@ -99,6 +144,12 @@ export function DealCard({ deal }: DealCardProps) {
                 </span>
                 <span>•</span>
                 <span>{deal.categories?.name ?? 'General'}</span>
+                {deal.deal_types?.name ? (
+                  <>
+                    <span>•</span>
+                    <span className="rounded border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[11px] text-primary">{deal.deal_types.name}</span>
+                  </>
+                ) : null}
                 <span>•</span>
                 <span>{formatRelativeTime(deal.created_at)}</span>
               </div>
@@ -107,10 +158,11 @@ export function DealCard({ deal }: DealCardProps) {
 
           <p className="mt-2 line-clamp-2 text-sm leading-snug text-muted-foreground">{deal.description?.trim() || 'Brief description of the deal goes here for preview.'}</p>
 
-          <div className="mt-4 flex items-center gap-3">
-            {salePrice ? <span className="text-xl font-semibold text-emerald-500">{salePrice}</span> : null}
-            {originalPrice ? <span className="text-sm text-muted-foreground line-through">{originalPrice}</span> : null}
-            {deal.discount_percent !== null ? <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-medium text-emerald-600">-{deal.discount_percent}%</span> : null}
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            {valueSummary.primary ? <span className="text-xl font-semibold text-emerald-500">{valueSummary.primary}</span> : null}
+            {valueSummary.secondary ? <span className="text-sm text-muted-foreground">{valueSummary.secondary}</span> : null}
+            {valueSummary.strike ? <span className="text-sm text-muted-foreground line-through">{valueSummary.strike}</span> : null}
+            {valueSummary.badge ? <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-medium text-emerald-600">{valueSummary.badge}</span> : null}
           </div>
         </div>
       </div>

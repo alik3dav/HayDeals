@@ -30,6 +30,8 @@ export type PublicDeal = {
   sale_price: number | null;
   original_price: number | null;
   discount_percent: number | null;
+  coupon_code: string | null;
+  bundle_text: string | null;
   currency_code: string;
   stores: {
     name: string;
