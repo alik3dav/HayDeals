@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 import { submitDealSchema } from '@/features/submit-deal/schemas';
 import type { SubmitDealActionState } from '@/features/submit-deal/types';
 
-function calculateDiscountPercent(originalPriceRaw: string, salePriceRaw: string) {
+function calculateDiscountPercent(originalPriceRaw: string | undefined, salePriceRaw: string | undefined) {
   const originalPrice = originalPriceRaw ? Number(originalPriceRaw) : null;
   const salePrice = salePriceRaw ? Number(salePriceRaw) : null;
 
