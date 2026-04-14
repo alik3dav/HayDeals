@@ -67,7 +67,8 @@ function getDealValueSummary(deal: PublicDeal) {
   const couponCode = deal.coupon_code?.trim() || null;
   const bundleText = deal.bundle_text?.trim() || null;
   const discountPercent = deal.discount_percent;
-  const dealTypeLabel = deal.deal_types?.name || 'Deal';
+  const dealTypeLabel = deal.deal_types?.name || null;
+  const fallbackPrimary = salePrice || couponCode || bundleText || (discountPercent !== null ? `-${discountPercent}%` : null) || dealTypeLabel || 'See details';
 
   switch (deal.deal_types?.code) {
     case 'price':
@@ -121,14 +122,14 @@ function getDealValueSummary(deal: PublicDeal) {
       };
     case 'info':
       return {
-        primary: dealTypeLabel,
+        primary: fallbackPrimary,
         secondary: null,
         strike: null,
         badge: null,
       };
     default:
       return {
-        primary: salePrice || dealTypeLabel,
+        primary: fallbackPrimary,
         secondary: null,
         strike: null,
         badge: null,
@@ -143,8 +144,6 @@ type DealCardProps = {
 export function DealCard({ deal }: DealCardProps) {
   const expiryLabel = formatExpiry(deal.expires_at);
   const valueSummary = getDealValueSummary(deal);
-  const couponCode = deal.coupon_code?.trim() || null;
-  const hasCoupon = Boolean(couponCode);
   const isFreeDeal = deal.deal_types?.code === 'free';
 
   return (
@@ -186,18 +185,11 @@ export function DealCard({ deal }: DealCardProps) {
                 <span>•</span>
                 <span>{formatRelativeTime(deal.created_at)}</span>
               </div>
-              {(isFreeDeal || hasCoupon) ? (
+              {isFreeDeal ? (
                 <div className="mt-2 flex flex-wrap items-center gap-2">
-                  {isFreeDeal ? (
-                    <Badge className="border-emerald-500/30 bg-emerald-500/15 text-[11px] font-semibold tracking-wide text-emerald-600" variant="outline">
-                      FREE
-                    </Badge>
-                  ) : null}
-                  {hasCoupon ? (
-                    <Badge className="border-amber-500/40 bg-amber-500/10 text-[11px] font-semibold uppercase tracking-wide text-amber-700" variant="outline">
-                      Coupon
-                    </Badge>
-                  ) : null}
+                  <Badge className="border-emerald-500/30 bg-emerald-500/15 text-[11px] font-semibold tracking-wide text-emerald-600" variant="outline">
+                    FREE
+                  </Badge>
                 </div>
               ) : null}
             </div>
