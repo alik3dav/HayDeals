@@ -87,12 +87,13 @@ export function DealCard({ deal }: DealCardProps) {
               ) : null}
               <span>•</span>
               <span>{formatRelativeTime(deal.created_at)}</span>
+              {expiryLabel ? <span className="rounded-md border border-rose-500/30 bg-rose-500/10 px-2 py-0.5 text-xs font-medium text-rose-300">{expiryLabel}</span> : null}
             </div>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center">
               <Link className="line-clamp-1 text-lg font-semibold leading-tight text-foreground hover:text-primary" href={`/deals/${deal.id}`}>
                 {deal.title}
               </Link>
-              {expiryLabel ? <span className="rounded-md border border-rose-500/30 bg-rose-500/10 px-2 py-0.5 text-xs font-medium text-rose-300">{expiryLabel}</span> : null}
+              
             </div>
            
           </div>
