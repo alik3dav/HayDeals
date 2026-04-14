@@ -9,16 +9,25 @@ type DealValueDisplayProps = {
 
 function CouponCodeBlock({ code }: { code: string }) {
   return (
-    <div className="flex min-w-0 flex-col gap-1.5">
-      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Coupon</span>
-      <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-primary/50 bg-primary/5 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-primary">
-        <span className="truncate">{code}</span>
-      </div>
+    <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-emerald-500/60 bg-emerald-500/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-emerald-400">
+      <span className="truncate">{code}</span>
     </div>
   );
 }
 
-function PriceBlock({ currentPrice, originalPrice, discountBadgeLabel }: { currentPrice?: string | null; originalPrice?: string | null; discountBadgeLabel?: string | null }) {
+function PriceBlock({
+  currentPrice,
+  originalPrice,
+  discountBadgeLabel,
+  isCoupon,
+  couponCode,
+}: {
+  currentPrice?: string | null;
+  originalPrice?: string | null;
+  discountBadgeLabel?: string | null;
+  isCoupon?: boolean;
+  couponCode?: string | null;
+}) {
   return (
     <section className="rounded-lg border border-border/60 bg-card/70 p-4">
       <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
@@ -26,6 +35,16 @@ function PriceBlock({ currentPrice, originalPrice, discountBadgeLabel }: { curre
         {originalPrice ? <span className="text-muted-foreground line-through">{originalPrice}</span> : null}
         {discountBadgeLabel ? <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-xs text-emerald-400">{discountBadgeLabel}</span> : null}
       </div>
+
+      {isCoupon ? (
+        <div className="mt-3 rounded border border-amber-400/30 bg-amber-500/10 px-2 py-1.5 text-xs text-amber-300">
+          Coupon: <span className="font-semibold">{couponCode ?? 'Shown on merchant page'}</span>
+        </div>
+      ) : couponCode ? (
+        <div className="mt-3 text-xs text-muted-foreground">
+          Optional code: <span className="font-medium text-foreground">{couponCode}</span>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -34,18 +53,20 @@ function PriceDropBlock({
   currentPrice,
   originalPrice,
   discountBadgeLabel,
+  couponCode,
 }: {
   currentPrice: string | null;
   originalPrice: string | null;
   discountBadgeLabel: string | null;
+  couponCode?: string | null;
 }) {
-  return (
-    <PriceBlock currentPrice={currentPrice} discountBadgeLabel={discountBadgeLabel} originalPrice={originalPrice} />
-  );
+  return <PriceBlock currentPrice={currentPrice} couponCode={couponCode} discountBadgeLabel={discountBadgeLabel} originalPrice={originalPrice} />;
 }
 
 export function DealValueDisplay({ deal }: DealValueDisplayProps) {
   const value = buildDealValueModel(deal);
+  const isCoupon = value.typeCode === 'coupon';
+  const hasPriceSectionData = Boolean(value.currentPrice || value.originalPrice || value.discountBadgeLabel || value.couponCode);
 
   if (process.env.NODE_ENV !== 'production' && value.typeCode === 'price_drop') {
     console.debug('DealValueDisplay price_drop debug', {
@@ -60,22 +81,26 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
 
   switch (value.typeCode) {
     case 'price':
-      return <PriceBlock currentPrice={value.currentPrice} discountBadgeLabel={value.discountBadgeLabel} originalPrice={value.originalPrice} />;
+      return (
+        <PriceBlock
+          currentPrice={value.currentPrice}
+          couponCode={value.couponCode}
+          discountBadgeLabel={value.discountBadgeLabel}
+          isCoupon={isCoupon}
+          originalPrice={value.originalPrice}
+        />
+      );
 
     case 'price_drop':
-      return <PriceDropBlock currentPrice={value.currentPrice} discountBadgeLabel={value.discountBadgeLabel} originalPrice={value.originalPrice} />;
+      return <PriceDropBlock currentPrice={value.currentPrice} couponCode={value.couponCode} discountBadgeLabel={value.discountBadgeLabel} originalPrice={value.originalPrice} />;
 
     case 'coupon':
-      return (
-        <div className="flex min-w-0 flex-wrap items-end gap-3">
-          {value.couponCode ? <CouponCodeBlock code={value.couponCode} /> : null}
-          {value.currentPrice ? <PriceBlock currentPrice={value.currentPrice} originalPrice={value.originalPrice} discountBadgeLabel={value.discountBadgeLabel} /> : null}
-          {!value.couponCode && !value.currentPrice ? (
-            <Badge className="border-primary/30 bg-primary/10 text-xs text-primary" variant="outline">
-              COUPON
-            </Badge>
-          ) : null}
-        </div>
+      return value.couponCode ? (
+        <CouponCodeBlock code={value.couponCode} />
+      ) : (
+        <Badge className="border-primary/30 bg-primary/10 text-xs text-primary" variant="outline">
+          COUPON
+        </Badge>
       );
 
     case 'percentage':
@@ -96,7 +121,19 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
 
     case 'info':
     default: {
-      const fallback = value.currentPrice || value.couponCode || value.bundleText || value.percentageLabel || value.dealTypeLabel || 'See details';
+      if (hasPriceSectionData) {
+        return (
+          <PriceBlock
+            currentPrice={value.currentPrice}
+            couponCode={value.couponCode}
+            discountBadgeLabel={value.discountBadgeLabel}
+            isCoupon={isCoupon}
+            originalPrice={value.originalPrice}
+          />
+        );
+      }
+
+      const fallback = value.bundleText || value.percentageLabel || value.dealTypeLabel || 'See details';
       return <span className="text-base font-medium text-foreground">{fallback}</span>;
     }
   }
