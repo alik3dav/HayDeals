@@ -21,6 +21,7 @@ export type PublicDeal = {
   title: string;
   description: string | null;
   created_at: string;
+  expires_at: string | null;
   deal_url: string;
   image_url: string | null;
   score: number;
