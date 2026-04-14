@@ -18,13 +18,15 @@ function CouponCodeBlock({ code }: { code: string }) {
   );
 }
 
-function PriceBlock({ currentPrice, originalPrice, discountBadgeLabel }: { currentPrice: string; originalPrice?: string | null; discountBadgeLabel?: string | null }) {
+function PriceBlock({ currentPrice, originalPrice, discountBadgeLabel }: { currentPrice?: string | null; originalPrice?: string | null; discountBadgeLabel?: string | null }) {
   return (
-    <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5">
-      <span className="text-2xl font-semibold leading-none text-emerald-400">{currentPrice}</span>
-      {originalPrice ? <span className="text-sm text-muted-foreground line-through">{originalPrice}</span> : null}
-      {discountBadgeLabel ? <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-400">{discountBadgeLabel}</span> : null}
-    </div>
+    <section className="rounded-lg border border-border/60 bg-card/70 p-4">
+      <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
+        {currentPrice ? <span className="text-base font-semibold text-foreground">{currentPrice}</span> : <span className="font-semibold text-foreground">See deal page</span>}
+        {originalPrice ? <span className="text-muted-foreground line-through">{originalPrice}</span> : null}
+        {discountBadgeLabel ? <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-xs text-emerald-400">{discountBadgeLabel}</span> : null}
+      </div>
+    </section>
   );
 }
 
@@ -33,7 +35,7 @@ function PriceDropBlock({
   originalPrice,
   discountBadgeLabel,
 }: {
-  currentPrice: string;
+  currentPrice: string | null;
   originalPrice: string | null;
   discountBadgeLabel: string | null;
 }) {
@@ -58,11 +60,9 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
 
   switch (value.typeCode) {
     case 'price':
-      if (!value.currentPrice) return null;
       return <PriceBlock currentPrice={value.currentPrice} discountBadgeLabel={value.discountBadgeLabel} originalPrice={value.originalPrice} />;
 
     case 'price_drop':
-      if (!value.currentPrice) return null;
       return <PriceDropBlock currentPrice={value.currentPrice} discountBadgeLabel={value.discountBadgeLabel} originalPrice={value.originalPrice} />;
 
     case 'coupon':
