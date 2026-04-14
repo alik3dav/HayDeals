@@ -62,17 +62,44 @@ function formatExpiry(expiresAt: string | null) {
 }
 
 function getDealValueSummary(deal: PublicDeal) {
+  const dealTypeCode = deal.deal_types?.code?.trim().toLowerCase() || null;
   const salePrice = formatPrice(deal.sale_price, deal.currency_code);
   const originalPrice = formatPrice(deal.original_price, deal.currency_code);
   const couponCode = deal.coupon_code?.trim() || null;
   const bundleText = deal.bundle_text?.trim() || null;
   const discountPercent = deal.discount_percent;
+  const dealTypeLabel = deal.deal_types?.name?.trim() || 'Info';
 
-  switch (deal.deal_types?.code) {
-    case 'coupon':
+  if (dealTypeCode === 'free') {
+    return {
+      primary: 'FREE',
+      secondary: null,
+      strike: null,
+      badge: null,
+    };
+  }
+
+  if (dealTypeCode === 'coupon' || (!dealTypeCode && couponCode)) {
+    return {
+      primary: couponCode || 'COUPON',
+      secondary: null,
+      strike: null,
+      badge: discountPercent !== null ? `-${discountPercent}%` : null,
+    };
+  }
+
+  switch (dealTypeCode) {
+    case 'price':
       return {
-        primary: couponCode ? `Code: ${couponCode}` : 'Coupon available',
-        secondary: salePrice,
+        primary: salePrice,
+        secondary: null,
+        strike: null,
+        badge: null,
+      };
+    case 'price_drop':
+      return {
+        primary: salePrice,
+        secondary: null,
         strike: originalPrice,
         badge: discountPercent !== null ? `-${discountPercent}%` : null,
       };
@@ -83,26 +110,33 @@ function getDealValueSummary(deal: PublicDeal) {
         strike: null,
         badge: null,
       };
-    case 'free':
-      return {
-        primary: 'FREE',
-        secondary: couponCode ? `Code: ${couponCode}` : null,
-        strike: null,
-        badge: null,
-      };
     case 'bundle':
       return {
         primary: bundleText || 'Bundle offer',
-        secondary: salePrice,
-        strike: originalPrice,
+        secondary: null,
+        strike: null,
+        badge: null,
+      };
+    case 'cashback':
+      return {
+        primary: discountPercent !== null ? `${discountPercent}% cashback` : 'Cashback',
+        secondary: null,
+        strike: null,
+        badge: null,
+      };
+    case 'info':
+      return {
+        primary: dealTypeLabel,
+        secondary: null,
+        strike: null,
         badge: null,
       };
     default:
       return {
-        primary: salePrice,
+        primary: salePrice || couponCode || bundleText || (discountPercent !== null ? `-${discountPercent}%` : dealTypeLabel),
         secondary: null,
-        strike: originalPrice,
-        badge: discountPercent !== null ? `-${discountPercent}%` : null,
+        strike: null,
+        badge: null,
       };
   }
 }
@@ -114,9 +148,7 @@ type DealCardProps = {
 export function DealCard({ deal }: DealCardProps) {
   const expiryLabel = formatExpiry(deal.expires_at);
   const valueSummary = getDealValueSummary(deal);
-  const couponCode = deal.coupon_code?.trim() || null;
-  const hasCoupon = Boolean(couponCode);
-  const isFreeDeal = deal.deal_types?.code === 'free';
+  const isFreeDeal = deal.deal_types?.code?.trim().toLowerCase() === 'free';
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40">
@@ -157,16 +189,11 @@ export function DealCard({ deal }: DealCardProps) {
                 <span>•</span>
                 <span>{formatRelativeTime(deal.created_at)}</span>
               </div>
-              {(isFreeDeal || hasCoupon) ? (
+              {isFreeDeal ? (
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   {isFreeDeal ? (
                     <Badge className="border-emerald-500/30 bg-emerald-500/15 text-[11px] font-semibold tracking-wide text-emerald-600" variant="outline">
                       FREE
-                    </Badge>
-                  ) : null}
-                  {hasCoupon ? (
-                    <Badge className="border-amber-500/40 bg-amber-500/10 text-[11px] font-semibold uppercase tracking-wide text-amber-700" variant="outline">
-                      Coupon
                     </Badge>
                   ) : null}
                 </div>

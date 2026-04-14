@@ -37,11 +37,11 @@ function getPrimaryDisplay({
     case 'percentage':
       return { headline: discountPercent ? `-${discountPercent}%` : '% off', subline: '' };
     case 'coupon':
-      return { headline: couponCode || 'Coupon code', subline: salePrice || '' };
+      return { headline: couponCode || 'COUPON', subline: '' };
     case 'bundle':
-      return { headline: bundleText || 'Bundle offer', subline: salePrice || '' };
+      return { headline: bundleText || 'Bundle offer', subline: '' };
     case 'cashback':
-      return { headline: discountPercent ? `${discountPercent}% cashback` : 'Cashback', subline: salePrice || '' };
+      return { headline: discountPercent ? `${discountPercent}% cashback` : 'Cashback', subline: '' };
     case 'free':
       return { headline: 'FREE', subline: couponCode ? `Code: ${couponCode}` : '' };
     case 'info':
