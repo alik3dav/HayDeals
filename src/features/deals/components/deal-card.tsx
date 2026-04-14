@@ -70,31 +70,31 @@ export function DealCard({ deal }: DealCardProps) {
   const expiryLabel = formatExpiry(deal.expires_at);
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-blue-500/40 bg-[#050f30] shadow-[0_0_40px_rgba(37,99,235,0.1)] transition-colors hover:border-blue-400/70">
+    <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40">
       <div className="flex">
-        <div className="relative h-52 w-72 shrink-0 overflow-hidden border-r border-blue-500/20 bg-slate-800/70">
+        <div className="relative h-44 w-64 shrink-0 overflow-hidden border-r border-border/60 bg-secondary/50">
           {deal.image_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img alt={deal.title} className="h-full w-full object-cover" src={deal.image_url} />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-slate-800/80 text-xs text-muted-foreground">No image</div>
+            <div className="flex h-full w-full items-center justify-center bg-secondary/70 text-xs text-muted-foreground">No image</div>
           )}
         </div>
 
-        <div className="min-w-0 flex-1 p-5 pb-4">
+        <div className="min-w-0 flex-1 p-4 pb-3">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
-                <Link className="line-clamp-1 text-3xl font-semibold leading-tight text-slate-100 hover:text-blue-300" href={`/deals/${deal.id}`}>
+                <Link className="line-clamp-1 text-lg font-semibold leading-tight text-foreground hover:text-primary" href={`/deals/${deal.id}`}>
                   {deal.title}
                 </Link>
                 {expiryLabel ? (
-                  <span className="rounded-md border border-rose-400/30 bg-rose-500/10 px-3 py-1 text-sm font-medium text-rose-300">{expiryLabel}</span>
+                  <span className="rounded-md border border-rose-500/30 bg-rose-500/10 px-2 py-0.5 text-xs font-medium text-rose-300">{expiryLabel}</span>
                 ) : null}
               </div>
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-400">
+              <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1.5">
-                  <Store className="h-3.5 w-3.5" />
+                  <Store className="h-3 w-3" />
                   {deal.stores?.name ?? 'Unknown store'}
                 </span>
                 <span>•</span>
@@ -105,37 +105,37 @@ export function DealCard({ deal }: DealCardProps) {
             </div>
           </div>
 
-          <p className="mt-3 line-clamp-2 text-[1.35rem] leading-snug text-slate-200">{deal.description?.trim() || 'Brief description of the deal goes here for preview.'}</p>
+          <p className="mt-2 line-clamp-2 text-sm leading-snug text-muted-foreground">{deal.description?.trim() || 'Brief description of the deal goes here for preview.'}</p>
 
-          <div className="mt-5 flex items-center gap-4 text-4xl font-semibold">
-            {salePrice ? <span className="text-emerald-300">{salePrice}</span> : null}
-            {originalPrice ? <span className="text-2xl text-slate-400 line-through">{originalPrice}</span> : null}
-            {deal.discount_percent !== null ? <span className="rounded-full bg-emerald-500/40 px-4 py-1 text-3xl text-emerald-100">-{deal.discount_percent}%</span> : null}
+          <div className="mt-4 flex items-center gap-3">
+            {salePrice ? <span className="text-xl font-semibold text-emerald-500">{salePrice}</span> : null}
+            {originalPrice ? <span className="text-sm text-muted-foreground line-through">{originalPrice}</span> : null}
+            {deal.discount_percent !== null ? <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-medium text-emerald-600">-{deal.discount_percent}%</span> : null}
           </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-blue-500/20 px-4 py-3">
-        <div className="flex items-center gap-3 text-emerald-300">
-          <button aria-label="Upvote deal" className="inline-flex items-center rounded-md p-1 transition-colors hover:bg-emerald-500/20">
-            <ThumbsUp className="h-5 w-5" />
+      <div className="flex items-center justify-between border-t border-border/60 px-4 py-2.5">
+        <div className="flex items-center gap-2.5 text-emerald-600">
+          <button aria-label="Upvote deal" className="inline-flex items-center rounded-md p-1 transition-colors hover:bg-emerald-500/15">
+            <ThumbsUp className="h-4 w-4" />
           </button>
-          <span className="text-4xl font-semibold">{deal.score}</span>
-          <button aria-label="Downvote deal" className="inline-flex items-center rounded-md p-1 text-rose-400 transition-colors hover:bg-rose-500/20">
-            <ThumbsDown className="h-5 w-5" />
+          <span className="text-base font-semibold">{deal.score}</span>
+          <button aria-label="Downvote deal" className="inline-flex items-center rounded-md p-1 text-rose-500 transition-colors hover:bg-rose-500/15">
+            <ThumbsDown className="h-4 w-4" />
           </button>
-          <span className="ml-6 inline-flex items-center gap-2 text-slate-400">
-            <MessageSquare className="h-5 w-5" />
-            <span className="text-3xl">{deal.comments_count}</span>
+          <span className="ml-4 inline-flex items-center gap-1.5 text-muted-foreground">
+            <MessageSquare className="h-4 w-4" />
+            <span className="text-sm">{deal.comments_count}</span>
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button aria-label="Save deal" className="h-11 w-11 shrink-0 border border-blue-400/20 bg-blue-400/10 text-blue-300 hover:bg-blue-400/20 hover:text-blue-100" size="icon" variant="ghost">
-            <Bookmark className="h-5 w-5" />
+        <div className="flex items-center gap-2">
+          <Button aria-label="Save deal" className="h-9 w-9 shrink-0 border border-border bg-secondary/70 text-muted-foreground hover:bg-secondary hover:text-foreground" size="icon" variant="ghost">
+            <Bookmark className="h-4 w-4" />
           </Button>
           <Link
-            className="inline-flex items-center rounded-xl bg-blue-400 px-6 py-2.5 text-2xl font-semibold text-slate-950 transition-colors hover:bg-blue-300"
+            className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
             href={deal.deal_url}
             rel="noreferrer"
             target="_blank"
