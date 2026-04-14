@@ -1,9 +1,8 @@
 import Link from 'next/link';
 
-import { cn } from '@/lib/utils';
 import type { DealFeedFilters, DealSortOption, FeedFacetCollections } from '@/features/deals/types';
 
-const sortOptions: { label: string; value: DealSortOption }[] = [
+export const sortOptions: { label: string; value: DealSortOption }[] = [
   { label: 'Newest', value: 'newest' },
   { label: 'Hot', value: 'hot' },
   { label: 'Most discussed', value: 'discussed' },
@@ -15,7 +14,7 @@ type FeedFiltersProps = {
   facets: FeedFacetCollections;
 };
 
-function buildUrl({
+export function buildFeedUrl({
   sort,
   filters,
 }: {
@@ -40,25 +39,6 @@ function optionList(baseLabel: string, items: { label: string; value: string }[]
 export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
   return (
     <section className="space-y-3 rounded-xl border border-border/70 bg-card/80 p-3">
-      <div className="flex flex-wrap items-center gap-2">
-        {sortOptions.map((option) => {
-          const isActive = sort === option.value;
-
-          return (
-            <Link
-              className={cn(
-                'rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
-                isActive ? 'bg-primary/20 text-primary' : 'bg-secondary/60 text-muted-foreground hover:text-foreground',
-              )}
-              href={buildUrl({ sort: option.value, filters })}
-              key={option.value}
-            >
-              {option.label}
-            </Link>
-          );
-        })}
-      </div>
-
       <form className="grid gap-2 md:grid-cols-3" method="get">
         <input name="sort" type="hidden" value={sort} />
 
@@ -111,7 +91,7 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
           <button className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground" type="submit">
             Apply filters
           </button>
-          <Link className="rounded-md bg-secondary px-3 py-1.5 text-sm text-secondary-foreground" href={buildUrl({ sort, filters: {} })}>
+          <Link className="rounded-md bg-secondary px-3 py-1.5 text-sm text-secondary-foreground" href={buildFeedUrl({ sort, filters: {} })}>
             Reset
           </Link>
         </div>
