@@ -147,9 +147,9 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
             </select>
           </FormField>
 
-          <FormField error={state.errors?.categoryId?.[0]} htmlFor="categoryId" label="Category">
+          <FormField error={state.errors?.categoryId?.[0]} hint="Optional" htmlFor="categoryId" label="Category">
             <select className={inputStyles} id="categoryId" name="categoryId" onChange={(event) => setField('categoryId', event.target.value)} value={values.categoryId}>
-              <option value="">Select category</option>
+              <option value="">{meta.categories.length ? 'Select category (optional)' : 'No categories available (optional)'}</option>
               {meta.categories.map((option) => (
                 <option key={option.id} value={option.value}>
                   {option.label}
@@ -158,9 +158,9 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
             </select>
           </FormField>
 
-          <FormField error={state.errors?.storeId?.[0]} htmlFor="storeId" label="Store">
+          <FormField error={state.errors?.storeId?.[0]} hint="Optional" htmlFor="storeId" label="Store">
             <select className={inputStyles} id="storeId" name="storeId" onChange={(event) => setField('storeId', event.target.value)} value={values.storeId}>
-              <option value="">Select store</option>
+              <option value="">{meta.stores.length ? 'Select store (optional)' : 'No stores available (optional)'}</option>
               {meta.stores.map((option) => (
                 <option key={option.id} value={option.value}>
                   {option.label}

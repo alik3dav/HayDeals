@@ -42,8 +42,8 @@ export async function createDealAction(_: SubmitDealActionState, formData: FormD
 
   const { error } = await supabase.from('deals').insert({
     profile_id: user.id,
-    category_id: payload.categoryId,
-    store_id: payload.storeId,
+    category_id: payload.categoryId || null,
+    store_id: payload.storeId || null,
     deal_type_id: payload.dealTypeId,
     title: payload.title,
     description: payload.description,
