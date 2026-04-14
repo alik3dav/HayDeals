@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { DEAL_TYPE_CONFIG, isDealTypeCode } from '@/features/submit-deal/deal-type-config';
 
 import type { SubmitDealMeta } from '@/features/submit-deal/types';
 
@@ -13,15 +14,26 @@ export async function getSubmitDealMeta(): Promise<SubmitDealMeta> {
 
   const categories = categoriesResult.data ?? [];
   const stores = storesResult.data ?? [];
-  const dealTypes = dealTypesResult.data ?? [];
+  const dealTypes = (dealTypesResult.data ?? []).flatMap((dealType) => {
+    const code = String(dealType.code);
+
+    if (!isDealTypeCode(code)) {
+      return [];
+    }
+
+    return [{ ...dealType, code }];
+  });
 
   if (dealTypesResult.error) throw dealTypesResult.error;
 
   return {
-    // Category and store are optional in the submit flow, so keep the form usable
-    // even when these lookups are empty or temporarily unavailable.
     categories: categories.map((category) => ({ id: category.id, label: category.name, value: category.id })),
     stores: stores.map((store) => ({ id: store.id, label: store.name, value: store.id })),
-    dealTypes: dealTypes.map((dealType) => ({ id: dealType.id, label: dealType.name, value: dealType.id, code: dealType.code })),
+    dealTypes: dealTypes.map((dealType) => ({
+      id: dealType.id,
+      label: DEAL_TYPE_CONFIG[dealType.code].label,
+      value: dealType.id,
+      code: dealType.code,
+    })),
   };
 }

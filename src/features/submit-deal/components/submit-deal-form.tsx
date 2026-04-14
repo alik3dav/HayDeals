@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/browser';
 import { createDealAction } from '@/features/submit-deal/mutations';
 import { DealPreviewCard } from '@/features/submit-deal/components/deal-preview-card';
 import { FormField, SectionCard, inputStyles } from '@/features/submit-deal/components/form-field';
+import { DEAL_FIELD_META, getAllowedFields, getDealTypeConfig } from '@/features/submit-deal/deal-type-config';
 import type { SubmitDealActionState, SubmitDealMeta } from '@/features/submit-deal/types';
 
 const INITIAL_STATE: SubmitDealActionState = {
@@ -43,8 +44,10 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
     description: '',
     dealUrl: '',
     couponCode: '',
+    bundleText: '',
     originalPrice: '',
     salePrice: '',
+    discountPercent: '',
     categoryId: '',
     storeId: '',
     dealTypeId: '',
@@ -58,8 +61,8 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
   const selectedDealType = meta.dealTypes.find((dealType) => dealType.value === values.dealTypeId);
 
   const dealTypeCode = selectedDealType?.code ?? values.dealTypeCode;
-  const requiresCoupon = dealTypeCode === 'coupon';
-  const requiresFullPricing = dealTypeCode === 'discount' || dealTypeCode === 'bundle';
+  const dealTypeConfig = getDealTypeConfig(dealTypeCode);
+  const visibleDealFields = getAllowedFields(dealTypeCode);
 
   const canSubmit = useMemo(() => !isPending && !uploadPending, [isPending, uploadPending]);
 
@@ -124,7 +127,7 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
         </div>
       </SectionCard>
 
-      <SectionCard description="Different deal types unlock different fields." title="Deal setup">
+      <SectionCard description="Deal type controls which fields are shown and required." title="Deal setup">
         <div className="grid gap-4 md:grid-cols-3">
           <FormField error={state.errors?.dealTypeId?.[0]} htmlFor="dealTypeId" label="Deal type">
             <select
@@ -134,7 +137,19 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
               onChange={(event) => {
                 const id = event.target.value;
                 const selected = meta.dealTypes.find((dealType) => dealType.value === id);
-                setValues((previous) => ({ ...previous, dealTypeId: id, dealTypeCode: selected?.code ?? '' }));
+                const nextCode = selected?.code ?? '';
+                const allowed = new Set(getAllowedFields(nextCode));
+
+                setValues((previous) => ({
+                  ...previous,
+                  dealTypeId: id,
+                  dealTypeCode: nextCode,
+                  couponCode: allowed.has('couponCode') ? previous.couponCode : '',
+                  bundleText: allowed.has('bundleText') ? previous.bundleText : '',
+                  originalPrice: allowed.has('originalPrice') ? previous.originalPrice : '',
+                  salePrice: allowed.has('salePrice') ? previous.salePrice : '',
+                  discountPercent: allowed.has('discountPercent') ? previous.discountPercent : '',
+                }));
               }}
               value={values.dealTypeId}
             >
@@ -169,17 +184,25 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
             </select>
           </FormField>
 
-          <FormField error={state.errors?.originalPrice?.[0]} hint={requiresFullPricing ? 'Required for this deal type.' : 'Optional'} htmlFor="originalPrice" label="Original price">
-            <input className={inputStyles} id="originalPrice" name="originalPrice" onChange={(event) => setField('originalPrice', event.target.value)} value={values.originalPrice} />
-          </FormField>
-
-          <FormField error={state.errors?.salePrice?.[0]} hint={requiresFullPricing ? 'Required for this deal type.' : 'Optional'} htmlFor="salePrice" label="Sale price">
-            <input className={inputStyles} id="salePrice" name="salePrice" onChange={(event) => setField('salePrice', event.target.value)} value={values.salePrice} />
-          </FormField>
-
-          <FormField error={state.errors?.couponCode?.[0]} hint={requiresCoupon ? 'Required for coupon deals.' : 'Optional'} htmlFor="couponCode" label="Coupon code">
-            <input className={inputStyles} id="couponCode" name="couponCode" onChange={(event) => setField('couponCode', event.target.value)} value={values.couponCode} />
-          </FormField>
+          {visibleDealFields.map((field) => (
+            <FormField
+              key={field}
+              error={state.errors?.[field]?.[0]}
+              hint={dealTypeConfig.requiredFields.includes(field) ? 'Required for this deal type.' : 'Optional'}
+              htmlFor={field}
+              label={DEAL_FIELD_META[field].label}
+            >
+              <input
+                className={inputStyles}
+                id={field}
+                inputMode={DEAL_FIELD_META[field].inputMode}
+                name={field}
+                onChange={(event) => setField(field, event.target.value)}
+                placeholder={DEAL_FIELD_META[field].placeholder}
+                value={values[field]}
+              />
+            </FormField>
+          ))}
 
           <FormField error={state.errors?.expiresAt?.[0]} hint="Optional. Must be in the future." htmlFor="expiresAt" label="Expiration">
             <input
@@ -192,6 +215,8 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
             />
           </FormField>
         </div>
+
+        <p className="text-xs text-muted-foreground">{dealTypeConfig.hint}</p>
       </SectionCard>
 
       <SectionCard description="Upload to Supabase Storage (deal-images bucket) or paste a direct URL." title="Image">
@@ -208,11 +233,14 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
 
       <SectionCard description="Horizontal feed-style preview of how your post may render." title="Preview">
         <DealPreviewCard
+          bundleText={values.bundleText}
           categoryLabel={selectedCategory?.label ?? ''}
           couponCode={values.couponCode}
+          dealTypeCode={dealTypeCode}
           dealTypeLabel={selectedDealType?.label ?? ''}
           dealUrl={values.dealUrl}
           description={values.description}
+          discountPercent={values.discountPercent}
           imageUrl={values.imageUrl}
           originalPrice={toPriceDisplay(values.originalPrice)}
           salePrice={toPriceDisplay(values.salePrice)}
@@ -221,9 +249,7 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
         />
       </SectionCard>
 
-      {state.message ? (
-        <p className={state.ok ? 'text-sm text-emerald-400' : 'text-sm text-destructive'}>{state.message}</p>
-      ) : null}
+      {state.message ? <p className={state.ok ? 'text-sm text-emerald-400' : 'text-sm text-destructive'}>{state.message}</p> : null}
 
       <div className="flex flex-wrap items-center justify-end gap-2">
         <Button disabled={!canSubmit} name="intentDraft" onClick={() => setIntent('draft')} type="submit" variant="secondary">

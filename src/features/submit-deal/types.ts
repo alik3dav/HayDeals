@@ -1,3 +1,5 @@
+import type { DealTypeCode } from '@/features/submit-deal/deal-type-config';
+
 export type SubmitDealOption = {
   id: string;
   label: string;
@@ -5,7 +7,7 @@ export type SubmitDealOption = {
 };
 
 export type SubmitDealDealType = SubmitDealOption & {
-  code: string;
+  code: DealTypeCode;
 };
 
 export type SubmitDealMeta = {
