@@ -60,6 +60,7 @@ export function buildDealValueModel(deal: PublicDeal): DealValueModel {
   const originalPrice = formatDealPrice(resolvedOriginalPriceValue, deal.currency_code);
   const calculatedDiscount = calculateDiscountPercentage(resolvedOriginalPriceValue, deal.sale_price);
   const resolvedPercent = calculatedDiscount ?? deal.discount_percent;
+  const discountBadgeLabel = resolvedPercent !== null ? `-${resolvedPercent}%` : null;
 
   return {
     typeCode,
@@ -69,6 +70,6 @@ export function buildDealValueModel(deal: PublicDeal): DealValueModel {
     bundleText,
     dealTypeLabel: deal.deal_types?.name ?? null,
     percentageLabel: resolvedPercent !== null ? `-${resolvedPercent}%` : null,
-    discountBadgeLabel: calculatedDiscount !== null ? `-${calculatedDiscount}%` : null,
+    discountBadgeLabel,
   };
 }
