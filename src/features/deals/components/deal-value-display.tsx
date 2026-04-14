@@ -20,13 +20,13 @@ function CouponCodeBlock({ code }: { code: string }) {
 
 function PriceBlock({ currentPrice, originalPrice, discountBadgeLabel }: { currentPrice: string; originalPrice?: string | null; discountBadgeLabel?: string | null }) {
   return (
-    <div className="rounded-lg border border-border/60 bg-card/70 px-3 py-2">
-      <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5 text-sm">
-        <span className="text-base font-semibold leading-none text-foreground">{currentPrice}</span>
+    <section className="rounded-lg border border-border/60 bg-card/70 p-4">
+      <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
+        <span className="text-base font-semibold text-foreground">{currentPrice}</span>
         {originalPrice ? <span className="text-muted-foreground line-through">{originalPrice}</span> : null}
         {discountBadgeLabel ? <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-xs text-emerald-400">{discountBadgeLabel}</span> : null}
       </div>
-    </div>
+    </section>
   );
 }
 
