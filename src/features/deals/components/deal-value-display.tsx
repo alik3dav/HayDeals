@@ -34,7 +34,7 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
   switch (value.typeCode) {
     case 'price':
       if (!value.currentPrice) return null;
-      return <PriceBlock currentPrice={value.currentPrice} originalPrice={value.originalPrice} />;
+      return <PriceBlock currentPrice={value.currentPrice} />;
 
     case 'price_drop':
       if (!value.currentPrice) return null;
