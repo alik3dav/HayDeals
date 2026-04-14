@@ -2,20 +2,10 @@ import Link from 'next/link';
 import { Bookmark, MessageSquare, Store, ThumbsDown, ThumbsUp } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import type { PublicDeal } from '@/features/deals/types';
 
-function formatPrice(value: number | null, currencyCode: string) {
-  if (value === null) {
-    return null;
-  }
+import { DealValueDisplay } from './deal-value-display';
 
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currencyCode,
-    maximumFractionDigits: 2,
-  }).format(value);
-}
 
 function formatRelativeTime(dateIso: string) {
   const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
@@ -61,90 +51,12 @@ function formatExpiry(expiresAt: string | null) {
   return `Expires in ${diffDays} days`;
 }
 
-function getDealValueSummary(deal: PublicDeal) {
-  const salePrice = formatPrice(deal.sale_price, deal.currency_code);
-  const originalPrice = formatPrice(deal.original_price, deal.currency_code);
-  const couponCode = deal.coupon_code?.trim() || null;
-  const bundleText = deal.bundle_text?.trim() || null;
-  const discountPercent = deal.discount_percent;
-  const dealTypeLabel = deal.deal_types?.name || null;
-  const fallbackPrimary = salePrice || couponCode || bundleText || (discountPercent !== null ? `-${discountPercent}%` : null) || dealTypeLabel || 'See details';
-
-  switch (deal.deal_types?.code) {
-    case 'price':
-      return {
-        primary: salePrice,
-        secondary: null,
-        strike: null,
-        badge: null,
-      };
-    case 'price_drop':
-      return {
-        primary: salePrice,
-        secondary: null,
-        strike: originalPrice,
-        badge: discountPercent !== null ? `-${discountPercent}%` : null,
-      };
-    case 'coupon':
-      return {
-        primary: couponCode || 'COUPON',
-        secondary: null,
-        strike: null,
-        badge: discountPercent !== null ? `-${discountPercent}%` : null,
-      };
-    case 'percentage':
-      return {
-        primary: discountPercent !== null ? `-${discountPercent}%` : null,
-        secondary: null,
-        strike: null,
-        badge: null,
-      };
-    case 'free':
-      return {
-        primary: 'FREE',
-        secondary: null,
-        strike: null,
-        badge: null,
-      };
-    case 'bundle':
-      return {
-        primary: bundleText || 'Bundle offer',
-        secondary: null,
-        strike: null,
-        badge: null,
-      };
-    case 'cashback':
-      return {
-        primary: discountPercent !== null ? `${discountPercent}% cashback` : 'Cashback',
-        secondary: null,
-        strike: null,
-        badge: null,
-      };
-    case 'info':
-      return {
-        primary: fallbackPrimary,
-        secondary: null,
-        strike: null,
-        badge: null,
-      };
-    default:
-      return {
-        primary: fallbackPrimary,
-        secondary: null,
-        strike: null,
-        badge: null,
-      };
-  }
-}
-
 type DealCardProps = {
   deal: PublicDeal;
 };
 
 export function DealCard({ deal }: DealCardProps) {
   const expiryLabel = formatExpiry(deal.expires_at);
-  const valueSummary = getDealValueSummary(deal);
-  const isFreeDeal = deal.deal_types?.code === 'free';
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40">
@@ -185,23 +97,13 @@ export function DealCard({ deal }: DealCardProps) {
                 <span>•</span>
                 <span>{formatRelativeTime(deal.created_at)}</span>
               </div>
-              {isFreeDeal ? (
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <Badge className="border-emerald-500/30 bg-emerald-500/15 text-[11px] font-semibold tracking-wide text-emerald-600" variant="outline">
-                    FREE
-                  </Badge>
-                </div>
-              ) : null}
             </div>
           </div>
 
           <p className="mt-2 line-clamp-2 text-sm leading-snug text-muted-foreground">{deal.description?.trim() || 'Brief description of the deal goes here for preview.'}</p>
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            {valueSummary.primary ? <span className="text-xl font-semibold text-emerald-500">{valueSummary.primary}</span> : null}
-            {valueSummary.secondary ? <span className="text-sm text-muted-foreground">{valueSummary.secondary}</span> : null}
-            {valueSummary.strike ? <span className="text-sm text-muted-foreground line-through">{valueSummary.strike}</span> : null}
-            {valueSummary.badge ? <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-medium text-emerald-600">{valueSummary.badge}</span> : null}
+          <div className="mt-4">
+            <DealValueDisplay deal={deal} />
           </div>
         </div>
       </div>
