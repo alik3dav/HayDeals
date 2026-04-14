@@ -67,13 +67,28 @@ function getDealValueSummary(deal: PublicDeal) {
   const couponCode = deal.coupon_code?.trim() || null;
   const bundleText = deal.bundle_text?.trim() || null;
   const discountPercent = deal.discount_percent;
+  const dealTypeLabel = deal.deal_types?.name || 'Deal';
 
   switch (deal.deal_types?.code) {
+    case 'price':
+      return {
+        primary: salePrice,
+        secondary: null,
+        strike: null,
+        badge: null,
+      };
+    case 'price_drop':
+      return {
+        primary: salePrice,
+        secondary: null,
+        strike: originalPrice,
+        badge: discountPercent !== null ? `-${discountPercent}%` : null,
+      };
     case 'coupon':
       return {
-        primary: couponCode ? `Code: ${couponCode}` : 'Coupon available',
-        secondary: salePrice,
-        strike: originalPrice,
+        primary: couponCode || 'COUPON',
+        secondary: null,
+        strike: null,
         badge: discountPercent !== null ? `-${discountPercent}%` : null,
       };
     case 'percentage':
@@ -86,23 +101,37 @@ function getDealValueSummary(deal: PublicDeal) {
     case 'free':
       return {
         primary: 'FREE',
-        secondary: couponCode ? `Code: ${couponCode}` : null,
+        secondary: null,
         strike: null,
         badge: null,
       };
     case 'bundle':
       return {
         primary: bundleText || 'Bundle offer',
-        secondary: salePrice,
-        strike: originalPrice,
+        secondary: null,
+        strike: null,
+        badge: null,
+      };
+    case 'cashback':
+      return {
+        primary: discountPercent !== null ? `${discountPercent}% cashback` : 'Cashback',
+        secondary: null,
+        strike: null,
+        badge: null,
+      };
+    case 'info':
+      return {
+        primary: dealTypeLabel,
+        secondary: null,
+        strike: null,
         badge: null,
       };
     default:
       return {
-        primary: salePrice,
+        primary: salePrice || dealTypeLabel,
         secondary: null,
-        strike: originalPrice,
-        badge: discountPercent !== null ? `-${discountPercent}%` : null,
+        strike: null,
+        badge: null,
       };
   }
 }
