@@ -106,7 +106,7 @@ export function DealCard({ deal }: DealCardProps) {
           </div>
 
           <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
-           <div className='border border-white/50 rounded-xl py-2 px-4'>
+           <div className='bg-[#191d25] border  border-[#252C3A] rounded-xl py-2 px-4 gap-1.5'>
            <button aria-label="Upvote deal" className="inline-flex items-center rounded-md p-1 transition-colors hover:bg-emerald-500/15">
               <ThumbsUp className="h-4 w-4" />
             </button>
