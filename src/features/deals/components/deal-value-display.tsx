@@ -35,7 +35,7 @@ function PriceBlock({
   }
 
   return (
-    <section className="rounded-lg border border-border/60 bg-card/70 p-4">
+    <section className="">
       <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
         {currentPrice ? <span className="text-base font-semibold text-foreground">{currentPrice}</span> : <span className="font-semibold text-foreground">See deal page</span>}
         {originalPrice ? <span className="text-muted-foreground line-through">{originalPrice}</span> : null}
