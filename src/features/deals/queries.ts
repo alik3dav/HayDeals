@@ -116,6 +116,8 @@ export async function getPublicDealsFeed({
       sale_price,
       original_price,
       discount_percent,
+      coupon_code,
+      bundle_text,
       currency_code,
       stores:stores!deals_store_id_fkey(name, slug),
       categories:categories!deals_category_id_fkey(name, slug),
