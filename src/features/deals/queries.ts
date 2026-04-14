@@ -17,6 +17,19 @@ type RawDeal = Omit<PublicDeal, 'stores' | 'categories' | 'deal_types'> & {
   deal_types: { name: string; code: string }[] | null;
 };
 
+function toNullableNumber(value: unknown): number | null {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+}
+
 function decodeCursor(raw: string | undefined): DealFeedCursor | null {
   if (!raw) {
     return null;
@@ -182,10 +195,29 @@ export async function getPublicDealsFeed({
 
   const rows = ((data ?? []) as RawDeal[]).map((row) => ({
     ...row,
+    sale_price: toNullableNumber(row.sale_price),
+    original_price: toNullableNumber(row.original_price),
+    discount_percent: toNullableNumber(row.discount_percent),
     stores: row.stores?.[0] ?? null,
     categories: row.categories?.[0] ?? null,
     deal_types: row.deal_types?.[0] ?? null,
   }));
+
+  if (process.env.NODE_ENV !== 'production') {
+    rows
+      .filter((row) => row.deal_types?.code === 'price_drop')
+      .forEach((row) => {
+        console.debug('getPublicDealsFeed price_drop debug', {
+          dealId: row.id,
+          dealType: row.deal_types?.code ?? null,
+          salePrice: row.sale_price,
+          originalPrice: row.original_price,
+          salePriceIsNumber: typeof row.sale_price === 'number' && Number.isFinite(row.sale_price),
+          originalPriceIsNumber: typeof row.original_price === 'number' && Number.isFinite(row.original_price),
+        });
+      });
+  }
+
   const hasMore = rows.length > safePageSize;
   const items = hasMore ? rows.slice(0, safePageSize) : rows;
   const last = items.at(-1);

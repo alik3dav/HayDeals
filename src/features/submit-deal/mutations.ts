@@ -56,7 +56,29 @@ export async function createDealAction(_: SubmitDealActionState, formData: FormD
 
   const payload = parsed.data;
   const supabase = await createClient();
-  const autoCalculatedDiscount = payload.dealTypeCode === 'price_drop' ? calculateDiscountPercent(payload.originalPrice, payload.salePrice) : null;
+
+  const { data: resolvedDealType, error: dealTypeError } = await supabase.from('deal_types').select('code').eq('id', payload.dealTypeId).maybeSingle();
+
+  if (dealTypeError || !resolvedDealType?.code) {
+    return {
+      ok: false,
+      message: 'Unable to resolve the selected deal type. Please re-select and try again.',
+    };
+  }
+
+  const resolvedDealTypeCode = String(resolvedDealType.code);
+  const autoCalculatedDiscount = resolvedDealTypeCode === 'price_drop' ? calculateDiscountPercent(payload.originalPrice, payload.salePrice) : null;
+
+  if (resolvedDealTypeCode === 'price_drop' && autoCalculatedDiscount === null) {
+    return {
+      ok: false,
+      message: 'Price Drop deals require valid original and current prices, where original is greater than current.',
+      errors: {
+        originalPrice: ['Original price is required and must be greater than current price.'],
+        salePrice: ['Current price is required and must be lower than original price.'],
+      },
+    };
+  }
 
   const { error } = await supabase.from('deals').insert({
     profile_id: user.id,

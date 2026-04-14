@@ -66,6 +66,17 @@ function PriceDropBlock({
 export function DealValueDisplay({ deal }: DealValueDisplayProps) {
   const value = buildDealValueModel(deal);
 
+  if (process.env.NODE_ENV !== 'production' && value.typeCode === 'price_drop') {
+    console.debug('DealValueDisplay price_drop debug', {
+      dealId: deal.id,
+      dealType: deal.deal_types?.code ?? null,
+      salePrice: deal.sale_price,
+      originalPrice: deal.original_price,
+      salePriceIsNumber: typeof deal.sale_price === 'number' && Number.isFinite(deal.sale_price),
+      originalPriceIsNumber: typeof deal.original_price === 'number' && Number.isFinite(deal.original_price),
+    });
+  }
+
   switch (value.typeCode) {
     case 'price':
       if (!value.currentPrice) return null;
