@@ -7,6 +7,14 @@ type DealValueDisplayProps = {
   deal: PublicDeal;
 };
 
+function CouponCodeBlock({ code }: { code: string }) {
+  return (
+    <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-emerald-500/60 bg-emerald-500/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-emerald-400">
+      <span className="truncate">{code}</span>
+    </div>
+  );
+}
+
 function PriceBlock({
   currentPrice,
   originalPrice,
@@ -87,14 +95,12 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
       return <PriceDropBlock currentPrice={value.currentPrice} couponCode={value.couponCode} discountBadgeLabel={value.discountBadgeLabel} originalPrice={value.originalPrice} />;
 
     case 'coupon':
-      return (
-        <PriceBlock
-          currentPrice={value.currentPrice}
-          couponCode={value.couponCode}
-          discountBadgeLabel={value.discountBadgeLabel}
-          isCoupon={isCoupon}
-          originalPrice={value.originalPrice}
-        />
+      return value.couponCode ? (
+        <CouponCodeBlock code={value.couponCode} />
+      ) : (
+        <Badge className="border-primary/30 bg-primary/10 text-xs text-primary" variant="outline">
+          COUPON
+        </Badge>
       );
 
     case 'percentage':
