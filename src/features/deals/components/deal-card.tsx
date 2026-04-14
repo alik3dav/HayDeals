@@ -106,13 +106,16 @@ export function DealCard({ deal }: DealCardProps) {
           </div>
 
           <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
-            <button aria-label="Upvote deal" className="inline-flex items-center rounded-md p-1 transition-colors hover:bg-emerald-500/15">
+           <div className='border border-white/50'>
+           <button aria-label="Upvote deal" className="inline-flex items-center rounded-md p-1 transition-colors hover:bg-emerald-500/15">
               <ThumbsUp className="h-4 w-4" />
             </button>
             <span className="text-base font-semibold">{deal.score}</span>
             <button aria-label="Downvote deal" className="inline-flex items-center rounded-md p-1 text-rose-500 transition-colors hover:bg-rose-500/15">
               <ThumbsDown className="h-4 w-4" />
             </button>
+           </div>
+          
             <span className="ml-2 inline-flex items-center gap-1.5 text-muted-foreground">
               <MessageSquare className="h-4 w-4" />
               <span className="text-sm">{deal.comments_count}</span>
@@ -123,7 +126,7 @@ export function DealCard({ deal }: DealCardProps) {
             <Bookmark className="h-4 w-4" />
           </Button>
           <Link
-            className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center rounded-lg bg[#F5F5F5] px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-[#E8E8E8]"
             href={deal.deal_url}
             rel="noreferrer"
             target="_blank"
