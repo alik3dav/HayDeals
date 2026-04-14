@@ -100,13 +100,13 @@ export function DealCard({ deal }: DealCardProps) {
 
         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{deal.description?.trim() || 'Brief description of the deal goes here for preview.'}</p>
 
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-3">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0 text-left">
             <DealValueDisplay deal={deal} />
           </div>
 
           <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
-           <div className='border border-white/50'>
+           <div className='border border-white/50 rounded-xl py-2 px-4'>
            <button aria-label="Upvote deal" className="inline-flex items-center rounded-md p-1 transition-colors hover:bg-emerald-500/15">
               <ThumbsUp className="h-4 w-4" />
             </button>
@@ -126,7 +126,7 @@ export function DealCard({ deal }: DealCardProps) {
             <Bookmark className="h-4 w-4" />
           </Button>
           <Link
-            className="inline-flex items-center rounded-lg bg[#F5F5F5] px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-[#E8E8E8]"
+            className="inline-flex items-center rounded-lg bg-[#F5F5F5] px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-[#E8E8E8]"
             href={deal.deal_url}
             rel="noreferrer"
             target="_blank"
