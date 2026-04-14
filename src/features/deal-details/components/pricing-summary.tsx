@@ -19,8 +19,9 @@ export function PricingSummary({ deal }: { deal: DealDetail }) {
   const couponCode = deal.coupon_code?.trim() || null;
   const isCoupon = deal.deal_types?.code === 'coupon';
   const discountPercent = calculateDiscountPercentage(deal.original_price, deal.sale_price) ?? deal.discount_percent;
+  const showCouponOnly = Boolean(couponCode) && !salePrice && !originalPrice && discountPercent === null;
 
-  if (isCoupon) {
+  if (isCoupon || showCouponOnly) {
     return couponCode ? (
       <section className="rounded-lg border border-border/60 bg-card/70 p-4">
         <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-emerald-500/60 bg-emerald-500/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-emerald-400">

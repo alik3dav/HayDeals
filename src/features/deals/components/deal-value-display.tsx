@@ -28,6 +28,12 @@ function PriceBlock({
   isCoupon?: boolean;
   couponCode?: string | null;
 }) {
+  const showCouponOnly = Boolean(couponCode) && !currentPrice && !originalPrice && !discountBadgeLabel;
+
+  if (showCouponOnly) {
+    return <CouponCodeBlock code={couponCode!} />;
+  }
+
   return (
     <section className="rounded-lg border border-border/60 bg-card/70 p-4">
       <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
