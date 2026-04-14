@@ -38,28 +38,7 @@ function PriceDropBlock({
   discountBadgeLabel: string | null;
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-1.5">
-      <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5">
-        <span className="inline-flex items-center gap-1 text-xs uppercase tracking-wide text-muted-foreground">
-          <span className="font-medium">Current</span>
-          <span className="text-base font-semibold normal-case leading-none text-emerald-400">{currentPrice}</span>
-        </span>
-        {originalPrice ? (
-          <span className="inline-flex items-center gap-1 text-xs uppercase tracking-wide text-muted-foreground">
-            <span className="font-medium">Original</span>
-            <span className="text-sm font-medium normal-case text-muted-foreground line-through">{originalPrice}</span>
-          </span>
-        ) : null}
-        {discountBadgeLabel ? (
-          <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-400">{discountBadgeLabel}</span>
-        ) : null}
-      </div>
-      {originalPrice && discountBadgeLabel ? (
-        <div className="text-xs text-muted-foreground">
-          You save {discountBadgeLabel.replace('-', '')} from {originalPrice}.
-        </div>
-      ) : null}
-    </div>
+    <PriceBlock currentPrice={currentPrice} discountBadgeLabel={discountBadgeLabel} originalPrice={originalPrice} />
   );
 }
 
