@@ -1,6 +1,6 @@
 import { PageContainer } from '@/components/layout/page-container';
 import { DealFeedList } from '@/features/deals/components/deal-feed-list';
-import { FeedFilters } from '@/features/deals/components/feed-filters';
+import { FeedSidebar } from '@/features/deals/components/feed-sidebar';
 import { FeedSortSubheader } from '@/features/deals/components/feed-sort-subheader';
 import { getFeedFacets, getPublicDealsFeed, parseFeedQueryParams } from '@/features/deals/queries';
 import type { FeedFacetCollections } from '@/features/deals/types';
@@ -44,21 +44,21 @@ export default async function PublicHomePage({
   return (
     <>
       <FeedSortSubheader filters={filters} sort={sort} />
-      <PageContainer className="max-w-5xl space-y-4">
-        <header className="space-y-1">
-          <h1 className="text-xl font-semibold tracking-tight">Community deals</h1>
-          <p className="text-sm text-muted-foreground">Fresh finds from the community — sorted your way.</p>
-        </header>
 
+      <PageContainer className="space-y-4">
         {loadError ? (
           <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
             We&apos;re having trouble loading deals right now. Please try again in a moment.
           </p>
         ) : null}
 
-        <FeedFilters facets={facets} filters={filters} sort={sort} />
+        <main className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <section>
+            <DealFeedList deals={deals.items} filters={filters} hasMore={deals.hasMore} nextCursor={deals.nextCursor} sort={sort} />
+          </section>
 
-        <DealFeedList deals={deals.items} filters={filters} hasMore={deals.hasMore} nextCursor={deals.nextCursor} sort={sort} />
+          <FeedSidebar deals={deals.items} facets={facets} />
+        </main>
       </PageContainer>
     </>
   );
