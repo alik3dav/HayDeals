@@ -96,9 +96,9 @@ export function buildDealValueModel(deal: PublicDeal): DealValueModel {
   const currentPrice = formatDealPrice(effectiveCurrentPrice, deal.currency_code);
   const originalPrice = formatDealPrice(effectiveOriginalPrice, deal.currency_code);
   const calculatedDiscount = getDiscountPercentage(effectiveOriginalPrice, effectiveCurrentPrice);
-  const shouldUseCalculatedDiscount = typeCode === 'price_drop' || typeCode === 'coupon';
+  const shouldUseCalculatedDiscount = typeCode === 'price' || typeCode === 'price_drop' || typeCode === 'coupon';
   const resolvedPercent = shouldUseCalculatedDiscount ? calculatedDiscount ?? deal.discount_percent : deal.discount_percent;
-  const showDiscountBadge = typeCode === 'price_drop' || typeCode === 'coupon';
+  const showDiscountBadge = typeCode === 'price' || typeCode === 'price_drop' || typeCode === 'coupon';
   const discountBadgeLabel = showDiscountBadge && resolvedPercent !== null ? `-${resolvedPercent}%` : null;
 
   return {
