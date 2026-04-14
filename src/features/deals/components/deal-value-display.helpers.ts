@@ -25,6 +25,19 @@ export function calculateDiscountPercentage(originalPrice: number | null, curren
   return Math.round(percentage);
 }
 
+export function deriveOriginalPriceFromDiscount(currentPrice: number | null, discountPercent: number | null) {
+  if (currentPrice === null || discountPercent === null) {
+    return null;
+  }
+
+  if (currentPrice < 0 || discountPercent <= 0 || discountPercent >= 100) {
+    return null;
+  }
+
+  const originalPrice = currentPrice / (1 - discountPercent / 100);
+  return Number(originalPrice.toFixed(2));
+}
+
 export type DealValueModel = {
   typeCode: string | null;
   currentPrice: string | null;
@@ -40,9 +53,12 @@ export function buildDealValueModel(deal: PublicDeal): DealValueModel {
   const typeCode = deal.deal_types?.code ?? null;
   const couponCode = deal.coupon_code?.trim() || null;
   const bundleText = deal.bundle_text?.trim() || null;
+  const resolvedOriginalPriceValue =
+    deal.original_price ??
+    (typeCode === 'price_drop' ? deriveOriginalPriceFromDiscount(deal.sale_price, deal.discount_percent) : null);
   const currentPrice = formatDealPrice(deal.sale_price, deal.currency_code);
-  const originalPrice = formatDealPrice(deal.original_price, deal.currency_code);
-  const calculatedDiscount = calculateDiscountPercentage(deal.original_price, deal.sale_price);
+  const originalPrice = formatDealPrice(resolvedOriginalPriceValue, deal.currency_code);
+  const calculatedDiscount = calculateDiscountPercentage(resolvedOriginalPriceValue, deal.sale_price);
   const resolvedPercent = calculatedDiscount ?? deal.discount_percent;
 
   return {
