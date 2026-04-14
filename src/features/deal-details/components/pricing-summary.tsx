@@ -32,7 +32,7 @@ export function PricingSummary({ deal }: { deal: DealDetail }) {
   }
 
   return (
-    <section className="rounded-lg border border-border/60 bg-card/70 p-4">
+    <section className="">
       <div className="flex flex-wrap items-center gap-2 text-sm">
         {salePrice ? <span className="text-base font-semibold text-foreground">{salePrice}</span> : <span className="font-semibold text-foreground">See deal page</span>}
         {originalPrice ? <span className="text-muted-foreground line-through">{originalPrice}</span> : null}
