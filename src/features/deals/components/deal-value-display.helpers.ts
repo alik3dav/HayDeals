@@ -27,6 +27,19 @@ export function formatDealPrice(value: number | null, currencyCode: string) {
   }).format(value);
 }
 
+export function getDiscountPercentage(priceOriginal: number | null, priceCurrent: number | null) {
+  if (priceOriginal === null || priceCurrent === null) {
+    return null;
+  }
+
+  if (priceOriginal <= 0 || priceCurrent < 0 || priceOriginal <= priceCurrent) {
+    return null;
+  }
+
+  const percentage = ((priceOriginal - priceCurrent) / priceOriginal) * 100;
+  return Math.round(percentage);
+}
+
 export function calculateDiscountPercentage(originalPrice: number | null, currentPrice: number | null) {
   if (originalPrice === null || currentPrice === null) {
     return null;
@@ -68,14 +81,24 @@ export function buildDealValueModel(deal: PublicDeal): DealValueModel {
   const typeCode = normalizeDealTypeCode(deal.deal_types?.code ?? null);
   const couponCode = deal.coupon_code?.trim() || null;
   const bundleText = deal.bundle_text?.trim() || null;
-  const resolvedOriginalPriceValue =
-    deal.original_price ??
-    (typeCode === 'price_drop' ? deriveOriginalPriceFromDiscount(deal.sale_price, deal.discount_percent) : null);
-  const currentPrice = formatDealPrice(deal.sale_price, deal.currency_code);
-  const originalPrice = formatDealPrice(resolvedOriginalPriceValue, deal.currency_code);
-  const calculatedDiscount = calculateDiscountPercentage(resolvedOriginalPriceValue, deal.sale_price);
-  const resolvedPercent = calculatedDiscount ?? deal.discount_percent;
-  const discountBadgeLabel = resolvedPercent !== null ? `-${resolvedPercent}%` : null;
+
+  const resolvedCurrentPrice = typeof deal.sale_price === 'number' && Number.isFinite(deal.sale_price) ? deal.sale_price : null;
+  const resolvedOriginalPrice = typeof deal.original_price === 'number' && Number.isFinite(deal.original_price) ? deal.original_price : null;
+
+  const isValidPriceDrop =
+    typeCode === 'price_drop' &&
+    resolvedCurrentPrice !== null &&
+    resolvedOriginalPrice !== null &&
+    resolvedOriginalPrice > resolvedCurrentPrice;
+
+  const effectiveOriginalPrice = isValidPriceDrop ? resolvedOriginalPrice : null;
+  const effectiveCurrentPrice = resolvedCurrentPrice;
+
+  const currentPrice = formatDealPrice(effectiveCurrentPrice, deal.currency_code);
+  const originalPrice = formatDealPrice(effectiveOriginalPrice, deal.currency_code);
+  const calculatedDiscount = getDiscountPercentage(effectiveOriginalPrice, effectiveCurrentPrice);
+  const resolvedPercent = typeCode === 'price_drop' ? calculatedDiscount : deal.discount_percent;
+  const discountBadgeLabel = typeCode === 'price_drop' && resolvedPercent !== null ? `-${resolvedPercent}%` : null;
 
   return {
     typeCode,
