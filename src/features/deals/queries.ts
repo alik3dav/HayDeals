@@ -107,6 +107,7 @@ export async function getPublicDealsFeed({
       title,
       description,
       created_at,
+      expires_at,
       deal_url,
       image_url,
       score,
