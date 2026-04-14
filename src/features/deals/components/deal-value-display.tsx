@@ -80,7 +80,7 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
   switch (value.typeCode) {
     case 'price':
       if (!value.currentPrice) return null;
-      return <PriceBlock currentPrice={value.currentPrice} />;
+      return <PriceBlock currentPrice={value.currentPrice} discountBadgeLabel={value.discountBadgeLabel} originalPrice={value.originalPrice} />;
 
     case 'price_drop':
       if (!value.currentPrice) return null;

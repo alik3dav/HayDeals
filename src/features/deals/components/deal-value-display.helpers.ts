@@ -85,20 +85,21 @@ export function buildDealValueModel(deal: PublicDeal): DealValueModel {
   const resolvedCurrentPrice = typeof deal.sale_price === 'number' && Number.isFinite(deal.sale_price) ? deal.sale_price : null;
   const resolvedOriginalPrice = typeof deal.original_price === 'number' && Number.isFinite(deal.original_price) ? deal.original_price : null;
 
-  const isValidPriceDrop =
-    typeCode === 'price_drop' &&
+  const hasValidPriceComparison =
     resolvedCurrentPrice !== null &&
     resolvedOriginalPrice !== null &&
     resolvedOriginalPrice > resolvedCurrentPrice;
 
-  const effectiveOriginalPrice = isValidPriceDrop ? resolvedOriginalPrice : null;
+  const effectiveOriginalPrice = hasValidPriceComparison ? resolvedOriginalPrice : null;
   const effectiveCurrentPrice = resolvedCurrentPrice;
 
   const currentPrice = formatDealPrice(effectiveCurrentPrice, deal.currency_code);
   const originalPrice = formatDealPrice(effectiveOriginalPrice, deal.currency_code);
   const calculatedDiscount = getDiscountPercentage(effectiveOriginalPrice, effectiveCurrentPrice);
-  const resolvedPercent = typeCode === 'price_drop' ? calculatedDiscount : deal.discount_percent;
-  const discountBadgeLabel = typeCode === 'price_drop' && resolvedPercent !== null ? `-${resolvedPercent}%` : null;
+  const shouldUseCalculatedDiscount = typeCode === 'price' || typeCode === 'price_drop' || typeCode === 'coupon';
+  const resolvedPercent = shouldUseCalculatedDiscount ? calculatedDiscount ?? deal.discount_percent : deal.discount_percent;
+  const showDiscountBadge = typeCode === 'price' || typeCode === 'price_drop' || typeCode === 'coupon';
+  const discountBadgeLabel = showDiscountBadge && resolvedPercent !== null ? `-${resolvedPercent}%` : null;
 
   return {
     typeCode,
