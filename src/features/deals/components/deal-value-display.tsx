@@ -35,7 +35,7 @@ function PriceBlock({
   }
 
   return (
-    <section className="">
+    <section>
       <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
         {currentPrice ? <span className="text-base font-semibold text-foreground">{currentPrice}</span> : <span className="font-semibold text-foreground">See deal page</span>}
         {originalPrice ? <span className="text-muted-foreground line-through">{originalPrice}</span> : null}
@@ -55,51 +55,24 @@ function PriceBlock({
   );
 }
 
-function PriceDropBlock({
-  currentPrice,
-  originalPrice,
-  discountBadgeLabel,
-  couponCode,
-}: {
-  currentPrice: string | null;
-  originalPrice: string | null;
-  discountBadgeLabel: string | null;
-  couponCode?: string | null;
-}) {
-  return <PriceBlock currentPrice={currentPrice} couponCode={couponCode} discountBadgeLabel={discountBadgeLabel} originalPrice={originalPrice} />;
-}
-
 export function DealValueDisplay({ deal }: DealValueDisplayProps) {
   const value = buildDealValueModel(deal);
   const isCoupon = value.typeCode === 'coupon';
   const hasPriceSectionData = Boolean(value.currentPrice || value.originalPrice || value.discountBadgeLabel || value.couponCode);
 
-  if (process.env.NODE_ENV !== 'production' && value.typeCode === 'price_drop') {
-    console.debug('DealValueDisplay price_drop debug', {
-      dealId: deal.id,
-      dealType: deal.deal_types?.code ?? null,
-      salePrice: deal.sale_price,
-      originalPrice: deal.original_price,
-      salePriceIsNumber: typeof deal.sale_price === 'number' && Number.isFinite(deal.sale_price),
-      originalPriceIsNumber: typeof deal.original_price === 'number' && Number.isFinite(deal.original_price),
-    });
+  if (value.typeCode === 'price' || value.typeCode === 'price_drop') {
+    return (
+      <PriceBlock
+        currentPrice={value.currentPrice}
+        couponCode={value.couponCode}
+        discountBadgeLabel={value.discountBadgeLabel}
+        isCoupon={isCoupon}
+        originalPrice={value.originalPrice}
+      />
+    );
   }
 
   switch (value.typeCode) {
-    case 'price':
-      return (
-        <PriceBlock
-          currentPrice={value.currentPrice}
-          couponCode={value.couponCode}
-          discountBadgeLabel={value.discountBadgeLabel}
-          isCoupon={isCoupon}
-          originalPrice={value.originalPrice}
-        />
-      );
-
-    case 'price_drop':
-      return <PriceDropBlock currentPrice={value.currentPrice} couponCode={value.couponCode} discountBadgeLabel={value.discountBadgeLabel} originalPrice={value.originalPrice} />;
-
     case 'coupon':
       return value.couponCode ? (
         <CouponCodeBlock code={value.couponCode} />

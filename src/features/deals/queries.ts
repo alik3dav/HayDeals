@@ -11,6 +11,28 @@ import {
 } from '@/features/deals/types';
 
 const MAX_PAGE_SIZE = 50;
+const DEAL_FEED_SELECT = `
+  id,
+  title,
+  description,
+  created_at,
+  expires_at,
+  deal_url,
+  image_url,
+  score,
+  hot_score,
+  comments_count,
+  sale_price,
+  original_price,
+  discount_percent,
+  coupon_code,
+  bundle_text,
+  currency_code,
+  stores:stores!deals_store_id_fkey(name, slug),
+  categories:categories!deals_category_id_fkey(name, slug),
+  deal_types:deal_types!deals_deal_type_id_fkey(name, code)
+`;
+
 type RawDeal = Omit<PublicDeal, 'stores' | 'categories' | 'deal_types'> & {
   stores: { name: string; slug: string }[] | null;
   categories: { name: string; slug: string }[] | null;
@@ -58,6 +80,46 @@ function normalizedSort(input: string | undefined): DealSortOption {
   }
 
   return DEAL_SORT_OPTIONS.includes(input as DealSortOption) ? (input as DealSortOption) : 'newest';
+}
+
+function normalizeDeals(rows: RawDeal[]): PublicDeal[] {
+  return rows.map((row) => ({
+    ...row,
+    sale_price: toNullableNumber(row.sale_price),
+    original_price: toNullableNumber(row.original_price),
+    discount_percent: toNullableNumber(row.discount_percent),
+    stores: row.stores?.[0] ?? null,
+    categories: row.categories?.[0] ?? null,
+    deal_types: row.deal_types?.[0] ?? null,
+  }));
+}
+
+function applyCursorFilters<T extends { or: (filters: string) => T }>(query: T, sort: DealSortOption, cursor?: DealFeedCursor | null): T {
+  if (!cursor) {
+    return query;
+  }
+
+  if (sort === 'newest') {
+    return query.or(`created_at.lt.${cursor.createdAt},and(created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`);
+  }
+
+  if (sort === 'hot') {
+    return query.or(
+      [
+        `hot_score.lt.${cursor.score}`,
+        `and(hot_score.eq.${cursor.score},created_at.lt.${cursor.createdAt})`,
+        `and(hot_score.eq.${cursor.score},created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`,
+      ].join(','),
+    );
+  }
+
+  return query.or(
+    [
+      `comments_count.lt.${cursor.score}`,
+      `and(comments_count.eq.${cursor.score},created_at.lt.${cursor.createdAt})`,
+      `and(comments_count.eq.${cursor.score},created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`,
+    ].join(','),
+  );
 }
 
 export function parseFeedQueryParams(params: Record<string, string | string[] | undefined>) {
@@ -112,32 +174,7 @@ export async function getPublicDealsFeed({
   const supabase = await createClient();
   const safePageSize = Math.min(Math.max(pageSize, 1), MAX_PAGE_SIZE);
 
-  let query = supabase
-    .from('deals')
-    .select(
-      `
-      id,
-      title,
-      description,
-      created_at,
-      expires_at,
-      deal_url,
-      image_url,
-      score,
-      hot_score,
-      comments_count,
-      sale_price,
-      original_price,
-      discount_percent,
-      coupon_code,
-      bundle_text,
-      currency_code,
-      stores:stores!deals_store_id_fkey(name, slug),
-      categories:categories!deals_category_id_fkey(name, slug),
-      deal_types:deal_types!deals_deal_type_id_fkey(name, code)
-    `,
-    )
-    .limit(safePageSize + 1);
+  let query = supabase.from('deals').select(DEAL_FEED_SELECT).limit(safePageSize + 1);
 
   if (filters.category) {
     query = query.eq('categories.slug', filters.category);
@@ -153,39 +190,17 @@ export async function getPublicDealsFeed({
 
   if (sort === 'newest') {
     query = query.order('created_at', { ascending: false }).order('id', { ascending: false });
-
-    if (cursor) {
-      query = query.or(`created_at.lt.${cursor.createdAt},and(created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`);
-    }
   }
 
   if (sort === 'hot') {
     query = query.order('hot_score', { ascending: false }).order('created_at', { ascending: false }).order('id', { ascending: false });
-
-    if (cursor) {
-      query = query.or(
-        [
-          `hot_score.lt.${cursor.score}`,
-          `and(hot_score.eq.${cursor.score},created_at.lt.${cursor.createdAt})`,
-          `and(hot_score.eq.${cursor.score},created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`,
-        ].join(','),
-      );
-    }
   }
 
   if (sort === 'discussed') {
     query = query.order('comments_count', { ascending: false }).order('created_at', { ascending: false }).order('id', { ascending: false });
-
-    if (cursor) {
-      query = query.or(
-        [
-          `comments_count.lt.${cursor.score}`,
-          `and(comments_count.eq.${cursor.score},created_at.lt.${cursor.createdAt})`,
-          `and(comments_count.eq.${cursor.score},created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`,
-        ].join(','),
-      );
-    }
   }
+
+  query = applyCursorFilters(query, sort, cursor);
 
   const { data, error } = await query;
 
@@ -193,31 +208,7 @@ export async function getPublicDealsFeed({
     throw error;
   }
 
-  const rows = ((data ?? []) as RawDeal[]).map((row) => ({
-    ...row,
-    sale_price: toNullableNumber(row.sale_price),
-    original_price: toNullableNumber(row.original_price),
-    discount_percent: toNullableNumber(row.discount_percent),
-    stores: row.stores?.[0] ?? null,
-    categories: row.categories?.[0] ?? null,
-    deal_types: row.deal_types?.[0] ?? null,
-  }));
-
-  if (process.env.NODE_ENV !== 'production') {
-    rows
-      .filter((row) => row.deal_types?.code === 'price_drop')
-      .forEach((row) => {
-        console.debug('getPublicDealsFeed price_drop debug', {
-          dealId: row.id,
-          dealType: row.deal_types?.code ?? null,
-          salePrice: row.sale_price,
-          originalPrice: row.original_price,
-          salePriceIsNumber: typeof row.sale_price === 'number' && Number.isFinite(row.sale_price),
-          originalPriceIsNumber: typeof row.original_price === 'number' && Number.isFinite(row.original_price),
-        });
-      });
-  }
-
+  const rows = normalizeDeals((data ?? []) as RawDeal[]);
   const hasMore = rows.length > safePageSize;
   const items = hasMore ? rows.slice(0, safePageSize) : rows;
   const last = items.at(-1);
