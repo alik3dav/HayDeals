@@ -41,8 +41,8 @@ function PriceBlock({
           Coupon: <span className="font-semibold">{couponCode ?? 'Shown on merchant page'}</span>
         </div>
       ) : couponCode ? (
-        <div className="mt-3 text-xs text-muted-foreground">
-          Optional code: <span className="font-medium text-foreground">{couponCode}</span>
+        <div className="text-xs text-muted-foreground">
+          <span className="font-medium text-foreground">{couponCode}</span>
         </div>
       ) : null}
     </section>

@@ -32,8 +32,8 @@ export function PricingSummary({ deal }: { deal: DealDetail }) {
           Coupon: <span className="font-semibold">{deal.coupon_code ?? 'Shown on merchant page'}</span>
         </div>
       ) : deal.coupon_code ? (
-        <div className="mt-3 text-xs text-muted-foreground">
-          Optional code: <span className="font-medium text-foreground">{deal.coupon_code}</span>
+        <div className="text-xs text-muted-foreground">
+         <span className="font-medium text-foreground">{deal.coupon_code}</span>
         </div>
       ) : null}
     </section>
