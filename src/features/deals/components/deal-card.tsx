@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Bookmark, MessageSquare, Store, ThumbsDown, ThumbsUp } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import type { PublicDeal } from '@/features/deals/types';
 
 function formatPrice(value: number | null, currencyCode: string) {
@@ -113,6 +114,9 @@ type DealCardProps = {
 export function DealCard({ deal }: DealCardProps) {
   const expiryLabel = formatExpiry(deal.expires_at);
   const valueSummary = getDealValueSummary(deal);
+  const couponCode = deal.coupon_code?.trim() || null;
+  const hasCoupon = Boolean(couponCode);
+  const isFreeDeal = deal.deal_types?.code === 'free';
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40">
@@ -153,6 +157,20 @@ export function DealCard({ deal }: DealCardProps) {
                 <span>•</span>
                 <span>{formatRelativeTime(deal.created_at)}</span>
               </div>
+              {(isFreeDeal || hasCoupon) ? (
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  {isFreeDeal ? (
+                    <Badge className="border-emerald-500/30 bg-emerald-500/15 text-[11px] font-semibold tracking-wide text-emerald-600" variant="outline">
+                      FREE
+                    </Badge>
+                  ) : null}
+                  {hasCoupon ? (
+                    <Badge className="border-amber-500/40 bg-amber-500/10 text-[11px] font-semibold uppercase tracking-wide text-amber-700" variant="outline">
+                      Coupon
+                    </Badge>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           </div>
 
