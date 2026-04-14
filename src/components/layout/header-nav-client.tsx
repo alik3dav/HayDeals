@@ -130,33 +130,35 @@ export function HeaderNavClient({ categories, isAuthenticated, onSignOut, userEm
 
           <div
             className={cn(
-              'absolute left-0 top-[calc(100%+8px)] w-[420px] origin-top-left rounded-xl border border-border/70 bg-popover p-3 shadow-lg transition-all duration-150',
+              'absolute left-0 top-full w-[420px] origin-top-left pt-2 transition-all duration-150',
               openKey === 'categories'
                 ? 'pointer-events-auto translate-y-0 scale-100 opacity-100'
                 : 'pointer-events-none -translate-y-1 scale-[0.98] opacity-0',
             )}
           >
-            <div className="mb-2 flex items-center gap-1.5 px-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-              <FolderTree className="h-3.5 w-3.5" />
-              Browse categories
-            </div>
-            <div className="grid grid-cols-2 gap-1.5">
-              {categoryGroups.map((group, idx) => (
-                <ul className="space-y-1" key={idx}>
-                  {group.map((category) => (
-                    <li key={category.value}>
-                      <Link
-                        className="flex h-8 items-center gap-2 rounded-md px-2 text-xs text-foreground/90 transition-colors duration-150 hover:bg-muted/45 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                        href={`/?category=${encodeURIComponent(category.value)}`}
-                        onClick={() => close()}
-                      >
-                        <Tag className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span className="truncate">{category.label}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ))}
+            <div className="rounded-xl border border-border/70 bg-popover p-3 shadow-lg">
+              <div className="mb-2 flex items-center gap-1.5 px-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                <FolderTree className="h-3.5 w-3.5" />
+                Browse categories
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                {categoryGroups.map((group, idx) => (
+                  <ul className="space-y-1" key={idx}>
+                    {group.map((category) => (
+                      <li key={category.value}>
+                        <Link
+                          className="flex h-8 items-center gap-2 rounded-md px-2 text-xs text-foreground/90 transition-colors duration-150 hover:bg-muted/45 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                          href={`/?category=${encodeURIComponent(category.value)}`}
+                          onClick={() => close()}
+                        >
+                          <Tag className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span className="truncate">{category.label}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -213,29 +215,31 @@ export function HeaderNavClient({ categories, isAuthenticated, onSignOut, userEm
 
                 <div
                   className={cn(
-                    'absolute right-0 top-[calc(100%+8px)] w-44 origin-top-right rounded-xl border border-border/70 bg-popover p-1.5 shadow-lg transition-all duration-150',
+                    'absolute right-0 top-full w-44 origin-top-right pt-2 transition-all duration-150',
                     openKey === 'profile'
                       ? 'pointer-events-auto translate-y-0 scale-100 opacity-100'
                       : 'pointer-events-none -translate-y-1 scale-[0.98] opacity-0',
                   )}
                 >
-                  <Link
-                    className="flex h-8 items-center gap-2 rounded-md px-2 text-xs transition-colors duration-150 hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    href="/dashboard"
-                    onClick={() => close()}
-                  >
-                    <User className="h-3.5 w-3.5 text-muted-foreground" />
-                    Dashboard
-                  </Link>
-                  <form action={onSignOut}>
-                    <button
-                      className="mt-1 flex h-8 w-full items-center gap-2 rounded-md px-2 text-left text-xs transition-colors duration-150 hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                      type="submit"
+                  <div className="rounded-xl border border-border/70 bg-popover p-1.5 shadow-lg">
+                    <Link
+                      className="flex h-8 items-center gap-2 rounded-md px-2 text-xs transition-colors duration-150 hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      href="/dashboard"
+                      onClick={() => close()}
                     >
-                      <LogOut className="h-3.5 w-3.5 text-muted-foreground" />
-                      Sign out
-                    </button>
-                  </form>
+                      <User className="h-3.5 w-3.5 text-muted-foreground" />
+                      Dashboard
+                    </Link>
+                    <form action={onSignOut}>
+                      <button
+                        className="mt-1 flex h-8 w-full items-center gap-2 rounded-md px-2 text-left text-xs transition-colors duration-150 hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        type="submit"
+                      >
+                        <LogOut className="h-3.5 w-3.5 text-muted-foreground" />
+                        Sign out
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </>
