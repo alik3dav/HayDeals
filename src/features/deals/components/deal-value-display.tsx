@@ -58,6 +58,7 @@ function PriceDropBlock({
 export function DealValueDisplay({ deal }: DealValueDisplayProps) {
   const value = buildDealValueModel(deal);
   const isCoupon = value.typeCode === 'coupon';
+  const hasPriceSectionData = Boolean(value.currentPrice || value.originalPrice || value.discountBadgeLabel || value.couponCode);
 
   if (process.env.NODE_ENV !== 'production' && value.typeCode === 'price_drop') {
     console.debug('DealValueDisplay price_drop debug', {
@@ -114,7 +115,19 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
 
     case 'info':
     default: {
-      const fallback = value.currentPrice || value.couponCode || value.bundleText || value.percentageLabel || value.dealTypeLabel || 'See details';
+      if (hasPriceSectionData) {
+        return (
+          <PriceBlock
+            currentPrice={value.currentPrice}
+            couponCode={value.couponCode}
+            discountBadgeLabel={value.discountBadgeLabel}
+            isCoupon={isCoupon}
+            originalPrice={value.originalPrice}
+          />
+        );
+      }
+
+      const fallback = value.bundleText || value.percentageLabel || value.dealTypeLabel || 'See details';
       return <span className="text-base font-medium text-foreground">{fallback}</span>;
     }
   }
