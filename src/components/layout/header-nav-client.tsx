@@ -201,13 +201,13 @@ export function HeaderNavClient({
           <Link className="shrink-0" href="/">
             {logotypeUrl ? (
               <img
-                alt={logoAlt || "HayDeals"}
+                alt={logoAlt || "CipiDeals"}
                 className={logoClassName}
                 src={logotypeUrl}
               />
             ) : (
               <span className="text-sm font-semibold tracking-tight">
-                HayDeals
+                CipiDeals
               </span>
             )}
           </Link>

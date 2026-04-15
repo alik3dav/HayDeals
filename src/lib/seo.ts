@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
-const DEFAULT_SITE_URL = 'https://haydeals.com';
+const DEFAULT_SITE_URL = 'https://cipideals.com';
 
-export const SITE_NAME = 'HayDeals';
+export const SITE_NAME = 'CipiDeals';
 export const SITE_DESCRIPTION = 'Discover and share the best verified deals from the community.';
 
 export function getSiteUrl() {

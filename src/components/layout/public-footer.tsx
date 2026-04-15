@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { getFeedFacets } from '@/features/deals/queries';
+import { createClient } from '@/lib/supabase/server';
 
 const DISCOVER_LINKS = [
   { href: '/?sort=newest', label: 'Newest deals' },
@@ -22,7 +23,13 @@ const DASHBOARD_LINKS = [
 ] as const;
 
 export async function PublicFooter() {
+  const supabase = await createClient();
   let categories: { value: string; label: string }[] = [];
+  let branding: { logotypeUrl: string | null; logoAlt: string | null; logoSize: 'small' | 'medium' | 'large' | 'custom' } = {
+    logotypeUrl: null,
+    logoAlt: null,
+    logoSize: 'medium',
+  };
 
   try {
     const facets = await getFeedFacets();
@@ -31,7 +38,33 @@ export async function PublicFooter() {
     console.error('Failed to load categories for footer.', error);
   }
 
+  try {
+    const { data } = await supabase
+      .from('website_control_settings')
+      .select('logotype_url, logo_alt, logo_size')
+      .eq('id', 1)
+      .maybeSingle();
+
+    if (data) {
+      branding = {
+        logotypeUrl: data.logotype_url,
+        logoAlt: data.logo_alt,
+        logoSize: data.logo_size ?? 'medium',
+      };
+    }
+  } catch (error) {
+    console.error('Failed to load website branding for footer.', error);
+  }
+
   const year = new Date().getFullYear();
+  const logoClassName =
+    branding.logoSize === 'small'
+      ? 'h-6 w-auto max-w-[120px]'
+      : branding.logoSize === 'large'
+        ? 'h-10 w-auto max-w-[240px]'
+        : branding.logoSize === 'custom'
+          ? 'h-10 w-auto max-w-[320px]'
+          : 'h-8 w-auto max-w-[180px]';
 
   return (
     <footer className="mt-10 border-t border-border/60 bg-background/80" role="contentinfo">
@@ -39,7 +72,15 @@ export async function PublicFooter() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-[minmax(0,1.15fr)_repeat(3,minmax(0,1fr))] lg:gap-10">
           <section aria-label="Brand" className="space-y-3">
             <Link className="inline-flex items-center text-sm font-semibold tracking-tight" href="/">
-              HayDeals
+              {branding.logotypeUrl ? (
+                <img
+                  alt={branding.logoAlt || 'CipiDeals'}
+                  className={logoClassName}
+                  src={branding.logotypeUrl}
+                />
+              ) : (
+                'CipiDeals'
+              )}
             </Link>
             <p className="max-w-sm text-sm text-muted-foreground">
               Discover and share the best verified deals from the community.
@@ -94,7 +135,7 @@ export async function PublicFooter() {
         </div>
 
         <div className="mt-8 flex flex-col gap-2 border-t border-border/50 pt-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {year} HayDeals. All rights reserved.</p>
+          <p>© {year} CipiDeals. All rights reserved.</p>
           <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
             {DASHBOARD_LINKS.map((link) => (
               <li key={link.href}>

@@ -7,7 +7,7 @@ import { buildPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'Create account',
-  description: 'Create a HayDeals account to submit and save deals.',
+  description: 'Create a CipiDeals account to submit and save deals.',
   pathname: '/sign-up',
   noIndex: true,
 });
