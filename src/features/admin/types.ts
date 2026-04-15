@@ -67,3 +67,8 @@ export type AdminDealEdit = {
   categoryOptions: Array<{ id: string; name: string }>;
   storeOptions: Array<{ id: string; name: string }>;
 };
+
+export type WebsiteControlState = {
+  ok: boolean;
+  message: string;
+};
