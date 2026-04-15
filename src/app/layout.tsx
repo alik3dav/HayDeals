@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import { Inter } from 'next/font/google';
 
 import '@/app/globals.css';
@@ -11,7 +10,7 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-const analyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+const analyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? 'G-02Y805BZ6G';
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -40,15 +39,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html className="dark" lang="en" suppressHydrationWarning>
+      <head>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${analyticsId}');`,
+          }}
+        />
+      </head>
       <body className={`${inter.variable} font-sans`}>
-        {analyticsId ? (
-          <>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`} strategy="afterInteractive" />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${analyticsId}');`}
-            </Script>
-          </>
-        ) : null}
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange enableSystem>
           {children}
         </ThemeProvider>
