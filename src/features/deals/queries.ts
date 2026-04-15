@@ -112,6 +112,8 @@ function normalizeDeals(rows: RawDeal[]): PublicDeal[] {
     categories: toRelationValue(row.categories),
     deal_types: toRelationValue(row.deal_types),
     profiles: toRelationValue(row.profiles),
+    current_user_vote: 0,
+    is_saved_by_current_user: false,
   }));
 }
 
@@ -232,6 +234,36 @@ export async function getPublicDealsFeed({
   const rows = normalizeDeals((data ?? []) as RawDeal[]);
   const hasMore = rows.length > safePageSize;
   const items = hasMore ? rows.slice(0, safePageSize) : rows;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const profileId = user?.id ?? null;
+
+  if (profileId && items.length > 0) {
+    const dealIds = items.map((deal) => deal.id);
+
+    const [{ data: votes, error: votesError }, { data: bookmarks, error: bookmarksError }] = await Promise.all([
+      supabase.from('deal_votes').select('deal_id, vote_value').eq('profile_id', profileId).in('deal_id', dealIds),
+      supabase.from('deal_bookmarks').select('deal_id').eq('profile_id', profileId).in('deal_id', dealIds),
+    ]);
+
+    if (votesError) {
+      throw votesError;
+    }
+
+    if (bookmarksError) {
+      throw bookmarksError;
+    }
+
+    const voteMap = new Map((votes ?? []).map((vote) => [vote.deal_id, vote.vote_value as -1 | 1]));
+    const bookmarkedDealIds = new Set((bookmarks ?? []).map((bookmark) => bookmark.deal_id));
+
+    for (const deal of items) {
+      deal.current_user_vote = voteMap.get(deal.id) ?? 0;
+      deal.is_saved_by_current_user = bookmarkedDealIds.has(deal.id);
+    }
+  }
+
   const last = items.at(-1);
 
   let nextCursor: string | null = null;

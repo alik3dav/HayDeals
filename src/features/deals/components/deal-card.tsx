@@ -1,20 +1,22 @@
 import Link from 'next/link';
-import { Bookmark, MessageSquare, Store, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { MessageSquare, Store } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import type { PublicDeal } from '@/features/deals/types';
 import { UserAvatar } from '@/features/profile/components/user-avatar';
 
 import { DealValueDisplay } from './deal-value-display';
+import { DealCardInteractions } from './deal-card-interactions';
 
 
 import { formatExpiryLabel, formatRelativeTime, getExpiryBadgeClassName } from '@/features/deals/utils/formatters';
 
 type DealCardProps = {
   deal: PublicDeal;
+  voteAction: (dealId: string, voteValue: 1 | -1) => Promise<void>;
+  saveAction: (dealId: string) => Promise<void>;
 };
 
-export function DealCard({ deal }: DealCardProps) {
+export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
   const expiryLabel = formatExpiryLabel(deal.expires_at);
   const expiryBadgeClassName = getExpiryBadgeClassName(deal.expires_at);
   const authorFullName = [deal.profiles?.first_name, deal.profiles?.last_name].filter(Boolean).join(' ').trim();
@@ -68,26 +70,21 @@ export function DealCard({ deal }: DealCardProps) {
             <DealValueDisplay deal={deal} />
           </div>
 
-          <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
-           <div className='flex justify-between items-center bg-[#191d25] border  border-[#252C3A] rounded-full py-1 px-1 gap-2'>
-           <button aria-label="Upvote deal" className="inline-flex items-center rounded-full p-2 transition-colors hover:bg-emerald-500/15">
-              <ThumbsUp className="h-4 w-4" />
-            </button>
-            <span className="text-base font-semibold">{deal.score}</span>
-            <button aria-label="Downvote deal" className="inline-flex items-center rounded-full p-2 text-rose-500 transition-colors hover:bg-rose-500/15">
-              <ThumbsDown className="h-4 w-4" />
-            </button>
-           </div>
-          
+          <DealCardInteractions
+            dealId={deal.id}
+            initialScore={deal.score}
+            initialVote={deal.current_user_vote}
+            initiallySaved={deal.is_saved_by_current_user}
+            saveAction={saveAction}
+            voteAction={voteAction}
+          />
+
+          <div className="flex items-center gap-2.5 text-emerald-600">
             <span className="ml-2 inline-flex items-center gap-1.5 text-muted-foreground">
               <MessageSquare className="h-4 w-4" />
               <span className="text-sm">{deal.comments_count}</span>
             </span>
           </div>
-
-          <Button aria-label="Save deal" className="h-10 w-10 shrink-0 border border-border rounded-full bg-secondary/70 text-muted-foreground hover:bg-secondary hover:text-foreground" size="icon" variant="ghost">
-            <Bookmark className="h-4 w-4" />
-          </Button>
           <Link
             className="inline-flex items-center rounded-full bg-[#F5F5F5] px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-[#E8E8E8]"
             href={deal.deal_url}
