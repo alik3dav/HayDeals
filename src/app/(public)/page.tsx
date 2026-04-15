@@ -1,15 +1,45 @@
+import type { Metadata } from 'next';
+
 import { PageContainer } from '@/components/layout/page-container';
 import { DealFeedList } from '@/features/deals/components/deal-feed-list';
 import { FeedSidebar } from '@/features/deals/components/feed-sidebar';
 import { FeedSortSubheader } from '@/features/deals/components/feed-sort-subheader';
 import { getFeedFacets, getPublicDealsFeed, parseFeedQueryParams } from '@/features/deals/queries';
 import type { FeedFacetCollections } from '@/features/deals/types';
+import { buildPageMetadata, absoluteUrl } from '@/lib/seo';
 
 const EMPTY_FACETS: FeedFacetCollections = {
   categories: [],
   stores: [],
   dealTypes: [],
 };
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const resolvedParams = await searchParams;
+  const { filters, sort } = parseFeedQueryParams(resolvedParams);
+
+  const titleParts = ['Latest Deals'];
+
+  if (filters.category) titleParts.unshift(`Category: ${filters.category}`);
+  if (filters.store) titleParts.unshift(`Store: ${filters.store}`);
+  if (sort !== 'newest') titleParts.push(`Sort: ${sort}`);
+
+  const canonicalQuery = new URLSearchParams();
+  if (filters.category) canonicalQuery.set('category', filters.category);
+  if (filters.store) canonicalQuery.set('store', filters.store);
+  if (filters.dealType) canonicalQuery.set('dealType', filters.dealType);
+  if (sort !== 'newest') canonicalQuery.set('sort', sort);
+
+  return buildPageMetadata({
+    title: titleParts.join(' | '),
+    description: 'Browse the latest verified community deals, discounts, and price drops.',
+    pathname: canonicalQuery.size ? `/?${canonicalQuery.toString()}` : '/',
+  });
+}
 
 export default async function PublicHomePage({
   searchParams,
@@ -30,19 +60,33 @@ export default async function PublicHomePage({
 
   if (facetsResult.status === 'fulfilled') {
     facets = facetsResult.value;
-  } else {
-    console.error('Failed to load feed facets.', facetsResult.reason);
   }
 
   if (dealsResult.status === 'fulfilled') {
     deals = dealsResult.value;
   } else {
     loadError = true;
-    console.error('Failed to load public deals feed.', dealsResult.reason);
   }
+
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'HayDeals - Latest Deals',
+    url: absoluteUrl('/'),
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: deals.items.map((deal, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: absoluteUrl(`/deals/${deal.id}`),
+        name: deal.title,
+      })),
+    },
+  };
 
   return (
     <>
+      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} type="application/ld+json" />
       <FeedSortSubheader filters={filters} sort={sort} />
 
       <PageContainer className="space-y-4">
@@ -54,6 +98,7 @@ export default async function PublicHomePage({
 
         <main className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
           <section>
+            <h1 className="sr-only">Latest deals and discounts</h1>
             <DealFeedList deals={deals.items} filters={filters} hasMore={deals.hasMore} nextCursor={deals.nextCursor} sort={sort} />
           </section>
 

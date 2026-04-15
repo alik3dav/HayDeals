@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { ShieldCheck } from 'lucide-react';
@@ -5,6 +6,13 @@ import { ShieldCheck } from 'lucide-react';
 import { AdminSidebarShell } from '@/features/admin/components/admin-sidebar-shell';
 import { requireRole } from '@/lib/auth/session';
 
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const { user, role } = await requireRole(['moderator', 'admin']);
 
