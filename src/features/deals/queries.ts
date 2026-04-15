@@ -19,6 +19,7 @@ const DEAL_FEED_SELECT = `
   expires_at,
   deal_url,
   image_url,
+  merchant_name,
   score,
   hot_score,
   comments_count,
@@ -34,10 +35,18 @@ const DEAL_FEED_SELECT = `
 `;
 
 type RawDeal = Omit<PublicDeal, 'stores' | 'categories' | 'deal_types'> & {
-  stores: { name: string; slug: string }[] | null;
-  categories: { name: string; slug: string }[] | null;
-  deal_types: { name: string; code: string }[] | null;
+  stores: { name: string; slug: string } | { name: string; slug: string }[] | null;
+  categories: { name: string; slug: string } | { name: string; slug: string }[] | null;
+  deal_types: { name: string; code: string } | { name: string; code: string }[] | null;
 };
+
+function toRelationValue<T>(value: T | T[] | null): T | null {
+  if (Array.isArray(value)) {
+    return value[0] ?? null;
+  }
+
+  return value;
+}
 
 function toNullableNumber(value: unknown): number | null {
   if (typeof value === 'number') {
@@ -88,9 +97,9 @@ function normalizeDeals(rows: RawDeal[]): PublicDeal[] {
     sale_price: toNullableNumber(row.sale_price),
     original_price: toNullableNumber(row.original_price),
     discount_percent: toNullableNumber(row.discount_percent),
-    stores: row.stores?.[0] ?? null,
-    categories: row.categories?.[0] ?? null,
-    deal_types: row.deal_types?.[0] ?? null,
+    stores: toRelationValue(row.stores),
+    categories: toRelationValue(row.categories),
+    deal_types: toRelationValue(row.deal_types),
   }));
 }
 

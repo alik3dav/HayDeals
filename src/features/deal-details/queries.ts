@@ -2,10 +2,18 @@ import { createClient } from '@/lib/supabase/server';
 import type { DealComment, DealDetail, RelatedDeal, ViewerDealState } from '@/features/deal-details/types';
 
 type RawDealDetail = Omit<DealDetail, 'stores' | 'categories' | 'deal_types'> & {
-  stores: { name: string; slug: string }[] | null;
-  categories: { name: string; slug: string }[] | null;
-  deal_types: { name: string; code: string }[] | null;
+  stores: { name: string; slug: string } | { name: string; slug: string }[] | null;
+  categories: { name: string; slug: string } | { name: string; slug: string }[] | null;
+  deal_types: { name: string; code: string } | { name: string; code: string }[] | null;
 };
+
+function toRelationValue<T>(value: T | T[] | null): T | null {
+  if (Array.isArray(value)) {
+    return value[0] ?? null;
+  }
+
+  return value;
+}
 
 export async function getDealDetailById(dealId: string): Promise<DealDetail | null> {
   const supabase = await createClient();
@@ -49,9 +57,9 @@ export async function getDealDetailById(dealId: string): Promise<DealDetail | nu
 
   return {
     ...data,
-    stores: data.stores?.[0] ?? null,
-    categories: data.categories?.[0] ?? null,
-    deal_types: data.deal_types?.[0] ?? null,
+    stores: toRelationValue(data.stores),
+    categories: toRelationValue(data.categories),
+    deal_types: toRelationValue(data.deal_types),
   };
 }
 

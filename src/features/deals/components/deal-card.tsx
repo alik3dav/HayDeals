@@ -75,7 +75,7 @@ export function DealCard({ deal }: DealCardProps) {
           <div className="mt-1.5 flex text-xs flex-wrap items-center gap-2 text-muted-foreground/60">
               <span className="inline-flex items-center gap-1.5  bg-[#191d25] py-1.5 px-3 rounded-[4px]" >
                 <Store className="h-3 w-3" />
-                {deal.stores?.name ?? 'Unknown store'}
+                {deal.stores?.name ?? deal.merchant_name ?? 'Unknown store'}
               </span>
               <span>•</span>
               <span>{deal.categories?.name ?? 'General'}</span>
