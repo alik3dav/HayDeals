@@ -4,7 +4,8 @@ import { MoreVertical } from 'lucide-react';
 import { moderateDealAction } from '@/features/admin/mutations';
 import type { AdminDealQueueItem } from '@/features/admin/types';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 function statusVariant(status: AdminDealQueueItem['moderation_status']) {
@@ -51,37 +52,53 @@ export function DealsQueueTable({ deals }: { deals: AdminDealQueueItem[] }) {
                   </td>
                   <td className="py-2">
                     <details className="relative inline-block">
-                      <summary className="list-none">
-                        <Button aria-label="Open actions menu" size="icon" type="button" variant="ghost">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
+                      <summary
+                        aria-label="Open actions menu"
+                        className={cn(
+                          'list-none cursor-pointer [&::-webkit-details-marker]:hidden',
+                          buttonVariants({ size: 'icon', variant: 'ghost' }),
+                        )}
+                      >
+                        <MoreVertical className="h-4 w-4" />
                       </summary>
 
                       <div className="absolute right-0 z-20 mt-1 w-36 rounded-md border bg-background p-1 shadow-lg">
                         <form action={moderateDealAction}>
                           <input name="dealId" type="hidden" value={deal.id} />
                           <input name="intent" type="hidden" value="approve" />
-                          <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">
+                          <button
+                            className={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'w-full justify-start')}
+                            type="submit"
+                          >
                             Approve
-                          </Button>
+                          </button>
                         </form>
                         <form action={moderateDealAction}>
                           <input name="dealId" type="hidden" value={deal.id} />
                           <input name="intent" type="hidden" value="reject" />
-                          <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">
+                          <button
+                            className={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'w-full justify-start')}
+                            type="submit"
+                          >
                             Reject
-                          </Button>
+                          </button>
                         </form>
                         <form action={moderateDealAction}>
                           <input name="dealId" type="hidden" value={deal.id} />
                           <input name="intent" type="hidden" value={deal.is_featured ? 'unfeature' : 'feature'} />
-                          <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">
+                          <button
+                            className={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'w-full justify-start')}
+                            type="submit"
+                          >
                             {deal.is_featured ? 'Unfeature' : 'Feature'}
-                          </Button>
+                          </button>
                         </form>
-                        <Button asChild className="w-full justify-start" size="sm" variant="ghost">
-                          <Link href={`/admin/deals/${deal.id}/edit`}>Edit</Link>
-                        </Button>
+                        <Link
+                          className={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'w-full justify-start')}
+                          href={`/admin/deals/${deal.id}/edit`}
+                        >
+                          Edit
+                        </Link>
                       </div>
                     </details>
                   </td>
