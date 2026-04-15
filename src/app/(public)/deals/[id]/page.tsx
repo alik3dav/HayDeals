@@ -76,10 +76,11 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
   return (
     <PageContainer className="max-w-6xl space-y-4 py-4">
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} type="application/ld+json" />
-      <DealHeader deal={deal} />
+      
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
+          <DealHeader deal={deal} />
           <AddCommentForm canComment={Boolean(user)} dealId={deal.id} onAddComment={addCommentAction} />
           <CommentsSection comments={comments} />
           <RelatedDeals deals={relatedDeals} />
