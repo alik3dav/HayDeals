@@ -38,6 +38,9 @@ type HeaderNavClientProps = {
   userEmail?: string;
   profileDisplayName?: string;
   profileAvatarUrl?: string | null;
+  logotypeUrl?: string | null;
+  logoAlt?: string | null;
+  logoSize?: "small" | "medium" | "large" | "custom";
   categories: HeaderCategory[];
   onSignOut: () => Promise<void>;
 };
@@ -61,6 +64,9 @@ export function HeaderNavClient({
   userEmail,
   profileDisplayName,
   profileAvatarUrl,
+  logotypeUrl,
+  logoAlt,
+  logoSize = "medium",
 }: HeaderNavClientProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
@@ -175,16 +181,35 @@ export function HeaderNavClient({
   };
 
   const hasOpenDropdown = openKey !== null;
+  const logoClassName = useMemo(() => {
+    switch (logoSize) {
+      case "small":
+        return "h-6 w-auto max-w-[120px]";
+      case "large":
+        return "h-10 w-auto max-w-[240px]";
+      case "custom":
+        return "h-10 w-auto max-w-[320px]";
+      default:
+        return "h-8 w-auto max-w-[180px]";
+    }
+  }, [logoSize]);
 
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="container flex h-14 items-center gap-3">
-          <Link
-            className="shrink-0 text-sm font-semibold tracking-tight"
-            href="/"
-          >
-            HayDeals
+          <Link className="shrink-0" href="/">
+            {logotypeUrl ? (
+              <img
+                alt={logoAlt || "HayDeals"}
+                className={logoClassName}
+                src={logotypeUrl}
+              />
+            ) : (
+              <span className="text-sm font-semibold tracking-tight">
+                HayDeals
+              </span>
+            )}
           </Link>
 
           <div
