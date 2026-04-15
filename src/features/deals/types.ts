@@ -53,6 +53,8 @@ export type PublicDeal = {
     last_name: string | null;
     avatar_url: string | null;
   } | null;
+  current_user_vote: -1 | 0 | 1;
+  is_saved_by_current_user: boolean;
 };
 
 export type FeedFacetOption = {

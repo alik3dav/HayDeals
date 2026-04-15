@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { toggleSaveFromFeedAction, voteOnDealFromFeedAction } from '@/features/deals/actions';
 import { DealCard } from '@/features/deals/components/deal-card';
 import type { DealFeedFilters, DealSortOption, PublicDeal } from '@/features/deals/types';
 
@@ -44,7 +45,7 @@ export function DealFeedList({ deals, hasMore, nextCursor, sort, filters }: Deal
   return (
     <section className="space-y-3">
       {deals.map((deal) => (
-        <DealCard deal={deal} key={deal.id} />
+        <DealCard deal={deal} key={deal.id} saveAction={toggleSaveFromFeedAction} voteAction={voteOnDealFromFeedAction} />
       ))}
 
       {hasMore && nextCursor ? (
