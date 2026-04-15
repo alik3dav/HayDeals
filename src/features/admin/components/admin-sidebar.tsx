@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { AlertTriangle, ClipboardList, Home, LayoutGrid, ShoppingBag, Store, Users } from 'lucide-react';
+import { AlertTriangle, ClipboardList, Home, LayoutGrid, Palette, ShoppingBag, Store, Users } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: '/admin/categories', label: 'Categories', icon: LayoutGrid },
   { href: '/admin/stores', label: 'Stores', icon: Store },
   { href: '/admin/users', label: 'Users & Roles', icon: Users },
+  { href: '/admin/website-control', label: 'Website control', icon: Palette },
 ];
 
 export function AdminSidebar({ pathname }: { pathname: string }) {
