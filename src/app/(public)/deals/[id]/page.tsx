@@ -34,7 +34,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
-          <AddCommentForm dealId={deal.id} onAddComment={addCommentAction} />
+          <AddCommentForm canComment={Boolean(user)} dealId={deal.id} onAddComment={addCommentAction} />
           <CommentsSection comments={comments} />
           <RelatedDeals deals={relatedDeals} />
         </div>
