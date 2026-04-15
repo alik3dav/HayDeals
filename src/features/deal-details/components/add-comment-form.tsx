@@ -2,18 +2,36 @@
 
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 
 export function AddCommentForm({
   dealId,
+  canComment,
   onAddComment,
 }: {
   dealId: string;
+  canComment: boolean;
   onAddComment: (dealId: string, formData: FormData) => Promise<void>;
 }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  if (!canComment) {
+    return (
+      <section className="space-y-2 rounded-lg border border-border/60 bg-card/70 p-3">
+        <h2 className="text-sm font-semibold text-foreground">Add comment</h2>
+        <p className="text-sm text-muted-foreground">
+          You need to{' '}
+          <Link className="font-medium text-primary hover:underline" href="/sign-in">
+            sign in
+          </Link>{' '}
+          to comment.
+        </p>
+      </section>
+    );
+  }
 
   return (
     <form
