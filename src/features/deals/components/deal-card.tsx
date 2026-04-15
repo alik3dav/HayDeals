@@ -22,7 +22,7 @@ export function DealCard({ deal }: DealCardProps) {
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40 md:flex md:min-h-60">
-      <div className="relative aspect-square p-2 bg-white w-full shrink-0 overflow-hidden border-b border-border/60 bg-secondary/50 md:h-60 md:w-60 md:border-b-0 md:border-r">
+      <div className="relative aspect-square bg-white w-full shrink-0 overflow-hidden border-b border-border/60 bg-secondary/50 md:h-60 md:w-60 md:border-b-0 md:border-r">
           {deal.image_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img alt={deal.title} className="h-full w-full object-cover" src={deal.image_url} />
