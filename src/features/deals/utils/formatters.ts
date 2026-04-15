@@ -66,3 +66,23 @@ export function formatExpiryLabel(expiresAt: string | null) {
 
   return `Expires in ${diffDays} days`;
 }
+
+export function getExpiryBadgeClassName(expiresAt: string | null) {
+  if (!expiresAt) {
+    return null;
+  }
+
+  const expiresAtMs = new Date(expiresAt).getTime();
+
+  if (Number.isNaN(expiresAtMs)) {
+    return null;
+  }
+
+  const diffDays = Math.ceil((expiresAtMs - Date.now()) / (1000 * 60 * 60 * 24));
+
+  if (diffDays > 1) {
+    return 'border-border bg-secondary text-muted-foreground';
+  }
+
+  return 'border-red-500/20 bg-red-500/10 text-red-300';
+}

@@ -7,7 +7,7 @@ import type { PublicDeal } from '@/features/deals/types';
 import { DealValueDisplay } from './deal-value-display';
 
 
-import { formatExpiryLabel, formatRelativeTime } from '@/features/deals/utils/formatters';
+import { formatExpiryLabel, formatRelativeTime, getExpiryBadgeClassName } from '@/features/deals/utils/formatters';
 
 type DealCardProps = {
   deal: PublicDeal;
@@ -15,6 +15,7 @@ type DealCardProps = {
 
 export function DealCard({ deal }: DealCardProps) {
   const expiryLabel = formatExpiryLabel(deal.expires_at);
+  const expiryBadgeClassName = getExpiryBadgeClassName(deal.expires_at);
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40 md:flex md:min-h-56">
@@ -45,7 +46,9 @@ export function DealCard({ deal }: DealCardProps) {
               ) : null}
               <span>•</span>
               <span>{formatRelativeTime(deal.created_at)}</span>
-              {expiryLabel ? <span className="rounded-md border border-red-500/20 bg-red-500/10 px-2 py-0.5 text-xs font-small text-red-300">{expiryLabel}</span> : null}
+              {expiryLabel && expiryBadgeClassName ? (
+                <span className={`rounded-md border px-2 py-0.5 text-xs font-small ${expiryBadgeClassName}`}>{expiryLabel}</span>
+              ) : null}
             </div>
           
               <Link className="line-clamp-1 text-xl font-semibold leading-tight text-foreground hover:text-primary" href={`/deals/${deal.id}`}>
