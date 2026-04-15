@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
@@ -83,6 +84,11 @@ export default function AdminWebsiteControlPage() {
 
           <div className="rounded-md border border-dashed border-border/80 bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
             Save behavior can be connected to a settings table or CMS endpoint when backend persistence is ready.
+          </div>
+
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs text-muted-foreground">Use save to keep your branding updates once persistence is connected.</p>
+            <Button type="button">Save changes</Button>
           </div>
         </CardContent>
       </Card>
