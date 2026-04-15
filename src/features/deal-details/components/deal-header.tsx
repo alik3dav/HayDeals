@@ -32,7 +32,7 @@ export function DealHeader({ deal }: { deal: DealDetail }) {
           </Link>
         </div>
 
-        <div className="relative min-h-48 border-t border-border/60 bg-secondary/50 md:min-h-full md:border-l md:border-t-0">
+        <div className="relative aspect-square border-t border-border/60 bg-secondary/50 md:aspect-auto md:h-80 md:w-80 md:justify-self-end md:border-l md:border-t-0">
           {deal.image_url ? (
             <Image
               alt={`Deal image for ${deal.title}`}
