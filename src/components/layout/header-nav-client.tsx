@@ -12,6 +12,7 @@ import {
   LogIn,
   LogOut,
   Menu,
+  Plus,
   Search,
   Settings,
   Tag,
@@ -224,17 +225,20 @@ export function HeaderNavClient({
           </form>
 
           <div className="ml-auto hidden items-center gap-1.5 lg:flex">
+            <Button
+              asChild
+              className="h-8 gap-1.5 px-3 text-xs"
+              size="sm"
+              variant="secondary"
+            >
+              <Link href="/dashboard/submit-deal">
+                <Plus className="h-3.5 w-3.5" />
+                Post deal
+              </Link>
+            </Button>
+
             {isAuthenticated ? (
               <>
-                <Button
-                  asChild
-                  className="h-8 px-3 text-xs"
-                  size="sm"
-                  variant="secondary"
-                >
-                  <Link href="/dashboard/submit-deal">Post deal</Link>
-                </Button>
-
                 <button
                   aria-label="Notifications"
                   className="relative inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-muted/45 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
@@ -417,20 +421,22 @@ export function HeaderNavClient({
             </div>
 
             <div className="grid grid-cols-1 gap-1">
+              <Button
+                asChild
+                className="h-9 justify-start gap-2 text-sm"
+                variant="secondary"
+              >
+                <Link
+                  href="/dashboard/submit-deal"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <Plus className="h-4 w-4" />
+                  Post deal
+                </Link>
+              </Button>
+
               {isAuthenticated ? (
                 <>
-                  <Button
-                    asChild
-                    className="h-9 justify-start text-sm"
-                    variant="secondary"
-                  >
-                    <Link
-                      href="/dashboard/submit-deal"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      Post deal
-                    </Link>
-                  </Button>
                   <Button
                     asChild
                     className="h-9 justify-start text-sm"
