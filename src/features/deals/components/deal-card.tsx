@@ -39,12 +39,6 @@ export function DealCard({ deal }: DealCardProps) {
               </span>
               <span>•</span>
               <span>{deal.categories?.name ?? 'General'}</span>
-              {deal.deal_types?.name ? (
-                <>
-                  <span>•</span>
-                  <span className="rounded border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[11px] text-primary">{deal.deal_types.name}</span>
-                </>
-              ) : null}
               {expiryLabel && expiryBadgeClassName ? (
                 <>
                   <span>•</span>
