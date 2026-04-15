@@ -134,12 +134,35 @@ export async function updateReportStatusAction(formData: FormData) {
 
 export async function saveWebsiteControlAction(prevState: WebsiteControlState, formData: FormData): Promise<WebsiteControlState> {
   await requireRole(['admin']);
+  const supabase = await createClient();
 
   void prevState;
-  void formData;
+
+  const logoSizeInput = String(formData.get('logoSize') ?? 'medium');
+  const logoSize = ['small', 'medium', 'large', 'custom'].includes(logoSizeInput) ? logoSizeInput : 'medium';
+
+  const payload = {
+    id: 1,
+    logotype_url: String(formData.get('logotypeUrl') ?? '').trim() || null,
+    logo_alt: String(formData.get('logoAlt') ?? '').trim() || null,
+    logo_size: logoSize,
+    primary_color: String(formData.get('primaryColor') ?? '#22c55e'),
+    accent_color: String(formData.get('accentColor') ?? '#0f172a'),
+    site_announcement: String(formData.get('siteAnnouncement') ?? '').trim() || null,
+  };
+
+  const { error } = await supabase.from('website_control_settings').upsert(payload, { onConflict: 'id' });
+  if (error) {
+    return {
+      ok: false,
+      message: `Unable to save website settings: ${error.message}`,
+    };
+  }
+
+  revalidatePath('/admin/website-control');
 
   return {
     ok: true,
-    message: 'Changes were submitted successfully. Persistence for website control settings is not connected yet.',
+    message: 'Changes saved successfully. Branding settings are now persisted in Supabase.',
   };
 }

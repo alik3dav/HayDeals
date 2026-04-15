@@ -72,3 +72,12 @@ export type WebsiteControlState = {
   ok: boolean;
   message: string;
 };
+
+export type WebsiteControlSettings = {
+  logotype_url: string | null;
+  logo_alt: string | null;
+  logo_size: 'small' | 'medium' | 'large' | 'custom';
+  primary_color: string;
+  accent_color: string;
+  site_announcement: string | null;
+};
