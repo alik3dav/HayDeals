@@ -54,6 +54,22 @@ export async function uploadDealImage(file: File): Promise<UploadDealImageResult
   });
 
   if (uploadError) {
+    const message = uploadError.message.toLowerCase();
+
+    if (message.includes('bucket') && message.includes('not found')) {
+      return {
+        ok: false,
+        error: 'Image upload is not configured yet. Please contact support.',
+      };
+    }
+
+    if (message.includes('row-level security') || message.includes('policy')) {
+      return {
+        ok: false,
+        error: 'You do not have permission to upload images.',
+      };
+    }
+
     return {
       ok: false,
       error: 'Image upload failed. Please try again.',
