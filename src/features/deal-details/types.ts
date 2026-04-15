@@ -4,6 +4,7 @@ export type DealDetail = {
   description: string | null;
   created_at: string;
   deal_url: string;
+  image_url: string | null;
   coupon_code: string | null;
   merchant_name: string | null;
   currency_code: string;

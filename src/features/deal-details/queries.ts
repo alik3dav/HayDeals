@@ -19,6 +19,7 @@ export async function getDealDetailById(dealId: string): Promise<DealDetail | nu
       description,
       created_at,
       deal_url,
+      image_url,
       coupon_code,
       merchant_name,
       currency_code,

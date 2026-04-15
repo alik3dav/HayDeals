@@ -29,27 +29,35 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
   ]);
 
   return (
-    <PageContainer className="max-w-4xl space-y-3 py-4">
+    <PageContainer className="max-w-6xl space-y-4 py-4">
       <DealHeader deal={deal} />
-      <PricingSummary deal={deal} />
 
-      <DealInteractions
-        dealId={deal.id}
-        initialBookmarks={deal.bookmarks_count}
-        initialDownvotes={deal.downvotes_count}
-        initialReports={deal.reports_count}
-        initialScore={deal.score}
-        initialUpvotes={deal.upvotes_count}
-        initialVote={viewerState.currentVote}
-        initiallySaved={viewerState.isSaved}
-        reportAction={reportDealAction}
-        saveAction={toggleSaveAction}
-        voteAction={voteOnDealAction}
-      />
+      <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="space-y-4">
+          <AddCommentForm dealId={deal.id} onAddComment={addCommentAction} />
+          <CommentsSection comments={comments} />
+          <RelatedDeals deals={relatedDeals} />
+        </div>
 
-      <AddCommentForm dealId={deal.id} onAddComment={addCommentAction} />
-      <CommentsSection comments={comments} />
-      <RelatedDeals deals={relatedDeals} />
+        <aside className="space-y-3 lg:sticky lg:top-20 lg:self-start">
+          <div className="rounded-lg border border-border/60 bg-card/70 p-4">
+            <PricingSummary deal={deal} />
+          </div>
+          <DealInteractions
+            dealId={deal.id}
+            initialBookmarks={deal.bookmarks_count}
+            initialDownvotes={deal.downvotes_count}
+            initialReports={deal.reports_count}
+            initialScore={deal.score}
+            initialUpvotes={deal.upvotes_count}
+            initialVote={viewerState.currentVote}
+            initiallySaved={viewerState.isSaved}
+            reportAction={reportDealAction}
+            saveAction={toggleSaveAction}
+            voteAction={voteOnDealAction}
+          />
+        </aside>
+      </section>
     </PageContainer>
   );
 }
