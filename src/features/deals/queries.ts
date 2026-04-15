@@ -197,7 +197,7 @@ export async function getPublicDealsFeed({
   const supabase = await createClient();
   const safePageSize = Math.min(Math.max(pageSize, 1), MAX_PAGE_SIZE);
 
-  let query = supabase.from('deals').select(DEAL_FEED_SELECT).limit(safePageSize + 1);
+  let query = supabase.from('deals').select(DEAL_FEED_SELECT).eq('moderation_status', 'approved').limit(safePageSize + 1);
 
   if (filters.category) {
     query = query.eq('categories.slug', filters.category);
