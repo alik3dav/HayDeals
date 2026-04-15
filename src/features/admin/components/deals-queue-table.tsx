@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { MoreVertical } from 'lucide-react';
 
 import { moderateDealAction } from '@/features/admin/mutations';
 import type { AdminDealQueueItem } from '@/features/admin/types';
@@ -49,32 +50,40 @@ export function DealsQueueTable({ deals }: { deals: AdminDealQueueItem[] }) {
                     <p>Coupon: {deal.coupon_code || '—'}</p>
                   </td>
                   <td className="py-2">
-                    <div className="flex flex-wrap gap-1">
-                      <form action={moderateDealAction}>
-                        <input name="dealId" type="hidden" value={deal.id} />
-                        <input name="intent" type="hidden" value="approve" />
-                        <Button size="sm" type="submit" variant="secondary">
-                          Approve
+                    <details className="relative inline-block">
+                      <summary className="list-none">
+                        <Button aria-label="Open actions menu" size="icon" type="button" variant="ghost">
+                          <MoreVertical className="h-4 w-4" />
                         </Button>
-                      </form>
-                      <form action={moderateDealAction}>
-                        <input name="dealId" type="hidden" value={deal.id} />
-                        <input name="intent" type="hidden" value="reject" />
-                        <Button size="sm" type="submit" variant="destructive">
-                          Reject
+                      </summary>
+
+                      <div className="absolute right-0 z-20 mt-1 w-36 rounded-md border bg-background p-1 shadow-lg">
+                        <form action={moderateDealAction}>
+                          <input name="dealId" type="hidden" value={deal.id} />
+                          <input name="intent" type="hidden" value="approve" />
+                          <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">
+                            Approve
+                          </Button>
+                        </form>
+                        <form action={moderateDealAction}>
+                          <input name="dealId" type="hidden" value={deal.id} />
+                          <input name="intent" type="hidden" value="reject" />
+                          <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">
+                            Reject
+                          </Button>
+                        </form>
+                        <form action={moderateDealAction}>
+                          <input name="dealId" type="hidden" value={deal.id} />
+                          <input name="intent" type="hidden" value={deal.is_featured ? 'unfeature' : 'feature'} />
+                          <Button className="w-full justify-start" size="sm" type="submit" variant="ghost">
+                            {deal.is_featured ? 'Unfeature' : 'Feature'}
+                          </Button>
+                        </form>
+                        <Button asChild className="w-full justify-start" size="sm" variant="ghost">
+                          <Link href={`/admin/deals/${deal.id}/edit`}>Edit</Link>
                         </Button>
-                      </form>
-                      <form action={moderateDealAction}>
-                        <input name="dealId" type="hidden" value={deal.id} />
-                        <input name="intent" type="hidden" value={deal.is_featured ? 'unfeature' : 'feature'} />
-                        <Button size="sm" type="submit" variant="outline">
-                          {deal.is_featured ? 'Unfeature' : 'Feature'}
-                        </Button>
-                      </form>
-                      <Button asChild size="sm" variant="outline">
-                        <Link href={`/admin/deals/${deal.id}/edit`}>Edit</Link>
-                      </Button>
-                    </div>
+                      </div>
+                    </details>
                   </td>
                 </tr>
               ))}
