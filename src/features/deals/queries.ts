@@ -21,6 +21,7 @@ const DEAL_FEED_SELECT = `
   image_url,
   merchant_name,
   score,
+  upvotes_count,
   hot_score,
   comments_count,
   sale_price,

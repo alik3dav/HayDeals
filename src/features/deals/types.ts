@@ -27,6 +27,7 @@ export type PublicDeal = {
   image_url: string | null;
   merchant_name: string | null;
   score: number;
+  upvotes_count: number;
   hot_score: number;
   comments_count: number;
   sale_price: number | null;
