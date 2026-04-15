@@ -159,6 +159,31 @@ function escapeIlikeValue(value: string): string {
   return value.replace(/[,%_]/g, (char) => `\\${char}`);
 }
 
+async function getVoteTotalsByDealIds(supabase: Awaited<ReturnType<typeof createClient>>, dealIds: string[]) {
+  if (dealIds.length === 0) {
+    return new Map<string, number>();
+  }
+
+  const { data, error } = await supabase.from('deal_votes').select('deal_id, vote_value').in('deal_id', dealIds);
+
+  if (error) {
+    throw error;
+  }
+
+  const upvoteTotals = new Map<string, number>();
+
+  for (const vote of data ?? []) {
+    if (vote.vote_value !== 1) {
+      continue;
+    }
+
+    const currentCount = upvoteTotals.get(vote.deal_id) ?? 0;
+    upvoteTotals.set(vote.deal_id, currentCount + 1);
+  }
+
+  return upvoteTotals;
+}
+
 export function parseFeedQueryParams(params: Record<string, string | string[] | undefined>) {
   const getParam = (key: string): string | undefined => {
     const value = params[key];
@@ -260,14 +285,19 @@ export async function getPublicDealsFeed({
   const rows = normalizeDeals((data ?? []) as RawDeal[]);
   const hasMore = rows.length > safePageSize;
   const items = hasMore ? rows.slice(0, safePageSize) : rows;
+  const dealIds = items.map((deal) => deal.id);
+  const upvoteTotals = await getVoteTotalsByDealIds(supabase, dealIds);
+
+  for (const deal of items) {
+    deal.upvotes_count = upvoteTotals.get(deal.id) ?? 0;
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
   const profileId = user?.id ?? null;
 
   if (profileId && items.length > 0) {
-    const dealIds = items.map((deal) => deal.id);
-
     const [{ data: votes, error: votesError }, { data: bookmarks, error: bookmarksError }] = await Promise.all([
       supabase.from('deal_votes').select('deal_id, vote_value').eq('profile_id', profileId).in('deal_id', dealIds),
       supabase.from('deal_bookmarks').select('deal_id').eq('profile_id', profileId).in('deal_id', dealIds),

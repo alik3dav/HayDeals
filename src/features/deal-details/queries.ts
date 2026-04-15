@@ -57,8 +57,31 @@ export const getDealDetailById = cache(async (dealId: string): Promise<DealDetai
     throw error;
   }
 
+  const { data: voteData, error: voteError } = await supabase.from('deal_votes').select('vote_value').eq('deal_id', dealId);
+
+  if (voteError) {
+    throw voteError;
+  }
+
+  let upvotesCount = 0;
+  let downvotesCount = 0;
+
+  for (const vote of voteData ?? []) {
+    if (vote.vote_value === 1) {
+      upvotesCount += 1;
+      continue;
+    }
+
+    if (vote.vote_value === -1) {
+      downvotesCount += 1;
+    }
+  }
+
   return {
     ...data,
+    score: upvotesCount - downvotesCount,
+    upvotes_count: upvotesCount,
+    downvotes_count: downvotesCount,
     stores: toRelationValue(data.stores),
     categories: toRelationValue(data.categories),
     deal_types: toRelationValue(data.deal_types),
