@@ -78,7 +78,7 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
 
           <DealCardInteractions
             dealId={deal.id}
-            initialScore={deal.score}
+            initialLikeCount={deal.upvotes_count}
             initialVote={deal.current_user_vote}
             initiallySaved={deal.is_saved_by_current_user}
             saveAction={saveAction}

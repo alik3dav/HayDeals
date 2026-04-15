@@ -8,44 +8,44 @@ import { Button } from '@/components/ui/button';
 
 type DealCardInteractionsProps = {
   dealId: string;
-  initialScore: number;
+  initialLikeCount: number;
   initialVote: -1 | 0 | 1;
   initiallySaved: boolean;
   voteAction: (dealId: string, voteValue: 1 | -1) => Promise<void>;
   saveAction: (dealId: string) => Promise<void>;
 };
 
-export function DealCardInteractions({ dealId, initialScore, initialVote, initiallySaved, voteAction, saveAction }: DealCardInteractionsProps) {
+export function DealCardInteractions({ dealId, initialLikeCount, initialVote, initiallySaved, voteAction, saveAction }: DealCardInteractionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [score, setScore] = useState(initialScore);
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [vote, setVote] = useState<-1 | 0 | 1>(initialVote);
   const [isSaved, setIsSaved] = useState(initiallySaved);
 
   const handleVote = (nextVote: 1 | -1) => {
     startTransition(async () => {
       const previousVote = vote;
-      let scoreDelta = 0;
+      let likeDelta = 0;
 
       if (previousVote === nextVote) {
         setVote(0);
-        scoreDelta = -nextVote;
+        likeDelta = nextVote === 1 ? -1 : 0;
       } else if (previousVote === 0) {
         setVote(nextVote);
-        scoreDelta = nextVote;
+        likeDelta = nextVote === 1 ? 1 : 0;
       } else {
         setVote(nextVote);
-        scoreDelta = nextVote * 2;
+        likeDelta = nextVote === 1 ? 1 : -1;
       }
 
-      setScore((currentScore) => currentScore + scoreDelta);
+      setLikeCount((currentLikeCount) => Math.max(0, currentLikeCount + likeDelta));
 
       try {
         await voteAction(dealId, nextVote);
         router.refresh();
       } catch {
         setVote(previousVote);
-        setScore((currentScore) => currentScore - scoreDelta);
+        setLikeCount((currentLikeCount) => Math.max(0, currentLikeCount - likeDelta));
       }
     });
   };
@@ -77,7 +77,7 @@ export function DealCardInteractions({ dealId, initialScore, initialVote, initia
           >
             <ThumbsUp className={`h-4 w-4 ${vote === 1 ? 'fill-current text-emerald-400' : ''}`} />
           </button>
-          <span className="text-base font-semibold">{score}</span>
+          <span className="text-base font-semibold">{likeCount}</span>
           <button
             aria-label="Downvote deal"
             className="inline-flex items-center rounded-full p-2 text-rose-500 transition-colors hover:bg-rose-500/15"
