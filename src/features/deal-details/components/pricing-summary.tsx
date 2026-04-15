@@ -1,17 +1,6 @@
 import type { DealDetail } from '@/features/deal-details/types';
 import { formatPrice } from '@/features/deal-details/components/deal-utils';
-
-function calculateDiscountPercentage(originalPrice: number | null, salePrice: number | null) {
-  if (originalPrice === null || salePrice === null) {
-    return null;
-  }
-
-  if (originalPrice <= 0 || salePrice < 0 || salePrice >= originalPrice) {
-    return null;
-  }
-
-  return Math.round(((originalPrice - salePrice) / originalPrice) * 100);
-}
+import { calculateDiscountPercentage } from '@/features/deals/utils/formatters';
 
 export function PricingSummary({ deal }: { deal: DealDetail }) {
   const salePrice = formatPrice(deal.sale_price, deal.currency_code);

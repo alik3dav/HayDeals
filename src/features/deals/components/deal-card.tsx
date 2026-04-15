@@ -7,56 +7,14 @@ import type { PublicDeal } from '@/features/deals/types';
 import { DealValueDisplay } from './deal-value-display';
 
 
-function formatRelativeTime(dateIso: string) {
-  const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-  const createdAt = new Date(dateIso).getTime();
-  const now = Date.now();
-  const diffMinutes = Math.round((createdAt - now) / (1000 * 60));
-
-  if (Math.abs(diffMinutes) < 60) {
-    return formatter.format(diffMinutes, 'minute');
-  }
-
-  const diffHours = Math.round(diffMinutes / 60);
-
-  if (Math.abs(diffHours) < 24) {
-    return formatter.format(diffHours, 'hour');
-  }
-
-  const diffDays = Math.round(diffHours / 24);
-  return formatter.format(diffDays, 'day');
-}
-
-function formatExpiry(expiresAt: string | null) {
-  if (!expiresAt) {
-    return null;
-  }
-
-  const expiresAtMs = new Date(expiresAt).getTime();
-
-  if (Number.isNaN(expiresAtMs)) {
-    return null;
-  }
-
-  const diffDays = Math.ceil((expiresAtMs - Date.now()) / (1000 * 60 * 60 * 24));
-
-  if (diffDays <= 0) {
-    return 'Expired';
-  }
-
-  if (diffDays === 1) {
-    return 'Expires in 1 day';
-  }
-
-  return `Expires in ${diffDays} days`;
-}
+import { formatExpiryLabel, formatRelativeTime } from '@/features/deals/utils/formatters';
 
 type DealCardProps = {
   deal: PublicDeal;
 };
 
 export function DealCard({ deal }: DealCardProps) {
-  const expiryLabel = formatExpiry(deal.expires_at);
+  const expiryLabel = formatExpiryLabel(deal.expires_at);
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40 md:flex md:min-h-56">
