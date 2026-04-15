@@ -1,4 +1,4 @@
-# HayDeals
+# CipiDeals
 
 Production-ready foundation for a community deals platform using Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui, Supabase, and Vercel.
 

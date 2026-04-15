@@ -20,7 +20,7 @@ export function DashboardLayoutHeader({
   return (
     <header className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/70 bg-card/60 px-3 py-2">
       <div>
-        <p className="text-sm font-semibold">HayDeals Dashboard</p>
+        <p className="text-sm font-semibold">CipiDeals Dashboard</p>
         <p className="text-xs text-muted-foreground">Manage your submissions, saves, and activity</p>
       </div>
 

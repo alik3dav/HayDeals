@@ -41,7 +41,7 @@ export function WebsiteControlForm({ settings }: WebsiteControlFormProps) {
           <label htmlFor="logo-alt" className="text-sm font-medium leading-none">
             Logotype alt text
           </label>
-          <Input id="logo-alt" name="logoAlt" placeholder="HayDeals" defaultValue={settings.logo_alt ?? ''} />
+          <Input id="logo-alt" name="logoAlt" placeholder="CipiDeals" defaultValue={settings.logo_alt ?? ''} />
         </div>
       </div>
 

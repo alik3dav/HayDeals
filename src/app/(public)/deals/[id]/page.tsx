@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   return buildPageMetadata({
     title: deal.title,
-    description: deal.description?.slice(0, 160) || `View details for ${deal.title} on HayDeals.`,
+    description: deal.description?.slice(0, 160) || `View details for ${deal.title} on CipiDeals.`,
     pathname: `/deals/${deal.id}`,
   });
 }

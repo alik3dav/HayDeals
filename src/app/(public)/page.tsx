@@ -73,7 +73,7 @@ export default async function PublicHomePage({
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'HayDeals - Latest Deals',
+    name: 'CipiDeals - Latest Deals',
     url: absoluteUrl('/'),
     mainEntity: {
       '@type': 'ItemList',

@@ -22,7 +22,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <div className="mb-3 flex items-center justify-between rounded-xl border border-border/70 bg-card/60 px-3 py-2">
           <div className="inline-flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-primary" />
-            <p className="text-sm font-semibold">HayDeals Admin</p>
+            <p className="text-sm font-semibold">CipiDeals Admin</p>
             <span className="rounded-md bg-secondary px-1.5 py-0.5 text-[11px] uppercase text-muted-foreground">{role}</span>
           </div>
           <div className="inline-flex items-center gap-3 text-xs text-muted-foreground">
