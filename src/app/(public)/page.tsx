@@ -24,11 +24,13 @@ export async function generateMetadata({
 
   const titleParts = ['Latest Deals'];
 
+  if (filters.query) titleParts.unshift(`Search: ${filters.query}`);
   if (filters.category) titleParts.unshift(`Category: ${filters.category}`);
   if (filters.store) titleParts.unshift(`Store: ${filters.store}`);
   if (sort !== 'newest') titleParts.push(`Sort: ${sort}`);
 
   const canonicalQuery = new URLSearchParams();
+  if (filters.query) canonicalQuery.set('q', filters.query);
   if (filters.category) canonicalQuery.set('category', filters.category);
   if (filters.store) canonicalQuery.set('store', filters.store);
   if (filters.dealType) canonicalQuery.set('dealType', filters.dealType);

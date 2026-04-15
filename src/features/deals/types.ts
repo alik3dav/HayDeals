@@ -5,6 +5,7 @@ export const DEAL_SORT_OPTIONS = ['newest', 'hot', 'discussed'] as const;
 export type DealSortOption = (typeof DEAL_SORT_OPTIONS)[number];
 
 export type DealFeedFilters = {
+  query?: string;
   category?: string;
   store?: string;
   dealType?: string;

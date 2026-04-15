@@ -145,6 +145,19 @@ function applyCursorFilters<T extends { or: (filters: string) => T }>(query: T, 
   );
 }
 
+function sanitizeSearchQuery(input: string | undefined): string | undefined {
+  if (!input) {
+    return undefined;
+  }
+
+  const normalized = input.trim().replace(/\s+/g, ' ');
+  return normalized.length > 0 ? normalized : undefined;
+}
+
+function escapeIlikeValue(value: string): string {
+  return value.replace(/[,%_]/g, (char) => `\\${char}`);
+}
+
 export function parseFeedQueryParams(params: Record<string, string | string[] | undefined>) {
   const getParam = (key: string): string | undefined => {
     const value = params[key];
@@ -155,6 +168,7 @@ export function parseFeedQueryParams(params: Record<string, string | string[] | 
     sort: normalizedSort(getParam('sort')),
     cursor: decodeCursor(getParam('cursor')),
     filters: {
+      query: sanitizeSearchQuery(getParam('q')),
       category: getParam('category'),
       store: getParam('store'),
       dealType: getParam('dealType'),
@@ -209,6 +223,17 @@ export async function getPublicDealsFeed({
 
   if (filters.dealType) {
     query = query.eq('deal_types.code', filters.dealType);
+  }
+
+  if (filters.query) {
+    const escapedQuery = escapeIlikeValue(filters.query);
+    query = query.or(
+      [
+        `title.ilike.%${escapedQuery}%`,
+        `description.ilike.%${escapedQuery}%`,
+        `merchant_name.ilike.%${escapedQuery}%`,
+      ].join(','),
+    );
   }
 
   if (sort === 'newest') {
