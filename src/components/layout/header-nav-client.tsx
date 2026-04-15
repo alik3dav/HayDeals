@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   Search,
+  Settings,
   Tag,
   User,
   X,
@@ -20,6 +21,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { UserAvatar } from "@/features/profile/components/user-avatar";
 import { cn } from "@/lib/utils";
 
 type HeaderCategory = {
@@ -31,6 +33,8 @@ type HeaderNavClientProps = {
   isAuthenticated: boolean;
   canAccessAdmin: boolean;
   userEmail?: string;
+  profileDisplayName?: string;
+  profileAvatarUrl?: string | null;
   categories: HeaderCategory[];
   onSignOut: () => Promise<void>;
 };
@@ -52,6 +56,8 @@ export function HeaderNavClient({
   isAuthenticated,
   onSignOut,
   userEmail,
+  profileDisplayName,
+  profileAvatarUrl,
 }: HeaderNavClientProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
@@ -116,10 +122,10 @@ export function HeaderNavClient({
     [topCategories],
   );
 
-  const avatarFallback = useMemo(() => {
-    if (!userEmail) return "U";
-    return userEmail.charAt(0).toUpperCase();
-  }, [userEmail]);
+  const avatarFallback = useMemo(
+    () => profileDisplayName || userEmail || "User",
+    [profileDisplayName, userEmail],
+  );
 
   const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
     if (mobileOpen) {
@@ -251,9 +257,11 @@ export function HeaderNavClient({
                     onClick={() => toggle("profile")}
                     type="button"
                   >
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-[11px] font-semibold text-foreground">
-                      {avatarFallback}
-                    </span>
+                    <UserAvatar
+                      avatarUrl={profileAvatarUrl}
+                      className="h-6 w-6"
+                      fallbackText={avatarFallback}
+                    />
                     <ChevronDown
                       className={cn(
                         "h-3.5 w-3.5 transition-transform duration-150",
@@ -278,6 +286,14 @@ export function HeaderNavClient({
                       >
                         <User className="h-3.5 w-3.5 text-muted-foreground" />
                         Dashboard
+                      </Link>
+                      <Link
+                        className="flex h-8 items-center gap-2 rounded-md px-2 text-xs transition-colors duration-150 hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        href="/dashboard/settings"
+                        onClick={() => close()}
+                      >
+                        <Settings className="h-3.5 w-3.5 text-muted-foreground" />
+                        Settings
                       </Link>
                       {canAccessAdmin ? (
                         <Link
@@ -426,6 +442,19 @@ export function HeaderNavClient({
                     >
                       <User className="h-4 w-4" />
                       Dashboard
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    className="h-9 justify-start text-sm"
+                    variant="ghost"
+                  >
+                    <Link
+                      href="/dashboard/settings"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <Settings className="h-4 w-4" />
+                      Settings
                     </Link>
                   </Button>
                   {canAccessAdmin ? (
