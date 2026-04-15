@@ -5,6 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { requireRole } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
 
+import type { WebsiteControlState } from '@/features/admin/types';
+
 export async function moderateDealAction(formData: FormData) {
   const { user } = await requireRole(['moderator', 'admin']);
   const supabase = await createClient();
@@ -128,4 +130,16 @@ export async function updateReportStatusAction(formData: FormData) {
   if (error) throw error;
 
   revalidatePath('/admin/reports');
+}
+
+export async function saveWebsiteControlAction(prevState: WebsiteControlState, formData: FormData): Promise<WebsiteControlState> {
+  await requireRole(['admin']);
+
+  void prevState;
+  void formData;
+
+  return {
+    ok: true,
+    message: 'Changes were submitted successfully. Persistence for website control settings is not connected yet.',
+  };
 }
