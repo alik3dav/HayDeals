@@ -38,6 +38,13 @@ export type DealComment = {
   body: string;
   is_deleted: boolean;
   created_at: string;
+  profiles: {
+    username: string | null;
+    display_name: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    avatar_url: string | null;
+  } | null;
 };
 
 export type RelatedDeal = {

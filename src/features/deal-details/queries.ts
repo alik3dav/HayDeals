@@ -67,7 +67,9 @@ export async function getDealComments(dealId: string): Promise<DealComment[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('deal_comments')
-    .select('id, deal_id, profile_id, body, is_deleted, created_at')
+    .select(
+      'id, deal_id, profile_id, body, is_deleted, created_at, profiles:profiles!deal_comments_profile_id_fkey(username, display_name, first_name, last_name, avatar_url)',
+    )
     .eq('deal_id', dealId)
     .order('created_at', { ascending: true })
     .limit(250);
@@ -76,7 +78,10 @@ export async function getDealComments(dealId: string): Promise<DealComment[]> {
     throw error;
   }
 
-  return data ?? [];
+  return (data ?? []).map((comment) => ({
+    ...comment,
+    profiles: Array.isArray(comment.profiles) ? (comment.profiles[0] ?? null) : comment.profiles,
+  }));
 }
 
 export async function getViewerDealState(dealId: string, profileId: string | null): Promise<ViewerDealState> {

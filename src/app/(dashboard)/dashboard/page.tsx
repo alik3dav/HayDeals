@@ -39,6 +39,9 @@ export default async function DashboardPage() {
             <Link className="rounded-md border border-border/70 px-3 py-2 hover:bg-accent hover:text-accent-foreground" href="/dashboard/activity">
               Check comment activity
             </Link>
+            <Link className="rounded-md border border-border/70 px-3 py-2 hover:bg-accent hover:text-accent-foreground" href="/dashboard/settings">
+              Manage account settings
+            </Link>
           </CardContent>
         </Card>
 

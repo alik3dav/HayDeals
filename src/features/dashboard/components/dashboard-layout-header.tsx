@@ -2,8 +2,21 @@ import Link from 'next/link';
 import { LogOut } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { UserAvatar } from '@/features/profile/components/user-avatar';
 
-export function DashboardLayoutHeader({ userEmail, signOutAction }: { userEmail?: string; signOutAction: () => Promise<void> }) {
+export function DashboardLayoutHeader({
+  userEmail,
+  displayName,
+  avatarUrl,
+  signOutAction,
+}: {
+  userEmail?: string;
+  displayName?: string;
+  avatarUrl?: string | null;
+  signOutAction: () => Promise<void>;
+}) {
+  const resolvedName = displayName || userEmail || 'User';
+
   return (
     <header className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/70 bg-card/60 px-3 py-2">
       <div>
@@ -12,7 +25,10 @@ export function DashboardLayoutHeader({ userEmail, signOutAction }: { userEmail?
       </div>
 
       <div className="inline-flex items-center gap-2">
-        {userEmail ? <span className="hidden text-xs text-muted-foreground lg:inline">{userEmail}</span> : null}
+        <div className="hidden items-center gap-2 lg:inline-flex">
+          <UserAvatar avatarUrl={avatarUrl} className="h-7 w-7" fallbackText={resolvedName} />
+          <span className="text-xs text-muted-foreground">{resolvedName}</span>
+        </div>
         <Button asChild size="sm" variant="outline">
           <Link href="/">Public feed</Link>
         </Button>
