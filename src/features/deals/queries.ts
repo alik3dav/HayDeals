@@ -31,13 +31,24 @@ const DEAL_FEED_SELECT = `
   currency_code,
   stores:stores!deals_store_id_fkey(name, slug),
   categories:categories!deals_category_id_fkey(name, slug),
-  deal_types:deal_types!deals_deal_type_id_fkey(name, code)
+  deal_types:deal_types!deals_deal_type_id_fkey(name, code),
+  profiles:profiles!deals_profile_id_fkey(username, display_name, first_name, last_name, avatar_url)
 `;
 
-type RawDeal = Omit<PublicDeal, 'stores' | 'categories' | 'deal_types'> & {
+type RawDeal = Omit<PublicDeal, 'stores' | 'categories' | 'deal_types' | 'profiles'> & {
   stores: { name: string; slug: string } | { name: string; slug: string }[] | null;
   categories: { name: string; slug: string } | { name: string; slug: string }[] | null;
   deal_types: { name: string; code: string } | { name: string; code: string }[] | null;
+  profiles:
+    | { username: string | null; display_name: string | null; first_name: string | null; last_name: string | null; avatar_url: string | null }
+    | {
+        username: string | null;
+        display_name: string | null;
+        first_name: string | null;
+        last_name: string | null;
+        avatar_url: string | null;
+      }[]
+    | null;
 };
 
 function toRelationValue<T>(value: T | T[] | null): T | null {
@@ -100,6 +111,7 @@ function normalizeDeals(rows: RawDeal[]): PublicDeal[] {
     stores: toRelationValue(row.stores),
     categories: toRelationValue(row.categories),
     deal_types: toRelationValue(row.deal_types),
+    profiles: toRelationValue(row.profiles),
   }));
 }
 

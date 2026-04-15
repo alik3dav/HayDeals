@@ -3,6 +3,7 @@ import { Bookmark, MessageSquare, Store, ThumbsDown, ThumbsUp } from 'lucide-rea
 
 import { Button } from '@/components/ui/button';
 import type { PublicDeal } from '@/features/deals/types';
+import { UserAvatar } from '@/features/profile/components/user-avatar';
 
 import { DealValueDisplay } from './deal-value-display';
 
@@ -16,6 +17,8 @@ type DealCardProps = {
 export function DealCard({ deal }: DealCardProps) {
   const expiryLabel = formatExpiryLabel(deal.expires_at);
   const expiryBadgeClassName = getExpiryBadgeClassName(deal.expires_at);
+  const authorFullName = [deal.profiles?.first_name, deal.profiles?.last_name].filter(Boolean).join(' ').trim();
+  const authorName = authorFullName || deal.profiles?.display_name || deal.profiles?.username || 'User';
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40 md:flex md:min-h-56">
@@ -28,40 +31,39 @@ export function DealCard({ deal }: DealCardProps) {
           )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col p-4 gap-2">
-      
-          
-          <div className="mt-1.5 flex text-xs flex-wrap items-center gap-2 text-muted-foreground/60">
+      <div className="flex min-w-0 flex-1 flex-col gap-2 p-4 md:grid md:h-56 md:grid-rows-5 md:gap-1">
+          <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground/60 md:mt-0 md:self-center">
               <span className="inline-flex items-center gap-1.5  bg-[#191d25] py-1.5 px-3 rounded-[4px]" >
                 <Store className="h-3 w-3" />
                 {deal.stores?.name ?? deal.merchant_name ?? 'Unknown store'}
               </span>
               <span>•</span>
               <span>{deal.categories?.name ?? 'General'}</span>
-              {deal.deal_types?.name ? (
+              {expiryLabel && expiryBadgeClassName ? (
                 <>
                   <span>•</span>
-                  <span className="rounded border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[11px] text-primary">{deal.deal_types.name}</span>
-                </>
-              ) : null}
-              <span>•</span>
-              <span>{formatRelativeTime(deal.created_at)}</span>
-              {expiryLabel && expiryBadgeClassName ? (
                 <span className={`rounded-md border px-2 py-0.5 text-xs font-small ${expiryBadgeClassName}`}>{expiryLabel}</span>
+                </>
               ) : null}
             </div>
           
-              <Link className="line-clamp-1 text-xl font-semibold leading-tight text-foreground hover:text-primary" href={`/deals/${deal.id}`}>
+              <Link className="line-clamp-1 text-xl font-semibold leading-tight text-foreground hover:text-primary md:self-center" href={`/deals/${deal.id}`}>
                 {deal.title}
               </Link>
               
             
            
      
+        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground/60 md:self-center">{deal.description?.trim() || 'Brief description of the deal goes here for preview.'}</p>
 
-        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground/60">{deal.description?.trim() || 'Brief description of the deal goes here for preview.'}</p>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground/70 md:self-center">
+          <UserAvatar avatarUrl={deal.profiles?.avatar_url} className="h-6 w-6" fallbackText={authorName} textClassName="text-[10px]" />
+          <span className="font-medium text-foreground/85">{authorName}</span>
+          <span>•</span>
+          <span>{formatRelativeTime(deal.created_at)}</span>
+        </div>
 
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 md:self-end">
           <div className="min-w-0 text-left">
             <DealValueDisplay deal={deal} />
           </div>
