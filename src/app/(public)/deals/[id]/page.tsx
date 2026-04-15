@@ -6,6 +6,7 @@ import { getCurrentUser } from '@/lib/auth/session';
 import { AddCommentForm } from '@/features/deal-details/components/add-comment-form';
 import { CommentsSection } from '@/features/deal-details/components/comments-section';
 import { DealHeader } from '@/features/deal-details/components/deal-header';
+import { DealImageCard } from '@/features/deal-details/components/deal-image-card';
 import { DealInteractions } from '@/features/deal-details/components/deal-interactions';
 import { PricingSummary } from '@/features/deal-details/components/pricing-summary';
 import { RelatedDeals } from '@/features/deal-details/components/related-deals';
@@ -86,6 +87,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
         </div>
 
         <aside className="space-y-3 lg:sticky lg:top-20 lg:self-start">
+          <DealImageCard deal={deal} />
           <div className="rounded-lg border border-border/60 bg-card/70 p-4">
             <PricingSummary deal={deal} />
           </div>
