@@ -3,15 +3,28 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getDashboardOverviewData } from '@/features/dashboard/queries';
 import { DashboardPageHeader, DashboardStatCard, DealStatusBadge, EmptyState, formatRelativeDate } from '@/features/dashboard/components/dashboard-shared';
+import { getUserIdentity } from '@/features/profile/queries';
 import { requireUser } from '@/lib/auth/session';
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const data = await getDashboardOverviewData(user.id);
+  const [data, identity] = await Promise.all([getDashboardOverviewData(user.id), getUserIdentity(user.id)]);
+  const fullNameFromMetadata = typeof user.user_metadata?.full_name === 'string' ? user.user_metadata.full_name.trim() : '';
+  const displayNameFromMetadata = typeof user.user_metadata?.name === 'string' ? user.user_metadata.name.trim() : '';
+  const identityDisplayName = identity?.displayName || fullNameFromMetadata || displayNameFromMetadata || user.email || 'User';
+  const identityAvatarUrl = identity?.avatarUrl ?? (typeof user.user_metadata?.avatar_url === 'string' ? user.user_metadata.avatar_url : null);
 
   return (
     <div className="space-y-3">
-      <DashboardPageHeader title="Overview" description="Your recent activity, submissions, and quick actions in one place." />
+      <DashboardPageHeader
+        description="Your recent activity, submissions, and quick actions in one place."
+        identity={{
+          displayName: identityDisplayName,
+          avatarUrl: identityAvatarUrl,
+          subtitle: user.email ?? 'Current account',
+        }}
+        title="Overview"
+      />
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <DashboardStatCard hint="Total deals you posted" label="Submitted" value={data.stats.submittedDeals} />

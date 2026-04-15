@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UserAvatar } from '@/features/profile/components/user-avatar';
 import { cn } from '@/lib/utils';
 
 export function formatRelativeDate(input: string) {
@@ -28,11 +29,37 @@ export function formatRelativeDate(input: string) {
   return `${days}d ${diffMs <= 0 ? 'ago' : 'from now'}`;
 }
 
-export function DashboardPageHeader({ title, description }: { title: string; description: string }) {
+type DashboardPageHeaderProps = {
+  title: string;
+  description: string;
+  identity?: {
+    displayName: string;
+    avatarUrl?: string | null;
+    subtitle?: string;
+  };
+};
+
+export function DashboardPageHeader({ title, description, identity }: DashboardPageHeaderProps) {
   return (
-    <header className="space-y-1 rounded-xl border border-border/70 bg-card/60 px-4 py-3">
-      <p className="text-lg font-semibold tracking-tight">{title}</p>
-      <p className="text-xs text-muted-foreground">{description}</p>
+    <header className="space-y-3 rounded-xl border border-border/70 bg-card/60 px-4 py-3">
+      <div className="space-y-1">
+        <p className="text-lg font-semibold tracking-tight">{title}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </div>
+      {identity ? (
+        <div className="inline-flex items-center gap-2 rounded-lg border border-border/60 bg-background/30 px-2.5 py-2">
+          <UserAvatar
+            avatarUrl={identity.avatarUrl}
+            className="h-9 w-9 bg-muted/70"
+            fallbackText={identity.displayName}
+            textClassName="text-xs"
+          />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium">{identity.displayName}</p>
+            <p className="truncate text-[11px] text-muted-foreground">{identity.subtitle ?? 'Current account'}</p>
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 }
