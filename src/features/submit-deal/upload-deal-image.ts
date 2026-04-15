@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/browser';
+import { createOptionalClient } from '@/lib/supabase/browser';
 
 const DEAL_IMAGE_BUCKET = 'deal-images';
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
@@ -39,7 +39,14 @@ export async function uploadDealImage(file: File): Promise<UploadDealImageResult
 
   const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
   const path = `submissions/${Date.now()}-${crypto.randomUUID()}.${extension}`;
-  const supabase = createClient();
+  const supabase = createOptionalClient();
+
+  if (!supabase) {
+    return {
+      ok: false,
+      error: 'Image uploads are temporarily unavailable. Please try again later.',
+    };
+  }
 
   const { error: uploadError } = await supabase.storage.from(DEAL_IMAGE_BUCKET).upload(path, file, {
     cacheControl: '3600',
@@ -63,6 +70,11 @@ export async function uploadDealImage(file: File): Promise<UploadDealImageResult
 }
 
 export async function removeDealImage(path: string) {
-  const supabase = createClient();
+  const supabase = createOptionalClient();
+
+  if (!supabase) {
+    return;
+  }
+
   await supabase.storage.from(DEAL_IMAGE_BUCKET).remove([path]);
 }
