@@ -24,8 +24,8 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
   const authorName = authorFullName || deal.profiles?.display_name || deal.profiles?.username || 'User';
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40 md:flex md:min-h-60">
-      <div className="relative aspect-square bg-white w-full shrink-0 overflow-hidden border-b border-border/60 bg-secondary/50 md:h-60 md:w-60 md:border-b-0 md:border-r">
+    <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40 md:grid md:min-h-60 md:grid-cols-[minmax(0,1fr)_15rem]">
+      <div className="relative aspect-square w-full shrink-0 overflow-hidden border-b border-border/60 bg-secondary/50 md:order-2 md:h-60 md:w-60 md:border-b-0 md:border-l">
           {deal.image_url ? (
             <Image
               alt={`Image for ${deal.title}`}
@@ -39,7 +39,7 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
           )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-2 p-4 md:grid md:h-60 md:grid-rows-5 md:gap-2">
+      <div className="flex min-w-0 flex-1 flex-col gap-2 p-4 md:order-1 md:grid md:h-60 md:grid-rows-5 md:gap-2">
           <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground/60 md:mt-0 md:self-center">
               <span className="inline-flex items-center gap-1.5  bg-[#191d25] py-1.5 px-3 rounded-[4px]" >
                 <Store className="h-3 w-3" />
