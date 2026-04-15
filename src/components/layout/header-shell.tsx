@@ -13,6 +13,11 @@ export async function HeaderShell() {
 
   let categories: { value: string; label: string }[] = [];
   let profile: { displayName: string; avatarUrl: string | null } | null = null;
+  let branding: { logotypeUrl: string | null; logoAlt: string | null; logoSize: 'small' | 'medium' | 'large' | 'custom' } = {
+    logotypeUrl: null,
+    logoAlt: null,
+    logoSize: 'medium',
+  };
 
   if (user) {
     const { data } = await supabase
@@ -37,6 +42,24 @@ export async function HeaderShell() {
     console.error('Failed to load categories for header.', error);
   }
 
+  try {
+    const { data } = await supabase
+      .from('website_control_settings')
+      .select('logotype_url, logo_alt, logo_size')
+      .eq('id', 1)
+      .maybeSingle();
+
+    if (data) {
+      branding = {
+        logotypeUrl: data.logotype_url,
+        logoAlt: data.logo_alt,
+        logoSize: data.logo_size ?? 'medium',
+      };
+    }
+  } catch (error) {
+    console.error('Failed to load website branding for header.', error);
+  }
+
   return (
     <HeaderNavClient
       canAccessAdmin={role === 'moderator' || role === 'admin'}
@@ -45,6 +68,9 @@ export async function HeaderShell() {
       onSignOut={signOutAction}
       profileAvatarUrl={profile?.avatarUrl}
       profileDisplayName={profile?.displayName}
+      logoAlt={branding.logoAlt}
+      logoSize={branding.logoSize}
+      logotypeUrl={branding.logotypeUrl}
       userEmail={user?.email}
     />
   );
