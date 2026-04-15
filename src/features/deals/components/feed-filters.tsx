@@ -25,6 +25,7 @@ export function buildFeedUrl({
 
   params.set('sort', sort);
 
+  if (filters.query) params.set('q', filters.query);
   if (filters.category) params.set('category', filters.category);
   if (filters.store) params.set('store', filters.store);
   if (filters.dealType) params.set('dealType', filters.dealType);
@@ -41,6 +42,7 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
     <section className="space-y-3 rounded-xl border border-border/70 bg-card/80 p-3">
       <form className="grid gap-2 md:grid-cols-3" method="get">
         <input name="sort" type="hidden" value={sort} />
+        <input name="q" type="hidden" value={filters.query ?? ''} />
 
         <label className="text-xs text-muted-foreground">
           Category
