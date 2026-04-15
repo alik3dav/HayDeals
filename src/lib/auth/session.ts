@@ -23,12 +23,18 @@ export async function requireUser() {
 
 export async function requireRole(roles: Array<'moderator' | 'admin'>) {
   const user = await requireUser();
-  const supabase = await createClient();
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  const role = await getCurrentUserRole(user.id);
 
-  if (!profile || !roles.includes(profile.role as 'moderator' | 'admin')) {
+  if ((role !== 'moderator' && role !== 'admin') || !roles.includes(role)) {
     redirect('/dashboard');
   }
 
-  return { user, role: profile.role as 'moderator' | 'admin' };
+  return { user, role };
+}
+
+export async function getCurrentUserRole(userId: string) {
+  const supabase = await createClient();
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', userId).single();
+
+  return (profile?.role ?? null) as 'user' | 'moderator' | 'admin' | null;
 }
