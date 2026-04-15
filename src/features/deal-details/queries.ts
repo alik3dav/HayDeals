@@ -1,3 +1,5 @@
+import { cache } from 'react';
+
 import { createClient } from '@/lib/supabase/server';
 import type { DealComment, DealDetail, RelatedDeal, ViewerDealState } from '@/features/deal-details/types';
 
@@ -15,7 +17,7 @@ function toRelationValue<T>(value: T | T[] | null): T | null {
   return value;
 }
 
-export async function getDealDetailById(dealId: string): Promise<DealDetail | null> {
+export const getDealDetailById = cache(async (dealId: string): Promise<DealDetail | null> => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -61,7 +63,7 @@ export async function getDealDetailById(dealId: string): Promise<DealDetail | nu
     categories: toRelationValue(data.categories),
     deal_types: toRelationValue(data.deal_types),
   };
-}
+});
 
 export async function getDealComments(dealId: string): Promise<DealComment[]> {
   const supabase = await createClient();

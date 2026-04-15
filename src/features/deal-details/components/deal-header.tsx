@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 
@@ -33,8 +34,15 @@ export function DealHeader({ deal }: { deal: DealDetail }) {
 
         <div className="relative min-h-48 border-t border-border/60 bg-secondary/50 md:min-h-full md:border-l md:border-t-0">
           {deal.image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img alt={deal.title} className="h-full w-full object-cover" src={deal.image_url} />
+            <Image
+              alt={`Deal image for ${deal.title}`}
+              className="object-cover"
+              fill
+              loading="eager"
+              priority
+              sizes="(max-width: 768px) 100vw, 320px"
+              src={deal.image_url}
+            />
           ) : (
             <div className="flex h-full min-h-48 items-center justify-center px-4 text-xs text-muted-foreground">No deal image provided</div>
           )}

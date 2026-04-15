@@ -2,6 +2,18 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+    ],
+  },
   webpack: (config, { dev }) => {
     if (dev) {
       // Avoid eval-based source maps so strict CSP policies do not trigger
