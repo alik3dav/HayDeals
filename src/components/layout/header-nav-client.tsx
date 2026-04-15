@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import {
   Bell,
   ChevronDown,
+  ShieldCheck,
   FolderTree,
   Grid2x2,
   LayoutGrid,
@@ -28,6 +29,7 @@ type HeaderCategory = {
 
 type HeaderNavClientProps = {
   isAuthenticated: boolean;
+  canAccessAdmin: boolean;
   userEmail?: string;
   categories: HeaderCategory[];
   onSignOut: () => Promise<void>;
@@ -45,6 +47,7 @@ function useDropdownState() {
 }
 
 export function HeaderNavClient({
+  canAccessAdmin,
   categories,
   isAuthenticated,
   onSignOut,
@@ -276,6 +279,16 @@ export function HeaderNavClient({
                         <User className="h-3.5 w-3.5 text-muted-foreground" />
                         Dashboard
                       </Link>
+                      {canAccessAdmin ? (
+                        <Link
+                          className="flex h-8 items-center gap-2 rounded-md px-2 text-xs transition-colors duration-150 hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                          href="/admin"
+                          onClick={() => close()}
+                        >
+                          <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
+                          Admin
+                        </Link>
+                      ) : null}
                       <form action={onSignOut}>
                         <button
                           className="mt-1 flex h-8 w-full items-center gap-2 rounded-md px-2 text-left text-xs transition-colors duration-150 hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
@@ -415,6 +428,18 @@ export function HeaderNavClient({
                       Dashboard
                     </Link>
                   </Button>
+                  {canAccessAdmin ? (
+                    <Button
+                      asChild
+                      className="h-9 justify-start text-sm"
+                      variant="ghost"
+                    >
+                      <Link href="/admin" onClick={() => setMobileOpen(false)}>
+                        <ShieldCheck className="h-4 w-4" />
+                        Admin
+                      </Link>
+                    </Button>
+                  ) : null}
                   <form action={onSignOut}>
                     <Button
                       className="h-9 w-full justify-start text-sm"
