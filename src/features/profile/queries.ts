@@ -51,5 +51,6 @@ export async function getUserIdentity(profileId: string): Promise<UserIdentity |
     lastName: profile.last_name,
     avatarUrl: profile.avatar_url,
     email: profile.email,
+    pointsTotal: profile.points_total,
   };
 }
