@@ -121,7 +121,7 @@ export default async function PublicHomePage({
             <DealFeedList deals={deals.items} filters={filters} hasMore={deals.hasMore} nextCursor={deals.nextCursor} sort={sort} />
           </section>
 
-          <FeedSidebar trendingDeals={trendingDeals} recentActivityDeals={deals.items} facets={facets} communityStats={communityStats} />
+          <FeedSidebar trendingDeals={trendingDeals} facets={facets} communityStats={communityStats} />
         </main>
       </PageContainer>
     </>
