@@ -65,7 +65,7 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
               ) : null}
             </div>
           
-              <Link className="line-clamp-1 text-xl font-semibold leading-tight text-foreground hover:text-primary/80 md:self-center" href={`/deals/${deal.slug}`}>
+              <Link className="line-clamp-1 text-xl font-semibold leading-tight text-foreground hover:text-primary md:self-center" href={`/deals/${deal.slug}`}>
                 {deal.title}
               </Link>
               

@@ -22,7 +22,7 @@ export function FormField({ label, htmlFor, hint, error, children }: FormFieldPr
 }
 
 export const inputStyles =
-  'w-full rounded-lg border border-border/70 bg-secondary/40 px-3 py-2 text-sm text-foreground outline-none ring-primary/40 placeholder:text-muted-foreground/80 transition-colors focus:border-primary/50 focus-visible:ring-2';
+  'w-full rounded-lg border border-border/70 bg-secondary/40 px-3 py-2 text-sm text-foreground outline-none ring-primary/40 placeholder:text-muted-foreground/80 transition-colors focus:border-primary/80 focus-visible:ring-2';
 
 export function SectionCard({ title, description, children, className }: { title: string; description?: string; children: ReactNode; className?: string }) {
   return (
