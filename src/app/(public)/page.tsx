@@ -59,11 +59,13 @@ export default async function PublicHomePage({
   let facets = EMPTY_FACETS;
   let communityStats = EMPTY_COMMUNITY_STATS;
   let deals: Awaited<ReturnType<typeof getPublicDealsFeed>> = { items: [], hasMore: false, nextCursor: null };
+  let trendingDeals: Awaited<ReturnType<typeof getPublicDealsFeed>>['items'] = [];
   let loadError = false;
 
-  const [facetsResult, dealsResult, communityStatsResult] = await Promise.allSettled([
+  const [facetsResult, dealsResult, trendingDealsResult, communityStatsResult] = await Promise.allSettled([
     getFeedFacets(),
     getPublicDealsFeed({ sort, cursor, filters }),
+    getPublicDealsFeed({ sort: 'hot', filters, pageSize: 5 }),
     getSidebarCommunityStats(),
   ]);
 
@@ -75,6 +77,10 @@ export default async function PublicHomePage({
     deals = dealsResult.value;
   } else {
     loadError = true;
+  }
+
+  if (trendingDealsResult.status === 'fulfilled') {
+    trendingDeals = trendingDealsResult.value.items;
   }
 
   if (communityStatsResult.status === 'fulfilled') {
@@ -115,7 +121,7 @@ export default async function PublicHomePage({
             <DealFeedList deals={deals.items} filters={filters} hasMore={deals.hasMore} nextCursor={deals.nextCursor} sort={sort} />
           </section>
 
-          <FeedSidebar deals={deals.items} facets={facets} communityStats={communityStats} />
+          <FeedSidebar trendingDeals={trendingDeals} recentActivityDeals={deals.items} facets={facets} communityStats={communityStats} />
         </main>
       </PageContainer>
     </>
