@@ -1,163 +1,109 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 import { PageContainer } from '@/components/layout/page-container';
-import { DealFeedList } from '@/features/deals/components/deal-feed-list';
-import { FeedFilters } from '@/features/deals/components/feed-filters';
-import { FeedSidebar } from '@/features/deals/components/feed-sidebar';
-import { FeedSortSubheader } from '@/features/deals/components/feed-sort-subheader';
-import { feedSidebarAd } from '@/features/deals/components/sidebar-ad-data';
-import type { SidebarAd } from '@/features/deals/components/sidebar-ad-module';
-import { getFeedFacets, getPublicDealsFeed, getSidebarCommunityStats, parseFeedQueryParams } from '@/features/deals/queries';
-import type { FeedFacetCollections, SidebarCommunityStats } from '@/features/deals/types';
-import { createClient } from '@/lib/supabase/server';
-import { SITE_NAME, absoluteUrl, buildPageMetadata } from '@/lib/seo';
+import { getFeedFacets, getPublicDealsFeed } from '@/features/deals/queries';
+import { absoluteUrl, buildPageMetadata } from '@/lib/seo';
 
-const EMPTY_FACETS: FeedFacetCollections = {
-  categories: [],
-  stores: [],
-  dealTypes: [],
-  availabilityRegions: [],
-  availabilityCountries: [],
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Home',
+  description: 'Discover trending deals, browse categories, and explore the CipiDeals platform structure.',
+  pathname: '/',
+});
 
-const EMPTY_COMMUNITY_STATS: SidebarCommunityStats = {
-  activeMembers: 0,
-  recentMembers: [],
-};
-
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}): Promise<Metadata> {
-  const resolvedParams = await searchParams;
-  const { filters, sort } = parseFeedQueryParams(resolvedParams);
-
-  const titleParts = ['Latest Deals'];
-
-  if (filters.query) titleParts.unshift(`Search: ${filters.query}`);
-  if (filters.category) titleParts.unshift(`Category: ${filters.category}`);
-  if (filters.store) titleParts.unshift(`Store: ${filters.store}`);
-  if (filters.availabilityScope) titleParts.unshift(`Availability: ${filters.availabilityScope}`);
-  if (sort !== 'newest') titleParts.push(`Sort: ${sort}`);
-
-  const canonicalQuery = new URLSearchParams();
-  if (filters.query) canonicalQuery.set('q', filters.query);
-  if (filters.category) canonicalQuery.set('category', filters.category);
-  if (filters.store) canonicalQuery.set('store', filters.store);
-  if (filters.dealType) canonicalQuery.set('dealType', filters.dealType);
-  if (filters.availabilityScope) canonicalQuery.set('availabilityScope', filters.availabilityScope);
-  if (filters.availabilityRegion) canonicalQuery.set('availabilityRegion', filters.availabilityRegion);
-  if (filters.availabilityCountry) canonicalQuery.set('availabilityCountry', filters.availabilityCountry);
-  if (sort !== 'newest') canonicalQuery.set('sort', sort);
-
-  return buildPageMetadata({
-    title: titleParts.join(' | '),
-    description: 'Browse verified community deals, discounts, and price drops.',
-    pathname: canonicalQuery.size ? `/?${canonicalQuery.toString()}` : '/',
-  });
-}
-
-export default async function PublicHomePage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const resolvedParams = await searchParams;
-  const { sort, cursor, filters } = parseFeedQueryParams(resolvedParams);
-
-  let facets = EMPTY_FACETS;
-  let communityStats = EMPTY_COMMUNITY_STATS;
-  let deals: Awaited<ReturnType<typeof getPublicDealsFeed>> = { items: [], hasMore: false, nextCursor: null };
-  let trendingDeals: Awaited<ReturnType<typeof getPublicDealsFeed>>['items'] = [];
-  let sidebarAd: SidebarAd = feedSidebarAd;
-  let loadError = false;
-  const supabase = await createClient();
-
-  const [facetsResult, dealsResult, trendingDealsResult, communityStatsResult, sidebarAdResult] = await Promise.allSettled([
-    getFeedFacets(),
-    getPublicDealsFeed({ sort, cursor, filters }),
-    getPublicDealsFeed({ sort: 'hot', filters, pageSize: 5 }),
-    getSidebarCommunityStats(),
-    supabase
-      .from('website_control_settings')
-      .select('sidebar_ad_background_image_url, sidebar_ad_title, sidebar_ad_description, sidebar_ad_button_text, sidebar_ad_href, sidebar_ad_image_only')
-      .eq('id', 1)
-      .maybeSingle(),
+export default async function PublicHomePage() {
+  const [facets, newestDeals, hotDeals] = await Promise.all([
+    getFeedFacets().catch(() => ({ categories: [] })),
+    getPublicDealsFeed({ sort: 'newest', filters: {}, pageSize: 8 }).catch(() => ({ items: [] })),
+    getPublicDealsFeed({ sort: 'hot', filters: {}, pageSize: 8 }).catch(() => ({ items: [] })),
   ]);
 
-  if (facetsResult.status === 'fulfilled') {
-    facets = facetsResult.value;
-  }
-
-  if (dealsResult.status === 'fulfilled') {
-    deals = dealsResult.value;
-  } else {
-    loadError = true;
-  }
-
-  if (trendingDealsResult.status === 'fulfilled') {
-    trendingDeals = trendingDealsResult.value.items;
-  }
-
-  if (communityStatsResult.status === 'fulfilled') {
-    communityStats = communityStatsResult.value;
-  }
-
-  if (sidebarAdResult.status === 'fulfilled') {
-    const settings = sidebarAdResult.value.data;
-
-    if (settings) {
-      sidebarAd = {
-        ...feedSidebarAd,
-        title: settings.sidebar_ad_title ?? feedSidebarAd.title,
-        description: settings.sidebar_ad_description ?? feedSidebarAd.description,
-        ctaLabel: settings.sidebar_ad_button_text ?? feedSidebarAd.ctaLabel,
-        href: settings.sidebar_ad_href ?? feedSidebarAd.href,
-        backgroundImageUrl: settings.sidebar_ad_background_image_url ?? undefined,
-        imageOnly: settings.sidebar_ad_image_only ?? false,
-      };
-    }
-  }
+  const topCategories = facets.categories.slice(0, 8);
 
   const structuredData = {
     '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: `${SITE_NAME} - Latest Deals`,
+    '@type': 'WebPage',
+    name: 'CipiDeals Home',
     url: absoluteUrl('/'),
     mainEntity: {
       '@type': 'ItemList',
-      itemListElement: deals.items.map((deal, index) => ({
-        '@type': 'ListItem',
-        position: index + 1,
-        url: absoluteUrl(`/deals/${deal.slug}`),
-        name: deal.title,
-      })),
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Deals', url: absoluteUrl('/deals') },
+        { '@type': 'ListItem', position: 2, name: 'Categories', url: absoluteUrl('/categories') },
+      ],
     },
   };
 
   return (
     <>
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} type="application/ld+json" />
-      <FeedSortSubheader filters={filters} sort={sort} />
-
-      <PageContainer className="space-y-4">
-        <FeedFilters facets={facets} filters={filters} sort={sort} />
-
-        {loadError ? (
-          <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            We&apos;re having trouble loading deals right now. Please try again in a moment.
+      <PageContainer className="space-y-6">
+        <section className="rounded-2xl border border-border/70 bg-card/30 p-6">
+          <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Find the best community-verified deals</h1>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Explore deal streams, browse categories, and jump to the most active sections of the platform.
           </p>
-        ) : null}
+          <div className="mt-5 flex flex-wrap gap-2.5">
+            <Link className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground" href="/deals">
+              Browse all deals
+            </Link>
+            <Link className="rounded-md border border-border px-4 py-2 text-sm font-semibold" href="/categories">
+              Browse categories
+            </Link>
+          </div>
+        </section>
 
-        <main className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
-          <section>
-            <h1 className="sr-only">Latest deals and discounts</h1>
-            <DealFeedList deals={deals.items} filters={filters} hasMore={deals.hasMore} nextCursor={deals.nextCursor} sort={sort} />
-          </section>
+        <section className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <div className="rounded-xl border border-border/70 bg-card/20 p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Newest deals</h2>
+              <Link className="text-sm text-primary hover:underline" href="/deals?sort=newest">View all</Link>
+            </div>
+            <ul className="space-y-2">
+              {newestDeals.items?.map((deal) => (
+                <li key={deal.id}>
+                  <Link className="text-sm text-foreground hover:underline" href={`/deals/${deal.slug}`}>
+                    {deal.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          <FeedSidebar trendingDeals={trendingDeals} facets={facets} communityStats={communityStats} sidebarAd={sidebarAd} />
-        </main>
+          <aside className="space-y-4">
+            <section className="rounded-xl border border-border/70 bg-card/20 p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Top categories</h2>
+                <Link className="text-sm text-primary hover:underline" href="/categories">All categories</Link>
+              </div>
+              <ul className="space-y-2">
+                {topCategories.map((category) => (
+                  <li key={category.value}>
+                    <Link className="text-sm text-foreground hover:underline" href={`/categories/${encodeURIComponent(category.value)}`}>
+                      {category.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="rounded-xl border border-border/70 bg-card/20 p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Hot deals</h2>
+                <Link className="text-sm text-primary hover:underline" href="/deals?sort=hot">View all</Link>
+              </div>
+              <ul className="space-y-2">
+                {hotDeals.items?.map((deal) => (
+                  <li key={deal.id}>
+                    <Link className="text-sm text-foreground hover:underline" href={`/deals/${deal.slug}`}>
+                      {deal.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </aside>
+        </section>
       </PageContainer>
     </>
   );

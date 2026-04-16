@@ -4,10 +4,11 @@ import Image from 'next/image';
 import { getFeedFacets } from '@/features/deals/queries';
 import { createClient } from '@/lib/supabase/server';
 
-const DISCOVER_LINKS = [
-  { href: '/?sort=newest', label: 'Newest deals' },
-  { href: '/?sort=hot', label: 'Hot deals' },
-  { href: '/?sort=discussed', label: 'Most discussed' },
+const PLATFORM_LINKS = [
+  { href: '/deals', label: 'All deals' },
+  { href: '/categories', label: 'All categories' },
+  { href: '/deals?sort=hot', label: 'Hot deals' },
+  { href: '/deals?sort=discussed', label: 'Most discussed deals' },
 ] as const;
 
 const ACCOUNT_LINKS = [
@@ -90,10 +91,10 @@ export async function PublicFooter() {
             </p>
           </section>
 
-          <nav aria-label="Discover" className="space-y-2.5">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Discover</h2>
+          <nav aria-label="Platform" className="space-y-2.5">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Platform</h2>
             <ul className="space-y-1.5 text-sm">
-              {DISCOVER_LINKS.map((link) => (
+              {PLATFORM_LINKS.map((link) => (
                 <li key={link.href}>
                   <Link className="text-foreground/90 transition-colors hover:text-foreground" href={link.href}>
                     {link.label}
@@ -111,7 +112,7 @@ export async function PublicFooter() {
                   <li key={category.value}>
                     <Link
                       className="text-foreground/90 transition-colors hover:text-foreground"
-                      href={`/?category=${encodeURIComponent(category.value)}`}
+                      href={`/categories/${encodeURIComponent(category.value)}`}
                     >
                       {category.label}
                     </Link>

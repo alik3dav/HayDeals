@@ -15,8 +15,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: absoluteUrl('/'),
-      changeFrequency: 'hourly',
+      changeFrequency: 'daily',
       priority: 1,
+    },
+    {
+      url: absoluteUrl('/deals'),
+      changeFrequency: 'hourly',
+      priority: 0.95,
+    },
+    {
+      url: absoluteUrl('/categories'),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: absoluteUrl('/deals?sort=hot'),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+    {
+      url: absoluteUrl('/deals?sort=discussed'),
+      changeFrequency: 'daily',
+      priority: 0.75,
     },
   ];
 
@@ -37,24 +57,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   const categoryPages: MetadataRoute.Sitemap = facets.categories.map((category) => ({
-    url: absoluteUrl(`/?category=${encodeURIComponent(category.value)}`),
+    url: absoluteUrl(`/categories/${encodeURIComponent(category.value)}`),
     changeFrequency: 'daily',
-    priority: 0.7,
+    priority: 0.8,
   }));
 
-  const storePages: MetadataRoute.Sitemap = facets.stores.map((store) => ({
-    url: absoluteUrl(`/?store=${encodeURIComponent(store.value)}`),
-    changeFrequency: 'daily',
-    priority: 0.7,
-  }));
-
-  const discussedPage: MetadataRoute.Sitemap = [
-    {
-      url: absoluteUrl('/?sort=discussed'),
-      changeFrequency: 'daily',
-      priority: 0.7,
-    },
-  ];
-
-  return [...staticPages, ...dealPages, ...profilePages, ...categoryPages, ...storePages, ...discussedPage];
+  return [...staticPages, ...dealPages, ...profilePages, ...categoryPages];
 }

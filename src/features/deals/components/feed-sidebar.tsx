@@ -30,11 +30,7 @@ function SidebarSection({ title, children }: SidebarSectionProps) {
 }
 
 function buildCategoryHref(category: string) {
-  const params = new URLSearchParams();
-  params.set('sort', 'hot');
-  params.set('category', category);
-
-  return `/?${params.toString()}`;
+  return `/categories/${encodeURIComponent(category)}`;
 }
 
 export function FeedSidebar({ trendingDeals, facets, communityStats, sidebarAd }: FeedSidebarProps) {
@@ -75,6 +71,26 @@ export function FeedSidebar({ trendingDeals, facets, communityStats, sidebarAd }
       </SidebarSection>
 
       <SidebarAdModule ad={sidebarAd ?? feedSidebarAd} />
+
+      <SidebarSection title="Browse platform">
+        <ul className="space-y-2 text-sm">
+          <li>
+            <Link className="text-foreground/90 transition-colors hover:text-foreground" href="/deals">
+              All deals directory
+            </Link>
+          </li>
+          <li>
+            <Link className="text-foreground/90 transition-colors hover:text-foreground" href="/categories">
+              All categories
+            </Link>
+          </li>
+          <li>
+            <Link className="text-foreground/90 transition-colors hover:text-foreground" href="/deals?sort=hot">
+              Hot deals feed
+            </Link>
+          </li>
+        </ul>
+      </SidebarSection>
 
       <SidebarSection title="Top categories">
         {topCategories.length ? (
