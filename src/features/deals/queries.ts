@@ -161,9 +161,15 @@ function escapeIlikeValue(value: string): string {
   return value.replace(/[,%_]/g, (char) => `\\${char}`);
 }
 
-async function getVoteTotalsByDealIds(supabase: Awaited<ReturnType<typeof createClient>>, dealIds: string[]) {
+type DealVoteStats = {
+  upvotes: number;
+  downvotes: number;
+  score: number;
+};
+
+async function getVoteStatsByDealIds(supabase: Awaited<ReturnType<typeof createClient>>, dealIds: string[]) {
   if (dealIds.length === 0) {
-    return new Map<string, number>();
+    return new Map<string, DealVoteStats>();
   }
 
   const { data, error } = await supabase.from('deal_votes').select('deal_id, vote_value').in('deal_id', dealIds);
@@ -172,18 +178,26 @@ async function getVoteTotalsByDealIds(supabase: Awaited<ReturnType<typeof create
     throw error;
   }
 
-  const upvoteTotals = new Map<string, number>();
+  const voteTotals = new Map<string, DealVoteStats>();
 
   for (const vote of data ?? []) {
-    if (vote.vote_value !== 1) {
-      continue;
-    }
-
-    const currentCount = upvoteTotals.get(vote.deal_id) ?? 0;
-    upvoteTotals.set(vote.deal_id, currentCount + 1);
+    const currentTotals = voteTotals.get(vote.deal_id) ?? { upvotes: 0, downvotes: 0, score: 0 };
+    const nextTotals =
+      vote.vote_value === 1
+        ? {
+            upvotes: currentTotals.upvotes + 1,
+            downvotes: currentTotals.downvotes,
+            score: currentTotals.score + 1,
+          }
+        : {
+            upvotes: currentTotals.upvotes,
+            downvotes: currentTotals.downvotes + 1,
+            score: currentTotals.score - 1,
+          };
+    voteTotals.set(vote.deal_id, nextTotals);
   }
 
-  return upvoteTotals;
+  return voteTotals;
 }
 
 export function parseFeedQueryParams(params: Record<string, string | string[] | undefined>) {
@@ -288,10 +302,12 @@ export async function getPublicDealsFeed({
   const hasMore = rows.length > safePageSize;
   const items = hasMore ? rows.slice(0, safePageSize) : rows;
   const dealIds = items.map((deal) => deal.id);
-  const upvoteTotals = await getVoteTotalsByDealIds(supabase, dealIds);
+  const voteStatsByDealId = await getVoteStatsByDealIds(supabase, dealIds);
 
   for (const deal of items) {
-    deal.upvotes_count = upvoteTotals.get(deal.id) ?? 0;
+    const voteStats = voteStatsByDealId.get(deal.id);
+    deal.upvotes_count = voteStats?.upvotes ?? 0;
+    deal.score = voteStats?.score ?? 0;
   }
 
   const {
