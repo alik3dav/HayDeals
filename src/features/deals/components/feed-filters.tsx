@@ -132,7 +132,14 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
               >
                 ×
               </Link>
-            ) : null}
+            ) : (
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground"
+              >
+                ▾
+              </span>
+            )}
             <div
               className={`absolute left-0 z-50 mt-2 max-h-72 min-w-52 overflow-auto rounded-lg border border-border/80 bg-background p-1 shadow-lg transition ${
                 openMenu === menu.name
