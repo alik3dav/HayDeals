@@ -116,8 +116,8 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
   ];
 
   return (
-    <section className="rounded-xl border border-border/70 bg-card/80 p-3">
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+    <section className="relative z-30 overflow-visible rounded-xl border border-border/70 bg-card/80 p-3">
+      <div className="flex flex-wrap items-center gap-2">
         {filterMenus.map((menu) => (
           <div className="group relative shrink-0" key={menu.name}>
             <button
@@ -127,7 +127,7 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
             >
               <span className="font-medium">{menu.name}:</span> {menu.activeValue}
             </button>
-            <div className="invisible absolute left-0 z-20 mt-2 max-h-72 min-w-52 overflow-auto rounded-lg border border-border/70 bg-popover p-1 opacity-0 shadow-lg transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+            <div className="invisible absolute left-0 z-50 mt-2 max-h-72 min-w-52 overflow-auto rounded-lg border border-border/70 bg-popover p-1 opacity-0 shadow-lg transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
               {menu.options.map((option) => (
                 <Link
                   className="block rounded-md px-3 py-1.5 text-xs text-popover-foreground hover:bg-accent hover:text-accent-foreground"
