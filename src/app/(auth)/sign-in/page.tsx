@@ -22,8 +22,8 @@ export default async function SignInPage({
   return (
     <main className="container max-w-md py-10">
       <h1 className="text-2xl font-semibold">Sign in</h1>
-      {message ? <p className="mt-3 text-sm text-green-500">{message}</p> : null}
-      {error ? <p className="mt-3 text-sm text-red-500">{error}</p> : null}
+      {message ? <p className="mt-3 text-sm text-success">{message}</p> : null}
+      {error ? <p className="mt-3 text-sm text-danger">{error}</p> : null}
       <form className="mt-6 space-y-4" action={signInAction}>
         <label className="sr-only" htmlFor="sign-in-email">Email</label>
         <input className="w-full rounded-md border bg-background px-3 py-2" id="sign-in-email" name="email" type="email" placeholder="Email" required />

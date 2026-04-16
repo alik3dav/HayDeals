@@ -156,8 +156,8 @@ export async function saveWebsiteControlAction(prevState: WebsiteControlState, f
     logotype_url: String(formData.get('logotypeUrl') ?? '').trim() || null,
     logo_alt: String(formData.get('logoAlt') ?? '').trim() || null,
     logo_size: logoSize,
-    primary_color: String(formData.get('primaryColor') ?? '#22c55e'),
-    accent_color: String(formData.get('accentColor') ?? '#0f172a'),
+    primary_color: String(formData.get('primaryColor') ?? '#34d399'),
+    accent_color: String(formData.get('accentColor') ?? '#121826'),
     site_announcement: String(formData.get('siteAnnouncement') ?? '').trim() || null,
   };
 

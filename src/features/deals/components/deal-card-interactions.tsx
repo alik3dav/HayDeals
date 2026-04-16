@@ -92,26 +92,26 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
 
   return (
     <>
-      <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
-        <div className="flex items-center justify-between gap-2 rounded-full border border-[#252C3A] bg-[#191d25] px-1 py-1">
+      <div className="ml-auto flex items-center gap-2.5 text-success">
+        <div className="flex items-center justify-between gap-2 rounded-full border border-border bg-surface-raised px-1 py-1">
           <button
             aria-label="Upvote deal"
-            className="inline-flex items-center rounded-full p-2 transition-colors hover:bg-emerald-500/15"
+            className="inline-flex items-center rounded-full p-2 transition-colors hover:bg-success/15"
             disabled={isVotePending}
             onClick={() => handleVote(1)}
             type="button"
           >
-            <ThumbsUp className={`h-4 w-4 ${voteState.vote === 1 ? 'fill-current text-emerald-400' : ''}`} />
+            <ThumbsUp className={`h-4 w-4 ${voteState.vote === 1 ? 'fill-current text-success' : ''}`} />
           </button>
           <span className="text-base font-semibold">{voteState.upvotes}</span>
           <button
             aria-label="Downvote deal"
-            className="inline-flex items-center rounded-full p-2 text-rose-500 transition-colors hover:bg-rose-500/15"
+            className="inline-flex items-center rounded-full p-2 text-danger transition-colors hover:bg-danger/15"
             disabled={isVotePending}
             onClick={() => handleVote(-1)}
             type="button"
           >
-            <ThumbsDown className={`h-4 w-4 ${voteState.vote === -1 ? 'fill-current text-rose-500' : ''}`} />
+            <ThumbsDown className={`h-4 w-4 ${voteState.vote === -1 ? 'fill-current text-danger' : ''}`} />
           </button>
         </div>
       </div>

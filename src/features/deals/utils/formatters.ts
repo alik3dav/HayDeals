@@ -96,5 +96,5 @@ export function getExpiryBadgeClassName(expiresAt: string | null) {
     return 'border-border bg-secondary text-muted-foreground';
   }
 
-  return 'border-red-500/20 bg-red-500/10 text-red-300';
+  return 'border-danger/20 bg-danger/10 text-danger';
 }

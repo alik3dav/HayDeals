@@ -42,6 +42,23 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        surface: {
+          raised: 'hsl(var(--surface-raised) / <alpha-value>)',
+          contrast: 'hsl(var(--surface-contrast) / <alpha-value>)',
+          'contrast-foreground': 'hsl(var(--surface-contrast-foreground) / <alpha-value>)',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success) / <alpha-value>)',
+          foreground: 'hsl(var(--success-foreground) / <alpha-value>)',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning) / <alpha-value>)',
+          foreground: 'hsl(var(--warning-foreground) / <alpha-value>)',
+        },
+        danger: {
+          DEFAULT: 'hsl(var(--danger) / <alpha-value>)',
+          foreground: 'hsl(var(--danger-foreground) / <alpha-value>)',
+        },
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],

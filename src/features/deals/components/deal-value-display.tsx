@@ -9,7 +9,7 @@ type DealValueDisplayProps = {
 
 function CouponCodeBlock({ code }: { code: string }) {
   return (
-    <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-emerald-500/60 bg-emerald-500/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-emerald-400">
+    <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-success/60 bg-success/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-success">
       <span className="truncate">{code}</span>
     </div>
   );
@@ -27,7 +27,7 @@ function CouponValueRow({
   return (
     <div className="flex min-w-0 flex-wrap items-center gap-2">
       <CouponCodeBlock code={couponCode} />
-      {currentPrice ? <span className="text-base font-semibold text-green-500">{currentPrice}</span> : null}
+      {currentPrice ? <span className="text-base font-semibold text-success">{currentPrice}</span> : null}
       {originalPrice ? <span className="text-muted-foreground line-through">{originalPrice}</span> : null}
     </div>
   );
@@ -63,13 +63,13 @@ function PriceBlock({
   return (
     <section>
       <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
-        {currentPrice ? <span className="text-base font-semibold text-green-500">{currentPrice}</span> : <span className="font-semibold text-foreground">See deal page</span>}
+        {currentPrice ? <span className="text-base font-semibold text-success">{currentPrice}</span> : <span className="font-semibold text-foreground">See deal page</span>}
         {originalPrice ? <span className="text-muted-foreground line-through">{originalPrice}</span> : null}
-        {discountBadgeLabel ? <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-xs text-emerald-400">{discountBadgeLabel}</span> : null}
+        {discountBadgeLabel ? <span className="rounded bg-success/10 px-1.5 py-0.5 text-xs text-success">{discountBadgeLabel}</span> : null}
       </div>
 
       {isCoupon ? (
-        <div className="mt-3 rounded border border-amber-400/30 bg-amber-500/10 px-2 py-1.5 text-xs text-amber-300">
+        <div className="mt-3 rounded border border-warning/30 bg-warning/10 px-2 py-1.5 text-xs text-warning">
           Coupon: <span className="font-semibold">{couponCode ?? 'Shown on merchant page'}</span>
         </div>
       ) : couponCode ? (
@@ -113,17 +113,17 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
       );
 
     case 'percentage':
-      return value.percentageLabel ? <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-sm font-semibold text-emerald-400">{value.percentageLabel}</span> : null;
+      return value.percentageLabel ? <span className="rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-sm font-semibold text-success">{value.percentageLabel}</span> : null;
 
     case 'bundle':
       return <span className="text-base font-semibold text-foreground">{value.bundleText || 'Bundle offer'}</span>;
 
     case 'cashback':
-      return <span className="text-base font-semibold text-emerald-400">{value.percentageLabel ? `${value.percentageLabel.replace('-', '')} cashback` : 'Cashback'}</span>;
+      return <span className="text-base font-semibold text-success">{value.percentageLabel ? `${value.percentageLabel.replace('-', '')} cashback` : 'Cashback'}</span>;
 
     case 'free':
       return (
-        <Badge className="border-emerald-500/30 bg-emerald-500/15 text-[11px] font-semibold tracking-wide text-emerald-500" variant="outline">
+        <Badge className="border-success/30 bg-success/15 text-[11px] font-semibold tracking-wide text-success" variant="outline">
           FREE
         </Badge>
       );
@@ -143,7 +143,7 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
       }
 
       const fallback = value.bundleText || value.percentageLabel || value.dealTypeLabel || 'See details';
-      return <span className="text-lg font-medium text-green-500">{fallback}</span>;
+      return <span className="text-lg font-medium text-success">{fallback}</span>;
     }
   }
 }

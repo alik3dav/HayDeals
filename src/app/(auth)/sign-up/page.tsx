@@ -18,7 +18,7 @@ export default async function SignUpPage({ searchParams }: { searchParams: Promi
   return (
     <main className="container max-w-md py-10">
       <h1 className="text-2xl font-semibold">Create account</h1>
-      {error ? <p className="mt-3 text-sm text-red-500">{error}</p> : null}
+      {error ? <p className="mt-3 text-sm text-danger">{error}</p> : null}
       <form className="mt-6 space-y-4" action={signUpAction}>
         <label className="sr-only" htmlFor="sign-up-email">Email</label>
         <input className="w-full rounded-md border bg-background px-3 py-2" id="sign-up-email" name="email" type="email" placeholder="Email" required />

@@ -85,9 +85,9 @@ export function DealStatusBadge({ status }: { status: 'pending' | 'approved' | '
     <Badge
       className={cn(
         'rounded-md px-2 py-0.5 text-[10px] uppercase tracking-[0.12em]',
-        status === 'approved' && 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/20',
-        status === 'pending' && 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/20',
-        status === 'rejected' && 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/20',
+        status === 'approved' && 'bg-success/20 text-success hover:bg-success/20',
+        status === 'pending' && 'bg-warning/20 text-warning hover:bg-warning/20',
+        status === 'rejected' && 'bg-danger/20 text-danger hover:bg-danger/20',
       )}
       variant="secondary"
     >

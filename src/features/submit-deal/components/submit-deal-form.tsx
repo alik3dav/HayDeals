@@ -293,7 +293,7 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
         </aside>
       </div>
 
-      {state.message ? <p className={state.ok ? 'text-sm text-emerald-400' : 'text-sm text-destructive'}>{state.message}</p> : null}
+      {state.message ? <p className={state.ok ? 'text-sm text-success' : 'text-sm text-destructive'}>{state.message}</p> : null}
 
       <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border/60 pt-4">
         <Button disabled={isPending} name="intentDraft" onClick={() => setIntent('draft')} type="submit" variant="secondary">

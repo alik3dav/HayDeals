@@ -30,14 +30,14 @@ export function SidebarAdModule({ ad }: SidebarAdModuleProps) {
           ) : (
             <div className="flex h-full w-full items-center justify-center px-4 text-center text-xs text-muted-foreground">No ad image</div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/55 to-transparent" />
 
           {showTextualContent ? (
-            <div className="absolute inset-x-0 bottom-0 p-3 text-white">
-              {ad.title ? <h2 className="text-sm font-semibold leading-5 text-white">{ad.title}</h2> : null}
-              {ad.description ? <p className="mt-1 line-clamp-3 text-xs leading-4 text-white/90">{ad.description}</p> : null}
+            <div className="absolute inset-x-0 bottom-0 p-3 text-foreground">
+              {ad.title ? <h2 className="text-sm font-semibold leading-5 text-foreground">{ad.title}</h2> : null}
+              {ad.description ? <p className="mt-1 line-clamp-3 text-xs leading-4 text-foreground/90">{ad.description}</p> : null}
               {ad.ctaLabel ? (
-                <span className="mt-2 inline-flex rounded-md bg-white/90 px-2.5 py-1.5 text-xs font-semibold text-slate-900">{ad.ctaLabel}</span>
+                <span className="mt-2 inline-flex rounded-md bg-surface-contrast px-2.5 py-1.5 text-xs font-semibold text-surface-contrast-foreground">{ad.ctaLabel}</span>
               ) : null}
             </div>
           ) : null}

@@ -89,7 +89,7 @@ export function DealImageUpload({ value, onChange, error }: DealImageUploadProps
           <div className="relative aspect-square w-full overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt="Deal upload preview" className="h-full w-full object-cover" src={value} />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
             <div className="absolute bottom-3 right-3 flex gap-2">
               <Button onClick={() => fileInputRef.current?.click()} size="sm" type="button" variant="secondary">
                 Replace

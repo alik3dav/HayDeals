@@ -56,7 +56,7 @@ export function ProfileSettingsForm({ profile }: { profile: ProfileSettings }) {
         </Button>
       </section>
 
-      {state.message ? <p className={`text-xs ${state.ok ? 'text-emerald-400' : 'text-destructive'}`}>{state.message}</p> : null}
+      {state.message ? <p className={`text-xs ${state.ok ? 'text-success' : 'text-destructive'}`}>{state.message}</p> : null}
     </form>
   );
 }

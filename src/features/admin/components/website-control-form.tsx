@@ -94,7 +94,7 @@ export function WebsiteControlForm({ settings }: WebsiteControlFormProps) {
         </Button>
       </div>
 
-      {state.message ? <p className={`text-xs ${state.ok ? 'text-emerald-400' : 'text-destructive'}`}>{state.message}</p> : null}
+      {state.message ? <p className={`text-xs ${state.ok ? 'text-success' : 'text-destructive'}`}>{state.message}</p> : null}
     </form>
   );
 }
