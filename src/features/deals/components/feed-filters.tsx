@@ -62,18 +62,21 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
 
   const filterMenus: {
     name: string;
+    selectedValue?: string;
     activeValue: string;
     options: { label: string; value: string }[];
     apply: (value: string) => string;
   }[] = [
     {
       name: 'Deal type',
+      selectedValue: filters.dealType,
       activeValue: getOptionLabel(dealTypeOptions, filters.dealType),
       options: dealTypeOptions,
       apply: (value) => filtersWithSort({ dealType: value || undefined }),
     },
     {
       name: 'Availability',
+      selectedValue: filters.availabilityScope,
       activeValue: getOptionLabel(availabilityScopeOptions, filters.availabilityScope),
       options: availabilityScopeOptions,
       apply: (value) =>
@@ -83,12 +86,14 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
     },
     {
       name: 'Region',
+      selectedValue: filters.availabilityRegion,
       activeValue: getOptionLabel(regionOptions, filters.availabilityRegion),
       options: regionOptions,
       apply: (value) => filtersWithSort({ availabilityRegion: value || undefined }),
     },
     {
       name: 'Country',
+      selectedValue: filters.availabilityCountry,
       activeValue: getOptionLabel(countryOptions, filters.availabilityCountry),
       options: countryOptions,
       apply: (value) => filtersWithSort({ availabilityCountry: value || undefined }),
@@ -106,14 +111,28 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
             <button
               aria-haspopup="menu"
               aria-expanded={openMenu === menu.name}
-              className="rounded-full border border-border/70 bg-secondary px-4 py-2.5 text-xs text-foreground transition hover:bg-secondary/90"
+              className={`rounded-full border px-4 py-2.5 pr-9 text-xs text-foreground transition ${
+                menu.selectedValue
+                  ? 'border-primary/30 bg-primary/10 hover:bg-primary/15'
+                  : 'border-border/70 bg-secondary hover:bg-secondary/90'
+              }`}
               onClick={() => {
                 setOpenMenu((current) => (current === menu.name ? null : menu.name));
               }}
               type="button"
             >
-              <span className="font-medium">{menu.name}:</span> {menu.activeValue}
+              {menu.selectedValue ? menu.activeValue : menu.name}
             </button>
+            {menu.selectedValue ? (
+              <Link
+                aria-label={`Remove ${menu.name} filter`}
+                className="absolute right-3 top-1/2 flex size-4 -translate-y-1/2 items-center justify-center rounded-full text-[10px] text-muted-foreground transition hover:bg-primary/20 hover:text-foreground"
+                href={menu.apply('')}
+                onClick={() => setOpenMenu(null)}
+              >
+                ×
+              </Link>
+            ) : null}
             <div
               className={`absolute left-0 z-50 mt-2 max-h-72 min-w-52 overflow-auto rounded-lg border border-border/80 bg-background p-1 shadow-lg transition ${
                 openMenu === menu.name
