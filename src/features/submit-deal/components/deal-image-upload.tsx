@@ -86,7 +86,7 @@ export function DealImageUpload({ value, onChange, error }: DealImageUploadProps
         onDrop={onDrop}
       >
         {value ? (
-          <div className="relative aspect-square w-full max-h-72 overflow-hidden">
+          <div className="relative aspect-square w-full overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt="Deal upload preview" className="h-full w-full object-cover" src={value} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
