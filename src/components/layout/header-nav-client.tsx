@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import {
   Bell,
   CheckCircle2,
@@ -25,6 +25,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { formatNotificationTime } from "@/features/notifications/time";
+import { useNotifications } from "@/features/notifications/use-notifications";
 import { UserAvatar } from "@/features/profile/components/user-avatar";
 import { cn } from "@/lib/utils";
 
@@ -79,33 +81,52 @@ export function HeaderNavClient({
   const profileRef = useRef<HTMLDivElement>(null);
   const mobileRef = useRef<HTMLDivElement>(null);
 
-  const notifications = useMemo(
-    () => [
-      {
-        id: "like-1",
-        message: "Someone liked your deal: Apple AirPods Pro 2",
-        time: "Just now",
-        unread: true,
-      },
-      {
-        id: "like-2",
-        message: "Your deal got another upvote on Samsung 990 Pro SSD",
-        time: "12m ago",
-        unread: true,
-      },
-      {
-        id: "info-1",
-        message: "You are all caught up. New likes will appear here.",
-        time: "Today",
-        unread: false,
-      },
-    ],
-    [],
-  );
-  const unreadNotifications = useMemo(
-    () => notifications.filter((notification) => notification.unread).length,
-    [notifications],
-  );
+
+  const {
+    notifications,
+    unreadCount: unreadNotifications,
+    loadingList: notificationsLoading,
+    loadedOnce: notificationsLoadedOnce,
+    loadNotifications,
+    markAllVisibleAsRead,
+  } = useNotifications({ enabled: isAuthenticated });
+
+  const [notificationsError, setNotificationsError] = useState<string | null>(null);
+
+  const onNotificationsToggle = useCallback(async () => {
+    if (openKey === "notifications") {
+      close();
+      return;
+    }
+
+    open("notifications");
+
+    try {
+      let unreadIds: string[] = [];
+
+      if (!notificationsLoadedOnce) {
+        const loadedNotifications = await loadNotifications();
+        unreadIds = loadedNotifications
+          .filter((notification) => !notification.isRead)
+          .map((notification) => notification.id);
+      }
+
+      setNotificationsError(null);
+      await markAllVisibleAsRead(unreadIds);
+    } catch (error) {
+      setNotificationsError(error instanceof Error ? error.message : "Failed to load notifications.");
+    }
+  }, [close, loadNotifications, markAllVisibleAsRead, notificationsLoadedOnce, open, openKey]);
+
+  const openNotification = useCallback((dealId: string | null) => {
+    if (!dealId) {
+      return;
+    }
+
+    if (typeof window !== "undefined") {
+      window.location.href = `/deals/${dealId}`;
+    }
+  }, []);
 
   useEffect(() => {
     function onEscape(event: KeyboardEvent) {
@@ -311,7 +332,7 @@ export function HeaderNavClient({
                     aria-label="Notifications"
                     aria-expanded={openKey === "notifications"}
                     className="relative inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-muted/45 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    onClick={() => toggle("notifications")}
+                    onClick={() => void onNotificationsToggle()}
                     type="button"
                   >
                     <Bell className="h-4 w-4" />
@@ -337,30 +358,39 @@ export function HeaderNavClient({
                           {unreadNotifications} unread
                         </span>
                       </div>
-                      <ul className="space-y-1">
-                        {notifications.map((notification) => (
-                          <li key={notification.id}>
-                            <button
-                              className="flex w-full items-start gap-2 rounded-md px-2 py-2 text-left transition-colors duration-150 hover:bg-muted/45"
-                              type="button"
-                            >
-                              {notification.unread ? (
-                                <CircleDot className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                              ) : (
-                                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                              )}
-                              <span className="min-w-0 flex-1">
-                                <span className="block truncate text-xs text-foreground/90">
-                                  {notification.message}
+                      {notificationsLoading && !notificationsLoadedOnce ? (
+                        <div className="px-2 py-4 text-center text-xs text-muted-foreground">Loading notifications...</div>
+                      ) : notificationsError ? (
+                        <div className="px-2 py-4 text-center text-xs text-destructive">{notificationsError}</div>
+                      ) : notifications.length === 0 ? (
+                        <div className="px-2 py-4 text-center text-xs text-muted-foreground">You&apos;re all caught up.</div>
+                      ) : (
+                        <ul className="space-y-1">
+                          {notifications.map((notification) => (
+                            <li key={notification.id}>
+                              <button
+                                className="flex w-full items-start gap-2 rounded-md px-2 py-2 text-left transition-colors duration-150 hover:bg-muted/45"
+                                onClick={() => void openNotification(notification.dealId)}
+                                type="button"
+                              >
+                                {!notification.isRead ? (
+                                  <CircleDot className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                                ) : (
+                                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                )}
+                                <span className="min-w-0 flex-1">
+                                  <span className="block truncate text-xs text-foreground/90">
+                                    {notification.message}
+                                  </span>
+                                  <span className="mt-0.5 block text-[11px] text-muted-foreground">
+                                    {formatNotificationTime(notification.createdAt)}
+                                  </span>
                                 </span>
-                                <span className="mt-0.5 block text-[11px] text-muted-foreground">
-                                  {notification.time}
-                                </span>
-                              </span>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 </div>
