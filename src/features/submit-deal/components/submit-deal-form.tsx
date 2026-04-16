@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useMemo, useRef, useState } from 'react';
+import { useActionState, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { createDealAction } from '@/features/submit-deal/mutations';
@@ -25,9 +25,7 @@ function toPriceDisplay(value: string) {
     return '';
   }
 
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'EUR',
+  return new Intl.NumberFormat(undefined, {
     maximumFractionDigits: 2,
   }).format(asNumber);
 }
@@ -61,8 +59,6 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
   const dealTypeCode = selectedDealType?.code ?? values.dealTypeCode;
   const dealTypeConfig = getDealTypeConfig(dealTypeCode);
   const visibleDealFields = getAllowedFields(dealTypeCode);
-
-  const canSubmit = useMemo(() => !isPending, [isPending]);
 
   const setField = (field: keyof typeof values, value: string) => {
     setValues((previous) => ({ ...previous, [field]: value }));
@@ -227,10 +223,10 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
       {state.message ? <p className={state.ok ? 'text-sm text-emerald-400' : 'text-sm text-destructive'}>{state.message}</p> : null}
 
       <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border/60 pt-4">
-        <Button disabled={!canSubmit} name="intentDraft" onClick={() => setIntent('draft')} type="submit" variant="secondary">
+        <Button disabled={isPending} name="intentDraft" onClick={() => setIntent('draft')} type="submit" variant="secondary">
           Save draft
         </Button>
-        <Button disabled={!canSubmit} onClick={() => setIntent('submit')} type="submit">
+        <Button disabled={isPending} onClick={() => setIntent('submit')} type="submit">
           Submit for review
         </Button>
       </div>

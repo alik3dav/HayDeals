@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { getFeedFacets } from '@/features/deals/queries';
 import { createClient } from '@/lib/supabase/server';
@@ -73,17 +74,19 @@ export async function PublicFooter() {
           <section aria-label="Brand" className="space-y-3">
             <Link className="inline-flex items-center text-sm font-semibold tracking-tight" href="/">
               {branding.logotypeUrl ? (
-                <img
+                <Image
                   alt={branding.logoAlt || 'CipiDeals'}
                   className={logoClassName}
                   src={branding.logotypeUrl}
+                  width={180}
+                  height={40}
                 />
               ) : (
                 'CipiDeals'
               )}
             </Link>
             <p className="max-w-sm text-sm text-muted-foreground">
-              Discover and share the best verified deals from the community.
+              Discover and share verified deals from the community.
             </p>
           </section>
 

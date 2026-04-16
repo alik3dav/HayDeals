@@ -3,14 +3,15 @@ import { Inter } from 'next/font/google';
 
 import '@/app/globals.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
-import { SITE_DESCRIPTION, SITE_NAME, absoluteUrl, getSiteUrl } from '@/lib/seo';
+import { SITE_DESCRIPTION, SITE_NAME, absoluteUrl, getDefaultLanguageTag, getSiteUrl } from '@/lib/seo';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 });
 
-const analyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? 'G-02Y805BZ6G';
+const analyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+const defaultLanguageTag = getDefaultLanguageTag();
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -38,14 +39,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html className="dark" lang="en" suppressHydrationWarning>
+    <html className="dark" lang={defaultLanguageTag} suppressHydrationWarning>
       <head>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`} />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${analyticsId}');`,
-          }}
-        />
+        {analyticsId ? <script async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`} /> : null}
+        {analyticsId ? (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${analyticsId}');`,
+            }}
+          />
+        ) : null}
       </head>
       <body className={`${inter.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange enableSystem>

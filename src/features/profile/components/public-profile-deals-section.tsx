@@ -2,14 +2,7 @@ import Link from 'next/link';
 import { MessageSquare, Store } from 'lucide-react';
 
 import type { PublicProfileDeal } from '@/features/profile/public-profile.types';
-
-function formatPrice(value: number | null, currencyCode: string) {
-  if (value === null) {
-    return null;
-  }
-
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: currencyCode, maximumFractionDigits: 2 }).format(value);
-}
+import { formatCurrency } from '@/features/deals/utils/formatters';
 
 export function PublicProfileDealsSection({ deals }: { deals: PublicProfileDeal[] }) {
   return (
@@ -29,17 +22,17 @@ export function PublicProfileDealsSection({ deals }: { deals: PublicProfileDeal[
                 <Store className="h-3 w-3" /> {deal.stores?.name ?? 'Unknown store'}
               </span>
               <span>•</span>
-              <span>{new Date(deal.created_at).toLocaleDateString()}</span>
+              <span>{new Date(deal.created_at).toLocaleDateString(undefined)}</span>
               <span>•</span>
               <span>Score {deal.score}</span>
               <span>•</span>
               <span className="inline-flex items-center gap-1">
                 <MessageSquare className="h-3 w-3" /> {deal.comments_count}
               </span>
-              {formatPrice(deal.sale_price, deal.currency_code) ? (
+              {formatCurrency(deal.sale_price, deal.currency_code) ? (
                 <>
                   <span>•</span>
-                  <span>{formatPrice(deal.sale_price, deal.currency_code)}</span>
+                  <span>{formatCurrency(deal.sale_price, deal.currency_code)}</span>
                 </>
               ) : null}
             </div>

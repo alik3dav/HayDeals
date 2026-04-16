@@ -3,13 +3,23 @@ export function formatCurrency(value: number | null, currencyCode: string) {
     return null;
   }
 
-  const normalizedCurrencyCode = currencyCode === 'AMD' ? 'EUR' : currencyCode;
+  const normalizedCurrencyCode = currencyCode?.trim()?.toUpperCase();
 
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: normalizedCurrencyCode,
-    maximumFractionDigits: 2,
-  }).format(value);
+  try {
+    if (!normalizedCurrencyCode) {
+      throw new Error('Missing currency code');
+    }
+
+    return new Intl.NumberFormat(undefined, {
+      style: 'currency',
+      currency: normalizedCurrencyCode,
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    return new Intl.NumberFormat(undefined, {
+      maximumFractionDigits: 2,
+    }).format(value);
+  }
 }
 
 export function calculateDiscountPercentage(originalPrice: number | null, currentPrice: number | null) {
@@ -26,7 +36,7 @@ export function calculateDiscountPercentage(originalPrice: number | null, curren
 }
 
 export function formatRelativeTime(dateIso: string) {
-  const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  const formatter = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
   const createdAt = new Date(dateIso).getTime();
   const now = Date.now();
   const diffMinutes = Math.round((createdAt - now) / (1000 * 60));

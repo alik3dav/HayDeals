@@ -6,7 +6,7 @@ import { FeedSidebar } from '@/features/deals/components/feed-sidebar';
 import { FeedSortSubheader } from '@/features/deals/components/feed-sort-subheader';
 import { getFeedFacets, getPublicDealsFeed, parseFeedQueryParams } from '@/features/deals/queries';
 import type { FeedFacetCollections } from '@/features/deals/types';
-import { buildPageMetadata, absoluteUrl } from '@/lib/seo';
+import { SITE_NAME, absoluteUrl, buildPageMetadata } from '@/lib/seo';
 
 const EMPTY_FACETS: FeedFacetCollections = {
   categories: [],
@@ -38,7 +38,7 @@ export async function generateMetadata({
 
   return buildPageMetadata({
     title: titleParts.join(' | '),
-    description: 'Browse the latest verified community deals, discounts, and price drops.',
+    description: 'Browse verified community deals, discounts, and price drops.',
     pathname: canonicalQuery.size ? `/?${canonicalQuery.toString()}` : '/',
   });
 }
@@ -73,7 +73,7 @@ export default async function PublicHomePage({
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'CipiDeals - Latest Deals',
+    name: `${SITE_NAME} - Latest Deals`,
     url: absoluteUrl('/'),
     mainEntity: {
       '@type': 'ItemList',
