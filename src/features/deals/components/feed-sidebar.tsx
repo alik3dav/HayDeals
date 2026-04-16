@@ -93,8 +93,8 @@ export function FeedSidebar({ deals, facets, communityStats }: FeedSidebarProps)
       </SidebarSection>
 
       <section className="rounded-xl border border-border/70 bg-gradient-to-b from-card/60 to-card/20 p-5 shadow-[0_0_0_1px_hsl(var(--background)/0.2)_inset]">
-        <h2 className="text-[2rem] font-semibold leading-tight text-foreground">{formattedMemberCount}+ active members</h2>
-        <p className="mt-1 text-lg text-muted-foreground">Sharing deals from around the world</p>
+        <h2 className="text-[1rem] font-semibold leading-tight text-foreground">{formattedMemberCount}+ active members</h2>
+        <p className="text-[12px] text-muted-foreground">Sharing deals from around the world</p>
 
         <div className="mt-5 flex items-center">
           {communityStats.recentMembers.map((member, index) => (
