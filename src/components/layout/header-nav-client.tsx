@@ -12,6 +12,7 @@ import {
   FolderTree,
   Grid2x2,
   LayoutGrid,
+  BookOpen,
   LogIn,
   LogOut,
   Menu,
@@ -236,6 +237,21 @@ export function HeaderNavClient({
             )}
           </Link>
 
+          <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+            <Link
+              className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
+              href="/deals"
+            >
+              Deals
+            </Link>
+            <Link
+              className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
+              href="/categories"
+            >
+              Categories
+            </Link>
+          </nav>
+
           <div
             className="relative hidden lg:block"
             onMouseEnter={() => open("categories")}
@@ -278,7 +294,7 @@ export function HeaderNavClient({
                         <li key={category.value}>
                           <Link
                             className="flex h-8 items-center gap-2 rounded-md px-2 text-xs text-foreground/90 transition-colors duration-150 hover:bg-muted/45 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                            href={`/?category=${encodeURIComponent(category.value)}`}
+                            href={`/categories/${encodeURIComponent(category.value)}`}
                             onClick={() => close()}
                           >
                             <Tag className="h-3.5 w-3.5 text-muted-foreground" />
@@ -556,7 +572,7 @@ export function HeaderNavClient({
                     <li key={category.value}>
                       <Link
                         className="flex h-9 items-center rounded-md px-2.5 text-sm text-foreground/90 transition-colors duration-150 hover:bg-muted/50"
-                        href={`/?category=${encodeURIComponent(category.value)}`}
+                        href={`/categories/${encodeURIComponent(category.value)}`}
                         onClick={() => setMobileOpen(false)}
                       >
                         {category.label}
@@ -568,6 +584,19 @@ export function HeaderNavClient({
             </div>
 
             <div className="grid grid-cols-1 gap-1">
+              <Button asChild className="h-9 justify-start text-sm" variant="ghost">
+                <Link href="/deals" onClick={() => setMobileOpen(false)}>
+                  <BookOpen className="h-4 w-4" />
+                  Deals
+                </Link>
+              </Button>
+              <Button asChild className="h-9 justify-start text-sm" variant="ghost">
+                <Link href="/categories" onClick={() => setMobileOpen(false)}>
+                  <LayoutGrid className="h-4 w-4" />
+                  Categories
+                </Link>
+              </Button>
+
               <Button
                 asChild
                 className="h-9 justify-start gap-2 text-sm"

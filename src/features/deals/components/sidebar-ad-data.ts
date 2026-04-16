@@ -6,6 +6,6 @@ export const feedSidebarAd: SidebarAd = {
   title: 'Build your stack with vetted tools',
   description: 'Discover member-picked software and gear deals curated for founders and builders.',
   ctaLabel: 'Explore picks',
-  href: '/?sort=hot&category=software',
+  href: '/deals?sort=hot&category=software',
   imageOnly: false,
 };
