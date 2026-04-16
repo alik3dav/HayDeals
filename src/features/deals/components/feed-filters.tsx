@@ -40,113 +40,106 @@ function optionList(baseLabel: string, items: { label: string; value: string }[]
   return [{ label: `All ${baseLabel}`, value: '' }, ...items];
 }
 
+function getOptionLabel(items: { label: string; value: string }[], value?: string) {
+  if (!value) return 'All';
+  return items.find((item) => item.value === value)?.label ?? value;
+}
+
 export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
+  const categoryOptions = optionList('categories', facets.categories);
+  const storeOptions = optionList('stores', facets.stores);
+  const dealTypeOptions = optionList('deal types', facets.dealTypes);
+  const availabilityScopeOptions = [
+    { label: 'All availability', value: '' },
+    { label: 'Worldwide', value: 'worldwide' },
+    { label: 'Region', value: 'region' },
+    { label: 'Country', value: 'country' },
+  ];
+  const regionOptions = [{ label: 'All regions', value: '' }, ...facets.availabilityRegions];
+  const countryOptions = [{ label: 'All countries', value: '' }, ...facets.availabilityCountries];
+
+  const filtersWithSort = (patch: Partial<DealFeedFilters>) =>
+    buildFeedUrl({
+      sort,
+      filters: {
+        ...filters,
+        ...patch,
+      },
+    });
+
+  const filterMenus: {
+    name: string;
+    activeValue: string;
+    options: { label: string; value: string }[];
+    apply: (value: string) => string;
+  }[] = [
+    {
+      name: 'Category',
+      activeValue: getOptionLabel(categoryOptions, filters.category),
+      options: categoryOptions,
+      apply: (value) => filtersWithSort({ category: value || undefined }),
+    },
+    {
+      name: 'Store',
+      activeValue: getOptionLabel(storeOptions, filters.store),
+      options: storeOptions,
+      apply: (value) => filtersWithSort({ store: value || undefined }),
+    },
+    {
+      name: 'Deal type',
+      activeValue: getOptionLabel(dealTypeOptions, filters.dealType),
+      options: dealTypeOptions,
+      apply: (value) => filtersWithSort({ dealType: value || undefined }),
+    },
+    {
+      name: 'Availability',
+      activeValue: getOptionLabel(availabilityScopeOptions, filters.availabilityScope),
+      options: availabilityScopeOptions,
+      apply: (value) => filtersWithSort({ availabilityScope: value || undefined }),
+    },
+    {
+      name: 'Region',
+      activeValue: getOptionLabel(regionOptions, filters.availabilityRegion),
+      options: regionOptions,
+      apply: (value) => filtersWithSort({ availabilityRegion: value || undefined }),
+    },
+    {
+      name: 'Country',
+      activeValue: getOptionLabel(countryOptions, filters.availabilityCountry),
+      options: countryOptions,
+      apply: (value) => filtersWithSort({ availabilityCountry: value || undefined }),
+    },
+  ];
+
   return (
-    <section className="space-y-3 rounded-xl border border-border/70 bg-card/80 p-3">
-      <form className="grid gap-2 md:grid-cols-3" method="get">
-        <input name="sort" type="hidden" value={sort} />
-        <input name="q" type="hidden" value={filters.query ?? ''} />
+    <section className="rounded-xl border border-border/70 bg-card/80 p-3">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        {filterMenus.map((menu) => (
+          <details className="group relative shrink-0" key={menu.name}>
+            <summary className="list-none cursor-pointer rounded-full border border-border/70 bg-secondary/60 px-3 py-1 text-xs text-foreground transition hover:bg-secondary">
+              <span className="font-medium">{menu.name}:</span> {menu.activeValue}
+            </summary>
+            <div className="absolute left-0 z-20 mt-2 max-h-72 min-w-52 overflow-auto rounded-lg border border-border/70 bg-popover p-1 shadow-lg">
+              {menu.options.map((option) => (
+                <Link
+                  className="block rounded-md px-3 py-1.5 text-xs text-popover-foreground hover:bg-accent hover:text-accent-foreground"
+                  href={menu.apply(option.value)}
+                  key={`${menu.name}-${option.value || 'all'}`}
+                >
+                  {option.label}
+                </Link>
+              ))}
+            </div>
+          </details>
+        ))}
 
-        <label className="text-xs text-muted-foreground">
-          Category
-          <select
-            className="mt-1 w-full rounded-md border border-border/70 bg-secondary/50 px-2 py-2 text-sm text-foreground"
-            defaultValue={filters.category ?? ''}
-            name="category"
-          >
-            {optionList('categories', facets.categories).map((option) => (
-              <option key={`category-${option.value || 'all'}`} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="text-xs text-muted-foreground">
-          Store
-          <select
-            className="mt-1 w-full rounded-md border border-border/70 bg-secondary/50 px-2 py-2 text-sm text-foreground"
-            defaultValue={filters.store ?? ''}
-            name="store"
-          >
-            {optionList('stores', facets.stores).map((option) => (
-              <option key={`store-${option.value || 'all'}`} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="text-xs text-muted-foreground">
-          Deal type
-          <select
-            className="mt-1 w-full rounded-md border border-border/70 bg-secondary/50 px-2 py-2 text-sm text-foreground"
-            defaultValue={filters.dealType ?? ''}
-            name="dealType"
-          >
-            {optionList('deal types', facets.dealTypes).map((option) => (
-              <option key={`deal-type-${option.value || 'all'}`} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="text-xs text-muted-foreground">
-          Availability type
-          <select
-            className="mt-1 w-full rounded-md border border-border/70 bg-secondary/50 px-2 py-2 text-sm text-foreground"
-            defaultValue={filters.availabilityScope ?? ''}
-            name="availabilityScope"
-          >
-            <option value="">All availability</option>
-            <option value="worldwide">Worldwide</option>
-            <option value="region">Region</option>
-            <option value="country">Country</option>
-          </select>
-        </label>
-
-        <label className="text-xs text-muted-foreground">
-          Region
-          <select
-            className="mt-1 w-full rounded-md border border-border/70 bg-secondary/50 px-2 py-2 text-sm text-foreground"
-            defaultValue={filters.availabilityRegion ?? ''}
-            name="availabilityRegion"
-          >
-            <option value="">All regions</option>
-            {facets.availabilityRegions.map((option) => (
-              <option key={`availability-region-${option.value}`} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="text-xs text-muted-foreground">
-          Country
-          <select
-            className="mt-1 w-full rounded-md border border-border/70 bg-secondary/50 px-2 py-2 text-sm text-foreground"
-            defaultValue={filters.availabilityCountry ?? ''}
-            name="availabilityCountry"
-          >
-            <option value="">All countries</option>
-            {facets.availabilityCountries.map((option) => (
-              <option key={`availability-country-${option.value}`} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <div className="md:col-span-3 flex gap-2">
-          <button className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground" type="submit">
-            Apply filters
-          </button>
-          <Link className="rounded-md bg-secondary px-3 py-1.5 text-sm text-secondary-foreground" href={buildFeedUrl({ sort, filters: {} })}>
-            Reset
-          </Link>
-        </div>
-      </form>
+        <Link
+          className="shrink-0 rounded-full border border-border/70 bg-secondary px-3 py-1 text-xs text-secondary-foreground"
+          href={buildFeedUrl({ sort, filters: {} })}
+        >
+          Reset
+        </Link>
+      </div>
     </section>
   );
 }
