@@ -123,7 +123,7 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
 
     case 'free':
       return (
-        <Badge className="border-emerald-500/30 bg-emerald-500/15 text-[11px] font-semibold tracking-wide text-emerald-500" variant="outline">
+        <Badge className="border-primary-80 bg-primary/10 text-[14px] font-semibold tracking-wide text-primary" variant="outline">
           FREE
         </Badge>
       );
