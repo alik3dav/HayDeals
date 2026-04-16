@@ -4,6 +4,8 @@ import { MessageSquare, Store } from 'lucide-react';
 
 import type { PublicDeal } from '@/features/deals/types';
 import { UserAvatar } from '@/features/profile/components/user-avatar';
+import { PublicProfileLink } from '@/features/profile/components/public-profile-link';
+import { buildProfileDisplayName } from '@/features/profile/identity';
 
 import { DealValueDisplay } from './deal-value-display';
 import { DealCardInteractions } from './deal-card-interactions';
@@ -20,8 +22,7 @@ type DealCardProps = {
 export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
   const expiryLabel = formatExpiryLabel(deal.expires_at);
   const expiryBadgeClassName = getExpiryBadgeClassName(deal.expires_at);
-  const authorFullName = [deal.profiles?.first_name, deal.profiles?.last_name].filter(Boolean).join(' ').trim();
-  const authorName = authorFullName || deal.profiles?.display_name || deal.profiles?.username || 'User';
+  const authorName = buildProfileDisplayName(deal.profiles ?? {});
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40 md:grid md:min-h-60 md:grid-cols-[15rem_minmax(0,1fr)]">
@@ -66,7 +67,9 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground/70 md:self-center">
           <UserAvatar avatarUrl={deal.profiles?.avatar_url} className="h-6 w-6" fallbackText={authorName} textClassName="text-[10px]" />
-          <span className="font-medium text-foreground/85">{authorName}</span>
+          <PublicProfileLink className="font-medium text-foreground/85 hover:text-primary" username={deal.profiles?.username}>
+            {authorName}
+          </PublicProfileLink>
           <span>•</span>
           <span>{formatRelativeTime(deal.created_at)}</span>
         </div>
