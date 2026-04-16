@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { ChevronDown, X } from 'lucide-react';
 
 import { buildFeedUrl } from '@/features/deals/components/feed-filter-utils';
 import type { DealFeedFilters, DealSortOption, FeedFacetCollections } from '@/features/deals/types';
@@ -126,18 +127,18 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
             {menu.selectedValue ? (
               <Link
                 aria-label={`Remove ${menu.name} filter`}
-                className="absolute right-3 top-1/2 flex size-4 -translate-y-1/2 items-center justify-center rounded-full text-[10px] text-muted-foreground transition hover:bg-primary/20 hover:text-foreground"
+                className="absolute right-3 top-1/2 flex size-4 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition hover:bg-primary/20 hover:text-foreground"
                 href={menu.apply('')}
                 onClick={() => setOpenMenu(null)}
               >
-                ×
+                <X aria-hidden="true" className="size-3" />
               </Link>
             ) : (
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground"
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               >
-                ▾
+                <ChevronDown className="size-3" />
               </span>
             )}
             <div
