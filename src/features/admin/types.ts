@@ -80,4 +80,9 @@ export type WebsiteControlSettings = {
   primary_color: string;
   accent_color: string;
   site_announcement: string | null;
+  sidebar_ad_background_image_url: string | null;
+  sidebar_ad_title: string | null;
+  sidebar_ad_description: string | null;
+  sidebar_ad_button_text: string | null;
+  sidebar_ad_image_only: boolean;
 };

@@ -6,11 +6,13 @@ import { UserAvatar } from '@/features/profile/components/user-avatar';
 import type { FeedFacetCollections, PublicDeal, SidebarCommunityStats } from '@/features/deals/types';
 import { SidebarAdModule } from '@/features/deals/components/sidebar-ad-module';
 import { feedSidebarAd } from '@/features/deals/components/sidebar-ad-data';
+import type { SidebarAd } from '@/features/deals/components/sidebar-ad-module';
 
 type FeedSidebarProps = {
   trendingDeals: PublicDeal[];
   facets: FeedFacetCollections;
   communityStats: SidebarCommunityStats;
+  sidebarAd?: SidebarAd;
 };
 
 type SidebarSectionProps = {
@@ -35,7 +37,7 @@ function buildCategoryHref(category: string) {
   return `/?${params.toString()}`;
 }
 
-export function FeedSidebar({ trendingDeals, facets, communityStats }: FeedSidebarProps) {
+export function FeedSidebar({ trendingDeals, facets, communityStats, sidebarAd }: FeedSidebarProps) {
   const topCategories = facets.categories.slice(0, 6);
   const overflowMembers = Math.max(communityStats.activeMembers - communityStats.recentMembers.length, 0);
   const formattedMemberCount = new Intl.NumberFormat('en-US').format(communityStats.activeMembers);
@@ -71,7 +73,7 @@ export function FeedSidebar({ trendingDeals, facets, communityStats }: FeedSideb
         )}
       </SidebarSection>
 
-      <SidebarAdModule ad={feedSidebarAd} />
+      <SidebarAdModule ad={sidebarAd ?? feedSidebarAd} />
 
       <SidebarSection title="Top categories">
         {topCategories.length ? (
