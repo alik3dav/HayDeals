@@ -1,5 +1,6 @@
 import { CalendarDays, MessageSquare, Tag } from 'lucide-react';
 
+import { PointsTotalDisplay } from '@/features/points/components/points-total-display';
 import { UserAvatar } from '@/features/profile/components/user-avatar';
 import { buildProfileDisplayName } from '@/features/profile/identity';
 import type { PublicProfile } from '@/features/profile/public-profile.types';
@@ -22,7 +23,9 @@ export function PublicProfileIdentityCard({ profile }: { profile: PublicProfile 
         </div>
       </div>
 
-      <dl className="mt-5 grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
+      <PointsTotalDisplay className="mt-5" context="Visible reputation based on real account activity." points={profile.points_total} />
+
+      <dl className="mt-3 grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
         <div className="rounded-lg border border-border/50 bg-background/40 p-3">
           <dt className="mb-1 inline-flex items-center gap-1.5 text-xs uppercase tracking-wide text-muted-foreground/80">
             <Tag className="h-3.5 w-3.5" /> Deals

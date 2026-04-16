@@ -15,6 +15,7 @@ export type UserIdentity = {
   lastName: string | null;
   avatarUrl: string | null;
   email: string | null;
+  pointsTotal: number;
 };
 
 export type UpdateProfileState = {

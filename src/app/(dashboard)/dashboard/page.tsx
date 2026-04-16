@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getDashboardOverviewData } from '@/features/dashboard/queries';
 import { DashboardPageHeader, DashboardStatCard, DealStatusBadge, EmptyState, formatRelativeDate } from '@/features/dashboard/components/dashboard-shared';
+import { PointsTotalDisplay } from '@/features/points/components/points-total-display';
 import { getUserIdentity } from '@/features/profile/queries';
 import { requireUser } from '@/lib/auth/session';
 
@@ -25,6 +26,15 @@ export default async function DashboardPage() {
         }}
         title="Overview"
       />
+
+      <section>
+        <PointsTotalDisplay
+          className="max-w-sm"
+          context="Your current reputation balance across deals and engagement."
+          points={identity?.pointsTotal ?? 0}
+          variant="highlight"
+        />
+      </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <DashboardStatCard hint="Total deals you posted" label="Submitted" value={data.stats.submittedDeals} />
