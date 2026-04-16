@@ -3,13 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
+import { buildFeedUrl } from '@/features/deals/components/feed-filter-utils';
 import type { DealFeedFilters, DealSortOption, FeedFacetCollections } from '@/features/deals/types';
-
-export const sortOptions: { label: string; value: DealSortOption }[] = [
-  { label: 'Newest', value: 'newest' },
-  { label: 'Hot', value: 'hot' },
-  { label: 'Most discussed', value: 'discussed' },
-];
 
 type FeedFiltersProps = {
   sort: DealSortOption;
@@ -17,28 +12,6 @@ type FeedFiltersProps = {
   facets: FeedFacetCollections;
 };
 type AvailabilityScopeOptionValue = NonNullable<DealFeedFilters['availabilityScope']>;
-
-export function buildFeedUrl({
-  sort,
-  filters,
-}: {
-  sort: DealSortOption;
-  filters: DealFeedFilters;
-}) {
-  const params = new URLSearchParams();
-
-  params.set('sort', sort);
-
-  if (filters.query) params.set('q', filters.query);
-  if (filters.category) params.set('category', filters.category);
-  if (filters.store) params.set('store', filters.store);
-  if (filters.dealType) params.set('dealType', filters.dealType);
-  if (filters.availabilityScope) params.set('availabilityScope', filters.availabilityScope);
-  if (filters.availabilityRegion) params.set('availabilityRegion', filters.availabilityRegion);
-  if (filters.availabilityCountry) params.set('availabilityCountry', filters.availabilityCountry);
-
-  return `/?${params.toString()}`;
-}
 
 function optionList(baseLabel: string, items: { label: string; value: string }[]) {
   return [{ label: `All ${baseLabel}`, value: '' }, ...items];
