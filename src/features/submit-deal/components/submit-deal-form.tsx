@@ -27,7 +27,7 @@ function toPriceDisplay(value: string) {
 
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'EUR',
     maximumFractionDigits: 2,
   }).format(asNumber);
 }
