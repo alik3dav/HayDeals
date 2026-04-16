@@ -11,7 +11,7 @@ import { DealInteractions } from '@/features/deal-details/components/deal-intera
 import { PricingSummary } from '@/features/deal-details/components/pricing-summary';
 import { RelatedDeals } from '@/features/deal-details/components/related-deals';
 import { getDealComments, getDealDetailById, getRelatedDeals, getViewerDealState } from '@/features/deal-details/queries';
-import { absoluteUrl, buildPageMetadata } from '@/lib/seo';
+import { absoluteUrl, buildPageDescription, buildPageMetadata, getOptionalDealLocationLabel } from '@/lib/seo';
 
 import { addCommentAction, reportDealAction, toggleSaveAction, voteOnDealAction } from './actions';
 
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   return buildPageMetadata({
     title: deal.title,
-    description: deal.description?.slice(0, 160) || `View details for ${deal.title} on CipiDeals.`,
+    description: buildPageDescription(deal.description, `View details for ${deal.title}.`),
     pathname: `/deals/${deal.id}`,
   });
 }
@@ -50,6 +50,11 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
     getRelatedDeals(deal),
     getViewerDealState(id, user?.id ?? null),
   ]);
+  const dealLocation = getOptionalDealLocationLabel({
+    city: (deal as { location_city?: string | null }).location_city,
+    region: (deal as { location_region?: string | null }).location_region,
+    country: (deal as { location_country?: string | null }).location_country,
+  });
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -68,10 +73,10 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
     offers: {
       '@type': 'Offer',
       url: deal.deal_url,
-      availability: 'https://schema.org/InStock',
-      priceCurrency: deal.currency_code || 'USD',
+      priceCurrency: deal.currency_code || undefined,
       price: deal.sale_price ?? undefined,
     },
+    areaServed: dealLocation || undefined,
   };
 
   return (

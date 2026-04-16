@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
 
   return buildPageMetadata({
     title: `${displayName} (@${profile.username})`,
-    description: `View public deals and comments from @${profile.username} on CipiDeals.`,
+    description: `View public deals and comments from @${profile.username}.`,
     pathname: `/users/${encodeURIComponent(profile.username)}`,
   });
 }

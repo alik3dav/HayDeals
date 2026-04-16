@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import {
@@ -200,10 +201,12 @@ export function HeaderNavClient({
         <div className="container flex h-14 items-center gap-3">
           <Link className="shrink-0" href="/">
             {logotypeUrl ? (
-              <img
+              <Image
                 alt={logoAlt || "CipiDeals"}
                 className={logoClassName}
                 src={logotypeUrl}
+                width={180}
+                height={40}
               />
             ) : (
               <span className="text-sm font-semibold tracking-tight">
