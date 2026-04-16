@@ -111,7 +111,7 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
 
   return (
     <section
-      className="relative z-30 overflow-visible rounded-xl border border-border/70 bg-card p-3"
+      className="relative z-30 overflow-visible"
       ref={containerRef}
     >
       <div className="flex flex-wrap items-center gap-2">
@@ -120,7 +120,7 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
             <button
               aria-haspopup="menu"
               aria-expanded={openMenu === menu.name}
-              className="rounded-full border border-border/70 bg-secondary px-3 py-1 text-xs text-foreground transition hover:bg-secondary/90"
+              className="rounded-sm border border-border/70 bg-secondary px-3 py-2 text-xs text-foreground transition hover:bg-secondary/90"
               onClick={() => {
                 setOpenMenu((current) => (current === menu.name ? null : menu.name));
               }}
