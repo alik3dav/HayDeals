@@ -11,7 +11,8 @@ import { DealInteractions } from '@/features/deal-details/components/deal-intera
 import { PricingSummary } from '@/features/deal-details/components/pricing-summary';
 import { RelatedDeals } from '@/features/deal-details/components/related-deals';
 import { getDealComments, getDealDetailBySlug, getRelatedDeals, getViewerDealState } from '@/features/deal-details/queries';
-import { absoluteUrl, buildPageDescription, buildPageMetadata, getOptionalDealLocationLabel } from '@/lib/seo';
+import { getAvailabilityLabel } from '@/features/deals/availability';
+import { absoluteUrl, buildPageDescription, buildPageMetadata } from '@/lib/seo';
 import { toPlainText } from '@/lib/text-formatting';
 
 import { addCommentAction, reportDealAction, toggleSaveAction, voteOnDealAction } from './actions';
@@ -51,10 +52,10 @@ export default async function DealDetailPage({ params }: { params: Promise<{ slu
     getRelatedDeals(deal),
     getViewerDealState(deal.id, user?.id ?? null),
   ]);
-  const dealLocation = getOptionalDealLocationLabel({
-    city: (deal as { location_city?: string | null }).location_city,
-    region: (deal as { location_region?: string | null }).location_region,
-    country: (deal as { location_country?: string | null }).location_country,
+  const dealLocation = getAvailabilityLabel({
+    availabilityScope: deal.availability_scope,
+    availabilityRegion: deal.availability_region,
+    availabilityCountryCode: deal.availability_country_code,
   });
 
   const structuredData = {

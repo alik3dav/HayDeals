@@ -84,7 +84,7 @@ export async function getDealForEdit(dealId: string): Promise<AdminDealEdit | nu
     supabase
       .from('deals')
       .select(
-        'id, title, description, deal_url, coupon_code, moderation_note, sale_price, original_price, expires_at, moderation_status, is_featured, category_id, store_id',
+        'id, title, description, deal_url, coupon_code, moderation_note, sale_price, original_price, expires_at, moderation_status, is_featured, category_id, store_id, availability_scope, availability_region, availability_country_code',
       )
       .eq('id', dealId)
       .maybeSingle(),

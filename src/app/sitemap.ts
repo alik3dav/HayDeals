@@ -9,7 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [dealsResponse, profilesResponse, facets] = await Promise.all([
     supabase.from('deals').select('slug, created_at').eq('moderation_status', 'approved').order('created_at', { ascending: false }).limit(5000),
     supabase.from('profiles').select('username, created_at').not('username', 'is', null).order('created_at', { ascending: false }).limit(5000),
-    getFeedFacets().catch(() => ({ categories: [], stores: [], dealTypes: [] })),
+    getFeedFacets().catch(() => ({ categories: [], stores: [], dealTypes: [], availabilityRegions: [], availabilityCountries: [] })),
   ]);
 
   const staticPages: MetadataRoute.Sitemap = [

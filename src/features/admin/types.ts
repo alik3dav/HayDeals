@@ -64,6 +64,9 @@ export type AdminDealEdit = {
   is_featured: boolean;
   category_id: string | null;
   store_id: string | null;
+  availability_scope: 'worldwide' | 'region' | 'country';
+  availability_region: string | null;
+  availability_country_code: string | null;
   categoryOptions: Array<{ id: string; name: string }>;
   storeOptions: Array<{ id: string; name: string }>;
 };

@@ -29,6 +29,9 @@ export function buildFeedUrl({
   if (filters.category) params.set('category', filters.category);
   if (filters.store) params.set('store', filters.store);
   if (filters.dealType) params.set('dealType', filters.dealType);
+  if (filters.availabilityScope) params.set('availabilityScope', filters.availabilityScope);
+  if (filters.availabilityRegion) params.set('availabilityRegion', filters.availabilityRegion);
+  if (filters.availabilityCountry) params.set('availabilityCountry', filters.availabilityCountry);
 
   return `/?${params.toString()}`;
 }
@@ -83,6 +86,52 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
           >
             {optionList('deal types', facets.dealTypes).map((option) => (
               <option key={`deal-type-${option.value || 'all'}`} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="text-xs text-muted-foreground">
+          Availability type
+          <select
+            className="mt-1 w-full rounded-md border border-border/70 bg-secondary/50 px-2 py-2 text-sm text-foreground"
+            defaultValue={filters.availabilityScope ?? ''}
+            name="availabilityScope"
+          >
+            <option value="">All availability</option>
+            <option value="worldwide">Worldwide</option>
+            <option value="region">Region</option>
+            <option value="country">Country</option>
+          </select>
+        </label>
+
+        <label className="text-xs text-muted-foreground">
+          Region
+          <select
+            className="mt-1 w-full rounded-md border border-border/70 bg-secondary/50 px-2 py-2 text-sm text-foreground"
+            defaultValue={filters.availabilityRegion ?? ''}
+            name="availabilityRegion"
+          >
+            <option value="">All regions</option>
+            {facets.availabilityRegions.map((option) => (
+              <option key={`availability-region-${option.value}`} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="text-xs text-muted-foreground">
+          Country
+          <select
+            className="mt-1 w-full rounded-md border border-border/70 bg-secondary/50 px-2 py-2 text-sm text-foreground"
+            defaultValue={filters.availabilityCountry ?? ''}
+            name="availabilityCountry"
+          >
+            <option value="">All countries</option>
+            {facets.availabilityCountries.map((option) => (
+              <option key={`availability-country-${option.value}`} value={option.value}>
                 {option.label}
               </option>
             ))}

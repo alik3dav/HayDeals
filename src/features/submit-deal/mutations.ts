@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import { requireUser } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
+import { normalizeCountryCode, normalizeRegion } from '@/features/deals/availability';
 import { submitDealSchema } from '@/features/submit-deal/schemas';
 import type { SubmitDealActionState } from '@/features/submit-deal/types';
 
@@ -38,6 +39,9 @@ function formDataToPayload(formData: FormData) {
     dealTypeCode: String(formData.get('dealTypeCode') ?? ''),
     expiresAt: String(formData.get('expiresAt') ?? ''),
     imageUrl: String(formData.get('imageUrl') ?? ''),
+    availabilityScope: String(formData.get('availabilityScope') ?? 'worldwide'),
+    availabilityRegion: String(formData.get('availabilityRegion') ?? ''),
+    availabilityCountryCode: String(formData.get('availabilityCountryCode') ?? ''),
     intent: String(formData.get('intent') ?? 'submit'),
   };
 }
@@ -55,6 +59,8 @@ export async function createDealAction(_: SubmitDealActionState, formData: FormD
   }
 
   const payload = parsed.data;
+  const availabilityRegion = payload.availabilityScope === 'region' ? normalizeRegion(payload.availabilityRegion) : null;
+  const availabilityCountryCode = payload.availabilityScope === 'country' ? normalizeCountryCode(payload.availabilityCountryCode) : null;
   const supabase = await createClient();
 
   const { data: resolvedDealType, error: dealTypeError } = await supabase.from('deal_types').select('code').eq('id', payload.dealTypeId).maybeSingle();
@@ -96,6 +102,9 @@ export async function createDealAction(_: SubmitDealActionState, formData: FormD
     expires_at: payload.expiresAt ? new Date(payload.expiresAt).toISOString() : null,
     image_url: payload.imageUrl || null,
     moderation_status: payload.intent === 'draft' ? 'draft' : 'pending',
+    availability_scope: payload.availabilityScope,
+    availability_region: availabilityRegion,
+    availability_country_code: availabilityCountryCode,
   });
 
   if (error) {

@@ -9,6 +9,9 @@ export type DealFeedFilters = {
   category?: string;
   store?: string;
   dealType?: string;
+  availabilityScope?: 'worldwide' | 'region' | 'country';
+  availabilityRegion?: string;
+  availabilityCountry?: string;
 };
 
 export type DealFeedCursor = {
@@ -37,6 +40,9 @@ export type PublicDeal = {
   coupon_code: string | null;
   bundle_text: string | null;
   currency_code: string;
+  availability_scope: 'worldwide' | 'region' | 'country';
+  availability_region: string | null;
+  availability_country_code: string | null;
   stores: {
     name: string;
     slug: string;
@@ -69,6 +75,8 @@ export type FeedFacetCollections = {
   categories: FeedFacetOption[];
   stores: FeedFacetOption[];
   dealTypes: FeedFacetOption[];
+  availabilityRegions: FeedFacetOption[];
+  availabilityCountries: FeedFacetOption[];
 };
 
 export type SidebarCommunityMember = {
