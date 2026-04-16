@@ -41,8 +41,6 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
     };
   }, []);
 
-  const categoryOptions = optionList('categories', facets.categories);
-  const storeOptions = optionList('stores', facets.stores);
   const dealTypeOptions = optionList('deal types', facets.dealTypes);
   const availabilityScopeOptions: { label: string; value: '' | AvailabilityScopeOptionValue }[] = [
     { label: 'All availability', value: '' },
@@ -68,18 +66,6 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
     options: { label: string; value: string }[];
     apply: (value: string) => string;
   }[] = [
-    {
-      name: 'Category',
-      activeValue: getOptionLabel(categoryOptions, filters.category),
-      options: categoryOptions,
-      apply: (value) => filtersWithSort({ category: value || undefined }),
-    },
-    {
-      name: 'Store',
-      activeValue: getOptionLabel(storeOptions, filters.store),
-      options: storeOptions,
-      apply: (value) => filtersWithSort({ store: value || undefined }),
-    },
     {
       name: 'Deal type',
       activeValue: getOptionLabel(dealTypeOptions, filters.dealType),
