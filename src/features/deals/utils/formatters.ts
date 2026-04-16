@@ -3,9 +3,11 @@ export function formatCurrency(value: number | null, currencyCode: string) {
     return null;
   }
 
+  const normalizedCurrencyCode = currencyCode === 'AMD' ? 'EUR' : currencyCode;
+
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: currencyCode,
+    currency: normalizedCurrencyCode,
     maximumFractionDigits: 2,
   }).format(value);
 }
