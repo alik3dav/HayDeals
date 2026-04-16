@@ -6,6 +6,7 @@ export type PublicProfile = {
   last_name: string | null;
   avatar_url: string | null;
   created_at: string;
+  points_total: number;
   approved_deals_count: number;
   comments_count: number;
 };

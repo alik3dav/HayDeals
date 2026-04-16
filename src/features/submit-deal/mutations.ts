@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 import { normalizeCountryCode, normalizeRegion } from '@/features/deals/availability';
 import { submitDealSchema } from '@/features/submit-deal/schemas';
 import type { SubmitDealActionState } from '@/features/submit-deal/types';
+import { awardPointsForDealCreation } from '@/features/points/service';
 
 function calculateDiscountPercent(originalPriceRaw: string | undefined, salePriceRaw: string | undefined) {
   const originalPrice = originalPriceRaw ? Number(originalPriceRaw) : null;
@@ -86,32 +87,40 @@ export async function createDealAction(_: SubmitDealActionState, formData: FormD
     };
   }
 
-  const { error } = await supabase.from('deals').insert({
-    profile_id: user.id,
-    category_id: payload.categoryId || null,
-    store_id: payload.storeId || null,
-    deal_type_id: payload.dealTypeId,
-    title: payload.title,
-    description: payload.description,
-    deal_url: payload.dealUrl,
-    coupon_code: payload.couponCode || null,
-    bundle_text: payload.bundleText || null,
-    original_price: payload.originalPrice ? Number(payload.originalPrice) : null,
-    sale_price: payload.salePrice ? Number(payload.salePrice) : null,
-    discount_percent: autoCalculatedDiscount ?? (payload.discountPercent ? Number(payload.discountPercent) : null),
-    expires_at: payload.expiresAt ? new Date(payload.expiresAt).toISOString() : null,
-    image_url: payload.imageUrl || null,
-    moderation_status: payload.intent === 'draft' ? 'draft' : 'pending',
-    availability_scope: payload.availabilityScope,
-    availability_region: availabilityRegion,
-    availability_country_code: availabilityCountryCode,
-  });
+  const { data: createdDeal, error } = await supabase
+    .from('deals')
+    .insert({
+      profile_id: user.id,
+      category_id: payload.categoryId || null,
+      store_id: payload.storeId || null,
+      deal_type_id: payload.dealTypeId,
+      title: payload.title,
+      description: payload.description,
+      deal_url: payload.dealUrl,
+      coupon_code: payload.couponCode || null,
+      bundle_text: payload.bundleText || null,
+      original_price: payload.originalPrice ? Number(payload.originalPrice) : null,
+      sale_price: payload.salePrice ? Number(payload.salePrice) : null,
+      discount_percent: autoCalculatedDiscount ?? (payload.discountPercent ? Number(payload.discountPercent) : null),
+      expires_at: payload.expiresAt ? new Date(payload.expiresAt).toISOString() : null,
+      image_url: payload.imageUrl || null,
+      moderation_status: payload.intent === 'draft' ? 'draft' : 'pending',
+      availability_scope: payload.availabilityScope,
+      availability_region: availabilityRegion,
+      availability_country_code: availabilityCountryCode,
+    })
+    .select('id')
+    .single();
 
   if (error) {
     return {
       ok: false,
       message: error.message,
     };
+  }
+
+  if (createdDeal?.id) {
+    await awardPointsForDealCreation(user.id, createdDeal.id).catch(() => false);
   }
 
   revalidatePath('/dashboard', 'layout');
