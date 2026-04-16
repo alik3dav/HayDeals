@@ -2,6 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { decodeFeedCursor, getPublicDealsFeed } from '@/features/deals/queries';
+import type { DealFeedFilters, DealSortOption } from '@/features/deals/types';
 import { toggleDealSave, voteOnDeal } from '@/features/deal-details/mutations';
 
 function refreshFeedAndDeal(dealId: string) {
@@ -27,4 +29,26 @@ export async function toggleSaveFromFeedAction(dealId: string) {
   }
 
   refreshFeedAndDeal(dealId);
+}
+
+export async function loadMoreDealsFromFeedAction({
+  sort,
+  filters,
+  cursor,
+}: {
+  sort: DealSortOption;
+  filters: DealFeedFilters;
+  cursor: string;
+}) {
+  const decodedCursor = decodeFeedCursor(cursor);
+
+  if (!decodedCursor) {
+    throw new Error('Invalid feed cursor.');
+  }
+
+  return getPublicDealsFeed({
+    sort,
+    filters,
+    cursor: decodedCursor,
+  });
 }
