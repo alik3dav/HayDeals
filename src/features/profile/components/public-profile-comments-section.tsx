@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import type { PublicProfileComment } from '@/features/profile/public-profile.types';
+import { toPlainText } from '@/lib/text-formatting';
 
 export function PublicProfileCommentsSection({ comments }: { comments: PublicProfileComment[] }) {
   return (
@@ -12,7 +13,7 @@ export function PublicProfileCommentsSection({ comments }: { comments: PublicPro
       <ul className="space-y-2">
         {comments.map((comment) => (
           <li className="rounded-lg border border-border/50 bg-background/40 p-3" key={comment.id}>
-            <p className="line-clamp-3 text-sm text-foreground">{comment.body}</p>
+            <p className="line-clamp-3 text-sm text-foreground">{toPlainText(comment.body)}</p>
             <Link className="mt-2 inline-block text-xs text-primary hover:underline" href={`/deals/${comment.deal.slug}`}>
               View on {comment.deal.title}
             </Link>

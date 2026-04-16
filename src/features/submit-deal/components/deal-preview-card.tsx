@@ -1,6 +1,7 @@
 import { TicketPercent, Tag } from 'lucide-react';
 
 import { getDealTypeConfig } from '@/features/submit-deal/deal-type-config';
+import { toPlainText } from '@/lib/text-formatting';
 import { cn } from '@/lib/utils';
 
 type DealPreviewCardProps = {
@@ -53,7 +54,7 @@ function getPrimaryDisplay({
 
 export function DealPreviewCard(props: DealPreviewCardProps) {
   const resolvedTitle = props.title || 'Your deal title will appear here';
-  const resolvedDescription = props.description || 'Describe what makes this deal worth sharing.';
+  const resolvedDescription = toPlainText(props.description) || 'Describe what makes this deal worth sharing.';
   const config = getDealTypeConfig(props.dealTypeCode);
   const primaryDisplay = getPrimaryDisplay(props);
 

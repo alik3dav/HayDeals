@@ -6,6 +6,7 @@ import type { PublicDeal } from '@/features/deals/types';
 import { UserAvatar } from '@/features/profile/components/user-avatar';
 import { PublicProfileLink } from '@/features/profile/components/public-profile-link';
 import { buildProfileDisplayName } from '@/features/profile/identity';
+import { toPlainText } from '@/lib/text-formatting';
 
 import { DealValueDisplay } from './deal-value-display';
 import { DealCardInteractions } from './deal-card-interactions';
@@ -63,7 +64,7 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
             
            
      
-        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground/60 md:self-center">{deal.description?.trim() || 'Brief description of the deal goes here for preview.'}</p>
+        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground/60 md:self-center">{toPlainText(deal.description ?? '') || 'Brief description of the deal goes here for preview.'}</p>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground/70 md:self-center">
           <UserAvatar avatarUrl={deal.profiles?.avatar_url} className="h-6 w-6" fallbackText={authorName} textClassName="text-[10px]" />
