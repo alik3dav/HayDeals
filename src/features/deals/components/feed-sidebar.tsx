@@ -39,7 +39,8 @@ function buildCategoryHref(category: string) {
 
 export function FeedSidebar({ trendingDeals, facets, communityStats, sidebarAd }: FeedSidebarProps) {
   const topCategories = facets.categories.slice(0, 6);
-  const overflowMembers = Math.max(communityStats.activeMembers - communityStats.recentMembers.length, 0);
+  const visibleMembers = communityStats.recentMembers.slice(0, 5);
+  const overflowMembers = Math.max(communityStats.activeMembers - visibleMembers.length, 0);
   const formattedMemberCount = new Intl.NumberFormat('en-US').format(communityStats.activeMembers);
 
   return (
@@ -98,7 +99,7 @@ export function FeedSidebar({ trendingDeals, facets, communityStats, sidebarAd }
         <p className="text-[12px] text-muted-foreground">Sharing deals from around the world</p>
 
         <div className="mt-5 flex items-center">
-          {communityStats.recentMembers.map((member, index) => (
+          {visibleMembers.map((member, index) => (
             <div className={index === 0 ? '' : '-ml-2.5'} key={`${member.username ?? member.displayName}-${index}`}>
               <UserAvatar
                 avatarUrl={member.avatarUrl}
