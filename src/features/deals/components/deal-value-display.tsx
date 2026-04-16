@@ -65,7 +65,7 @@ function PriceBlock({
       <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
         {currentPrice ? <span className="text-base font-semibold text-primary/80">{currentPrice}</span> : <span className="font-semibold text-foreground">See deal page</span>}
         {originalPrice ? <span className="text-muted-foreground line-through">{originalPrice}</span> : null}
-        {discountBadgeLabel ? <span className="rounded bg-primary/20 px-1.5 py-0.5 text-xs text-primary/80">{discountBadgeLabel}</span> : null}
+        {discountBadgeLabel ? <span className="rounded bg-primary/10 px-1.5 py-0.5 text-xs text-primary/80">{discountBadgeLabel}</span> : null}
       </div>
 
       {isCoupon ? (

@@ -96,14 +96,14 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
         <div className="flex items-center justify-between gap-2 rounded-full border-border bg-secondary/70 px-1 py-1">
           <button
             aria-label="Upvote deal"
-            className="inline-flex items-center rounded-full p-2 transition-colors hover:bg-emerald-500/15"
+            className="inline-flex items-center rounded-full p-2 transition-colors hover:bg-primary/10"
             disabled={isVotePending}
             onClick={() => handleVote(1)}
             type="button"
           >
             <ThumbsUp className={`h-4 w-4 ${voteState.vote === 1 ? 'fill-current text-emerald-400' : ''}`} />
           </button>
-          <span className="text-base font-semibold">{voteState.upvotes}</span>
+          <span className="text-base font-primary/80">{voteState.upvotes}</span>
           <button
             aria-label="Downvote deal"
             className="inline-flex items-center rounded-full p-2 text-rose-500 transition-colors hover:bg-rose-500/15"
