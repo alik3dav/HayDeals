@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { createClient } from '@/lib/supabase/browser';
+import { createOptionalClient } from '@/lib/supabase/browser';
 import { fetchRecentNotifications, fetchUnreadNotificationsCount, markNotificationsRead } from '@/features/notifications/client';
 import type { UserNotification } from '@/features/notifications/types';
 
@@ -13,7 +13,7 @@ type UseNotificationsOptions = {
 };
 
 export function useNotifications({ enabled }: UseNotificationsOptions) {
-  const supabase = useMemo(() => (enabled ? createClient() : null), [enabled]);
+  const supabase = useMemo(() => (enabled ? createOptionalClient() : null), [enabled]);
   const [profileId, setProfileId] = useState<string | null>(null);
 
   const [unreadCount, setUnreadCount] = useState(0);
