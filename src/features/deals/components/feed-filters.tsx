@@ -13,6 +13,7 @@ type FeedFiltersProps = {
   filters: DealFeedFilters;
   facets: FeedFacetCollections;
 };
+type AvailabilityScopeOptionValue = NonNullable<DealFeedFilters['availabilityScope']>;
 
 export function buildFeedUrl({
   sort,
@@ -49,7 +50,7 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
   const categoryOptions = optionList('categories', facets.categories);
   const storeOptions = optionList('stores', facets.stores);
   const dealTypeOptions = optionList('deal types', facets.dealTypes);
-  const availabilityScopeOptions = [
+  const availabilityScopeOptions: { label: string; value: '' | AvailabilityScopeOptionValue }[] = [
     { label: 'All availability', value: '' },
     { label: 'Worldwide', value: 'worldwide' },
     { label: 'Region', value: 'region' },
@@ -95,7 +96,10 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
       name: 'Availability',
       activeValue: getOptionLabel(availabilityScopeOptions, filters.availabilityScope),
       options: availabilityScopeOptions,
-      apply: (value) => filtersWithSort({ availabilityScope: value || undefined }),
+      apply: (value) =>
+        filtersWithSort({
+          availabilityScope: value ? (value as AvailabilityScopeOptionValue) : undefined,
+        }),
     },
     {
       name: 'Region',
