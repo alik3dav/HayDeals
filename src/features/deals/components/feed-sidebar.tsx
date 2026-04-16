@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -46,8 +47,21 @@ export function FeedSidebar({ deals, facets, communityStats }: FeedSidebarProps)
           <ul className="space-y-2">
             {trendingDeals.map((deal) => (
               <li key={`trending-${deal.id}`}>
-                <Link className="line-clamp-2 text-sm text-muted-foreground transition-colors hover:text-foreground" href={`/deals/${deal.slug}`}>
-                  {deal.title}
+                <Link
+                  className="group grid grid-cols-[3.25rem_minmax(0,1fr)] gap-2 rounded-md p-1 transition-colors hover:bg-muted/30"
+                  href={`/deals/${deal.slug}`}
+                >
+                  <div className="relative h-12 w-12 overflow-hidden rounded-md border border-border/70 bg-secondary/50">
+                    {deal.image_url ? (
+                      <Image alt={`Image for ${deal.title}`} className="object-cover" fill sizes="48px" src={deal.image_url} />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">No image</div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="line-clamp-2 text-xs font-medium text-muted-foreground transition-colors group-hover:text-foreground">{deal.title}</p>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground/80">Score {deal.score}</p>
+                  </div>
                 </Link>
               </li>
             ))}
