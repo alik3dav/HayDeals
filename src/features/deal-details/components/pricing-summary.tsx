@@ -15,7 +15,7 @@ export function PricingSummary({ deal }: { deal: DealDetail }) {
     return couponCode ? (
       <section className="rounded-lg border border-border/60 bg-card/70 p-4">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-emerald-500/60 bg-emerald-500/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-emerald-400">
+          <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-primary/50 bg-primary/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-primary/80">
             <span className="truncate">{couponCode}</span>
           </div>
           {salePrice ? <span className="text-base font-semibold text-foreground">{salePrice}</span> : null}
@@ -28,7 +28,7 @@ export function PricingSummary({ deal }: { deal: DealDetail }) {
   if (isCoupon || showCouponOnly) {
     return couponCode ? (
       <section className="rounded-lg border border-border/60 bg-card/70 p-4">
-        <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-emerald-500/60 bg-emerald-500/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-emerald-400">
+        <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-primary/50 bg-primary/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-primary/80">
           <span className="truncate">{couponCode}</span>
         </div>
       </section>

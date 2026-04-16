@@ -9,7 +9,7 @@ type DealValueDisplayProps = {
 
 function CouponCodeBlock({ code }: { code: string }) {
   return (
-    <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-emerald-500/60 bg-emerald-500/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-emerald-400">
+    <div className="inline-flex max-w-full items-center rounded-lg border border-dashed border-primary/50 bg-primary/10 px-3 py-2 font-mono text-sm font-semibold tracking-[0.12em] text-primary/80">
       <span className="truncate">{code}</span>
     </div>
   );
