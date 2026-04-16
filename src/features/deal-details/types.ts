@@ -1,5 +1,6 @@
 export type DealDetail = {
   id: string;
+  profile_id: string;
   title: string;
   description: string | null;
   created_at: string;
@@ -28,6 +29,13 @@ export type DealDetail = {
   categories: {
     name: string;
     slug: string;
+  } | null;
+  profiles: {
+    username: string | null;
+    display_name: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    avatar_url: string | null;
   } | null;
 };
 

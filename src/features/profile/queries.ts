@@ -1,21 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
+import { buildProfileDisplayName } from '@/features/profile/identity';
 import type { ProfileSettings, UserIdentity } from '@/features/profile/types';
-
-function buildDisplayName(profile: {
-  display_name: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  username: string | null;
-}, email: string | null) {
-  const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ').trim();
-
-  if (fullName) return fullName;
-  if (profile.display_name?.trim()) return profile.display_name.trim();
-  if (profile.username?.trim()) return profile.username.trim();
-  if (email?.trim()) return email.trim();
-
-  return 'User';
-}
 
 export async function getProfileSettings(profileId: string): Promise<ProfileSettings | null> {
   const supabase = await createClient();
@@ -61,7 +46,7 @@ export async function getUserIdentity(profileId: string): Promise<UserIdentity |
   }
 
   return {
-    displayName: buildDisplayName(profile, profile.email),
+    displayName: buildProfileDisplayName(profile, profile.email?.trim() || 'User'),
     firstName: profile.first_name,
     lastName: profile.last_name,
     avatarUrl: profile.avatar_url,

@@ -3,8 +3,12 @@ import { ExternalLink } from 'lucide-react';
 
 import type { DealDetail } from '@/features/deal-details/types';
 import { formatRelativeTime } from '@/features/deal-details/components/deal-utils';
+import { PublicProfileLink } from '@/features/profile/components/public-profile-link';
+import { buildProfileDisplayName } from '@/features/profile/identity';
 
 export function DealHeader({ deal }: { deal: DealDetail }) {
+  const authorName = buildProfileDisplayName(deal.profiles ?? {}, 'User');
+
   return (
     <header className="rounded-2xl border border-border/60 bg-card/80 p-5">
       <div className="space-y-4">
@@ -19,6 +23,10 @@ export function DealHeader({ deal }: { deal: DealDetail }) {
           <span>{deal.stores?.name ?? deal.merchant_name ?? 'Unknown merchant'}</span>
           <span>•</span>
           <span>{deal.categories?.name ?? 'General'}</span>
+          <span>•</span>
+          <PublicProfileLink className="hover:text-primary" username={deal.profiles?.username}>
+            {authorName}
+          </PublicProfileLink>
           <span>•</span>
           <span>{formatRelativeTime(deal.created_at)}</span>
         </div>
