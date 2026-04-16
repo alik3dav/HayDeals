@@ -7,7 +7,6 @@ import type { FeedFacetCollections, PublicDeal, SidebarCommunityStats } from '@/
 
 type FeedSidebarProps = {
   trendingDeals: PublicDeal[];
-  recentActivityDeals: PublicDeal[];
   facets: FeedFacetCollections;
   communityStats: SidebarCommunityStats;
 };
@@ -34,9 +33,8 @@ function buildCategoryHref(category: string) {
   return `/?${params.toString()}`;
 }
 
-export function FeedSidebar({ trendingDeals, recentActivityDeals, facets, communityStats }: FeedSidebarProps) {
+export function FeedSidebar({ trendingDeals, facets, communityStats }: FeedSidebarProps) {
   const topCategories = facets.categories.slice(0, 6);
-  const recentActivity = recentActivityDeals.slice(0, 4);
   const overflowMembers = Math.max(communityStats.activeMembers - communityStats.recentMembers.length, 0);
   const formattedMemberCount = new Intl.NumberFormat('en-US').format(communityStats.activeMembers);
 
@@ -86,23 +84,6 @@ export function FeedSidebar({ trendingDeals, recentActivityDeals, facets, commun
           </div>
         ) : (
           <p className="text-sm text-muted-foreground">Categories will appear as deals are added.</p>
-        )}
-      </SidebarSection>
-
-      <SidebarSection title="Latest activity">
-        {recentActivity.length ? (
-          <ul className="space-y-2">
-            {recentActivity.map((deal) => (
-              <li className="text-sm text-muted-foreground" key={`activity-${deal.id}`}>
-                <Link className="transition-colors hover:text-foreground" href={`/deals/${deal.slug}`}>
-                  {deal.title}
-                </Link>
-                <p className="text-xs text-muted-foreground/80">{deal.comments_count} comments • score {deal.score}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-muted-foreground">No recent activity right now.</p>
         )}
       </SidebarSection>
 
