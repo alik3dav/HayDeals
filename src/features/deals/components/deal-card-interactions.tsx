@@ -101,9 +101,9 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
             onClick={() => handleVote(1)}
             type="button"
           >
-            <ThumbsUp className={`h-4 w-4 ${voteState.vote === 1 ? 'fill-current text-emerald-400' : ''}`} />
+            <ThumbsUp className={`h-4 w-4 ${voteState.vote === 1 ? 'fill-current text-primary/80' : ''}`} />
           </button>
-          <span className="text-base font-primary/80">{voteState.upvotes}</span>
+          <span className="text-base font-primary/80  text-primary/80">{voteState.upvotes}</span>
           <button
             aria-label="Downvote deal"
             className="inline-flex items-center rounded-full p-2 text-rose-500 transition-colors hover:bg-rose-500/15"
