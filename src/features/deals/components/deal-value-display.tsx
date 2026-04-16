@@ -15,6 +15,24 @@ function CouponCodeBlock({ code }: { code: string }) {
   );
 }
 
+function CouponValueRow({
+  couponCode,
+  currentPrice,
+  originalPrice,
+}: {
+  couponCode: string;
+  currentPrice?: string | null;
+  originalPrice?: string | null;
+}) {
+  return (
+    <div className="flex min-w-0 flex-wrap items-center gap-2">
+      <CouponCodeBlock code={couponCode} />
+      {currentPrice ? <span className="text-base font-semibold text-green-500">{currentPrice}</span> : null}
+      {originalPrice ? <span className="text-muted-foreground line-through">{originalPrice}</span> : null}
+    </div>
+  );
+}
+
 function PriceBlock({
   currentPrice,
   originalPrice,
@@ -32,6 +50,14 @@ function PriceBlock({
 
   if (showCouponOnly) {
     return <CouponCodeBlock code={couponCode!} />;
+  }
+
+  if (isCoupon && couponCode && (currentPrice || originalPrice)) {
+    return (
+      <section>
+        <CouponValueRow couponCode={couponCode} currentPrice={currentPrice} originalPrice={originalPrice} />
+      </section>
+    );
   }
 
   return (
@@ -74,6 +100,10 @@ export function DealValueDisplay({ deal }: DealValueDisplayProps) {
 
   switch (value.typeCode) {
     case 'coupon':
+      if (value.couponCode && (value.currentPrice || value.originalPrice)) {
+        return <CouponValueRow couponCode={value.couponCode} currentPrice={value.currentPrice} originalPrice={value.originalPrice} />;
+      }
+
       return value.couponCode ? (
         <CouponCodeBlock code={value.couponCode} />
       ) : (
