@@ -72,11 +72,11 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
             
            
      
-        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground/60 md:self-center">{toPlainText(deal.description ?? '') || 'Brief description of the deal goes here for preview.'}</p>
+        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground/40 md:self-center">{toPlainText(deal.description ?? '') || 'Brief description of the deal goes here for preview.'}</p>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground/70 md:self-center">
           <UserAvatar avatarUrl={deal.profiles?.avatar_url} className="h-6 w-6" fallbackText={authorName} textClassName="text-[10px]" />
-          <PublicProfileLink className="font-small text-foreground/85 hover:text-primary" username={deal.profiles?.username}>
+          <PublicProfileLink className="font-small text-[13px] text-foreground/85 hover:text-primary" username={deal.profiles?.username}>
             {authorName}
           </PublicProfileLink>
           <span>•</span>
