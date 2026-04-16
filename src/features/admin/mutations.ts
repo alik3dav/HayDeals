@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import { requireRole } from '@/lib/auth/session';
 import { createClient } from '@/lib/supabase/server';
+import { normalizeCountryCode, normalizeRegion } from '@/features/deals/availability';
 
 import type { WebsiteControlState } from '@/features/admin/types';
 
@@ -37,6 +38,12 @@ export async function updateDealAction(formData: FormData) {
 
   const dealId = String(formData.get('dealId') ?? '');
 
+  const availabilityScopeInput = String(formData.get('availabilityScope') ?? 'worldwide');
+  const availabilityScope = ['worldwide', 'region', 'country'].includes(availabilityScopeInput) ? availabilityScopeInput : 'worldwide';
+  const availabilityRegion = availabilityScope === 'region' ? normalizeRegion(String(formData.get('availabilityRegion') ?? '')) : null;
+  const availabilityCountryCode =
+    availabilityScope === 'country' ? normalizeCountryCode(String(formData.get('availabilityCountryCode') ?? '')) : null;
+
   const { error } = await supabase
     .from('deals')
     .update({
@@ -52,6 +59,9 @@ export async function updateDealAction(formData: FormData) {
       moderation_note: String(formData.get('moderationNote') ?? '') || null,
       moderation_status: String(formData.get('moderationStatus') ?? 'pending'),
       is_featured: String(formData.get('isFeatured') ?? '') === 'on',
+      availability_scope: availabilityScope,
+      availability_region: availabilityRegion,
+      availability_country_code: availabilityCountryCode,
       moderated_by: user.id,
       moderated_at: new Date().toISOString(),
     })

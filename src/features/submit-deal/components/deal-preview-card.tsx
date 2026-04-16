@@ -1,5 +1,6 @@
 import { TicketPercent, Tag } from 'lucide-react';
 
+import { getAvailabilityLabel } from '@/features/deals/availability';
 import { getDealTypeConfig } from '@/features/submit-deal/deal-type-config';
 import { toPlainText } from '@/lib/text-formatting';
 import { cn } from '@/lib/utils';
@@ -18,6 +19,9 @@ type DealPreviewCardProps = {
   couponCode: string;
   bundleText: string;
   imageUrl: string;
+  availabilityScope: 'worldwide' | 'region' | 'country';
+  availabilityRegion: string;
+  availabilityCountryCode: string;
 };
 
 function getPrimaryDisplay({
@@ -57,6 +61,11 @@ export function DealPreviewCard(props: DealPreviewCardProps) {
   const resolvedDescription = toPlainText(props.description) || 'Describe what makes this deal worth sharing.';
   const config = getDealTypeConfig(props.dealTypeCode);
   const primaryDisplay = getPrimaryDisplay(props);
+  const availabilityLabel = getAvailabilityLabel({
+    availabilityScope: props.availabilityScope,
+    availabilityRegion: props.availabilityRegion,
+    availabilityCountryCode: props.availabilityCountryCode,
+  });
 
   return (
     <article className="flex items-center gap-4 overflow-hidden rounded-xl border border-border/70 bg-card/80 p-3">
@@ -79,6 +88,8 @@ export function DealPreviewCard(props: DealPreviewCardProps) {
           <span>{props.categoryLabel || 'Category'}</span>
           <span>•</span>
           <span>{props.dealTypeLabel || 'Type'}</span>
+          <span>•</span>
+          <span>{availabilityLabel}</span>
           {config.cardDisplay.badge ? <span className="rounded bg-primary/10 px-1.5 py-0.5 text-primary">{config.cardDisplay.badge}</span> : null}
           {props.couponCode ? (
             <span className="inline-flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-primary">

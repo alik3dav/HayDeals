@@ -10,6 +10,9 @@ export type DealDetail = {
   coupon_code: string | null;
   merchant_name: string | null;
   currency_code: string;
+  availability_scope: 'worldwide' | 'region' | 'country';
+  availability_region: string | null;
+  availability_country_code: string | null;
   sale_price: number | null;
   original_price: number | null;
   discount_percent: number | null;

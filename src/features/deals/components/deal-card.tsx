@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { MessageSquare, Store } from 'lucide-react';
 
 import type { PublicDeal } from '@/features/deals/types';
+import { getAvailabilityLabel } from '@/features/deals/availability';
 import { UserAvatar } from '@/features/profile/components/user-avatar';
 import { PublicProfileLink } from '@/features/profile/components/public-profile-link';
 import { buildProfileDisplayName } from '@/features/profile/identity';
@@ -24,6 +25,11 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
   const expiryLabel = formatExpiryLabel(deal.expires_at);
   const expiryBadgeClassName = getExpiryBadgeClassName(deal.expires_at);
   const authorName = buildProfileDisplayName(deal.profiles ?? {});
+  const availabilityLabel = getAvailabilityLabel({
+    availabilityScope: deal.availability_scope,
+    availabilityRegion: deal.availability_region,
+    availabilityCountryCode: deal.availability_country_code,
+  });
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40 md:grid md:min-h-60 md:grid-cols-[15rem_minmax(0,1fr)]">
@@ -49,6 +55,8 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
               </span>
               <span>•</span>
               <span>{deal.categories?.name ?? 'General'}</span>
+              <span>•</span>
+              <span>{availabilityLabel}</span>
               {expiryLabel && expiryBadgeClassName ? (
                 <>
                   <span>•</span>

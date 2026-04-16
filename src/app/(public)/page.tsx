@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { PageContainer } from '@/components/layout/page-container';
 import { DealFeedList } from '@/features/deals/components/deal-feed-list';
+import { FeedFilters } from '@/features/deals/components/feed-filters';
 import { FeedSidebar } from '@/features/deals/components/feed-sidebar';
 import { FeedSortSubheader } from '@/features/deals/components/feed-sort-subheader';
 import { feedSidebarAd } from '@/features/deals/components/sidebar-ad-data';
@@ -15,6 +16,8 @@ const EMPTY_FACETS: FeedFacetCollections = {
   categories: [],
   stores: [],
   dealTypes: [],
+  availabilityRegions: [],
+  availabilityCountries: [],
 };
 
 const EMPTY_COMMUNITY_STATS: SidebarCommunityStats = {
@@ -35,6 +38,7 @@ export async function generateMetadata({
   if (filters.query) titleParts.unshift(`Search: ${filters.query}`);
   if (filters.category) titleParts.unshift(`Category: ${filters.category}`);
   if (filters.store) titleParts.unshift(`Store: ${filters.store}`);
+  if (filters.availabilityScope) titleParts.unshift(`Availability: ${filters.availabilityScope}`);
   if (sort !== 'newest') titleParts.push(`Sort: ${sort}`);
 
   const canonicalQuery = new URLSearchParams();
@@ -42,6 +46,9 @@ export async function generateMetadata({
   if (filters.category) canonicalQuery.set('category', filters.category);
   if (filters.store) canonicalQuery.set('store', filters.store);
   if (filters.dealType) canonicalQuery.set('dealType', filters.dealType);
+  if (filters.availabilityScope) canonicalQuery.set('availabilityScope', filters.availabilityScope);
+  if (filters.availabilityRegion) canonicalQuery.set('availabilityRegion', filters.availabilityRegion);
+  if (filters.availabilityCountry) canonicalQuery.set('availabilityCountry', filters.availabilityCountry);
   if (sort !== 'newest') canonicalQuery.set('sort', sort);
 
   return buildPageMetadata({
@@ -135,6 +142,8 @@ export default async function PublicHomePage({
       <FeedSortSubheader filters={filters} sort={sort} />
 
       <PageContainer className="space-y-4">
+        <FeedFilters facets={facets} filters={filters} sort={sort} />
+
         {loadError ? (
           <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
             We&apos;re having trouble loading deals right now. Please try again in a moment.

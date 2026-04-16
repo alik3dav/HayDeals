@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { AVAILABILITY_SCOPES, normalizeCountryCode, normalizeRegion } from '@/features/deals/availability';
 import { getAllowedFields, getDealTypeConfig, isDealTypeCode } from '@/features/submit-deal/deal-type-config';
 
 const NUMERIC_FIELDS = ['originalPrice', 'salePrice', 'discountPercent'] as const;
@@ -20,6 +21,9 @@ export const submitDealBaseSchema = z.object({
   dealTypeCode: z.string().trim().min(1, 'Deal type metadata is required.'),
   expiresAt: z.string().trim().optional().or(z.literal('')),
   imageUrl: z.string().trim().url('Image URL must be a valid URL.').optional().or(z.literal('')),
+  availabilityScope: z.enum(AVAILABILITY_SCOPES, { message: 'Select an availability scope.' }),
+  availabilityRegion: z.string().trim().optional().or(z.literal('')),
+  availabilityCountryCode: z.string().trim().optional().or(z.literal('')),
   intent: z.enum(['draft', 'submit']),
 });
 
@@ -51,6 +55,25 @@ export const submitDealSchema = submitDealBaseSchema.superRefine((value, ctx) =>
 
   if (value.imageUrl && !/^https?:\/\//i.test(value.imageUrl)) {
     ctx.addIssue({ code: 'custom', path: ['imageUrl'], message: 'Image URL must start with http:// or https://.' });
+  }
+
+  const normalizedRegion = normalizeRegion(value.availabilityRegion);
+  const normalizedCountryCode = normalizeCountryCode(value.availabilityCountryCode);
+
+  if (value.availabilityScope === 'region' && !normalizedRegion) {
+    ctx.addIssue({ code: 'custom', path: ['availabilityRegion'], message: 'Select a valid region.' });
+  }
+
+  if (value.availabilityScope === 'country' && !normalizedCountryCode) {
+    ctx.addIssue({ code: 'custom', path: ['availabilityCountryCode'], message: 'Select a valid country.' });
+  }
+
+  if (value.availabilityScope !== 'region' && value.availabilityRegion) {
+    ctx.addIssue({ code: 'custom', path: ['availabilityRegion'], message: 'Region only applies when scope is set to region.' });
+  }
+
+  if (value.availabilityScope !== 'country' && value.availabilityCountryCode) {
+    ctx.addIssue({ code: 'custom', path: ['availabilityCountryCode'], message: 'Country only applies when scope is set to country.' });
   }
 
   for (const key of NUMERIC_FIELDS) {

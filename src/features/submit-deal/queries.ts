@@ -1,5 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
 import { DEAL_TYPE_CONFIG, isDealTypeCode } from '@/features/submit-deal/deal-type-config';
+import {
+  AVAILABILITY_SCOPE_LABELS,
+  AVAILABILITY_SCOPES,
+  COUNTRY_SELECT_OPTIONS,
+  REGION_OPTIONS,
+} from '@/features/deals/availability';
 
 import type { SubmitDealMeta } from '@/features/submit-deal/types';
 
@@ -35,5 +41,8 @@ export async function getSubmitDealMeta(): Promise<SubmitDealMeta> {
       value: dealType.id,
       code: dealType.code,
     })),
+    availabilityScopes: AVAILABILITY_SCOPES.map((scope) => ({ value: scope, label: AVAILABILITY_SCOPE_LABELS[scope] })),
+    availabilityRegions: REGION_OPTIONS.map((region) => ({ id: region.value, value: region.value, label: region.label })),
+    availabilityCountries: COUNTRY_SELECT_OPTIONS.map((country) => ({ id: country.value, value: country.value, label: country.label })),
   };
 }

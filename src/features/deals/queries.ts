@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { COUNTRY_SELECT_OPTIONS, REGION_OPTIONS } from '@/features/deals/availability';
 
 import {
   DEAL_FEED_PAGE_SIZE,
@@ -32,6 +33,9 @@ const DEAL_FEED_SELECT = `
   coupon_code,
   bundle_text,
   currency_code,
+  availability_scope,
+  availability_region,
+  availability_country_code,
   stores:stores!deals_store_id_fkey(name, slug),
   categories:categories!deals_category_id_fkey(name, slug),
   deal_types:deal_types!deals_deal_type_id_fkey(name, code),
@@ -214,6 +218,11 @@ export function parseFeedQueryParams(params: Record<string, string | string[] | 
       category: getParam('category'),
       store: getParam('store'),
       dealType: getParam('dealType'),
+      availabilityScope: ['worldwide', 'region', 'country'].includes(getParam('availabilityScope') ?? '')
+        ? (getParam('availabilityScope') as DealFeedFilters['availabilityScope'])
+        : undefined,
+      availabilityRegion: getParam('availabilityRegion'),
+      availabilityCountry: getParam('availabilityCountry'),
     } satisfies DealFeedFilters,
   };
 }
@@ -221,21 +230,33 @@ export function parseFeedQueryParams(params: Record<string, string | string[] | 
 export async function getFeedFacets(): Promise<FeedFacetCollections> {
   const supabase = await createClient();
 
-  const [{ data: categories, error: categoriesError }, { data: stores, error: storesError }, { data: dealTypes, error: dealTypesError }] =
+  const [{ data: categories, error: categoriesError }, { data: stores, error: storesError }, { data: dealTypes, error: dealTypesError }, { data: availabilityRows, error: availabilityError }] =
     await Promise.all([
       supabase.from('categories').select('slug, name').eq('is_active', true).order('name', { ascending: true }),
       supabase.from('stores').select('slug, name').eq('is_active', true).order('name', { ascending: true }),
       supabase.from('deal_types').select('code, name').eq('is_active', true).order('name', { ascending: true }),
+      supabase.from('deals').select('availability_scope, availability_region, availability_country_code').eq('moderation_status', 'approved').limit(2000),
     ]);
 
   if (categoriesError) throw categoriesError;
   if (storesError) throw storesError;
   if (dealTypesError) throw dealTypesError;
+  if (availabilityError) throw availabilityError;
+
+  const availableRegions = new Set((availabilityRows ?? []).filter((row) => row.availability_scope === 'region').map((row) => row.availability_region).filter(Boolean));
+  const availableCountries = new Set(
+    (availabilityRows ?? []).filter((row) => row.availability_scope === 'country').map((row) => row.availability_country_code).filter(Boolean),
+  );
 
   return {
     categories: (categories ?? []).map((entry) => ({ value: entry.slug, label: entry.name })),
     stores: (stores ?? []).map((entry) => ({ value: entry.slug, label: entry.name })),
     dealTypes: (dealTypes ?? []).map((entry) => ({ value: entry.code, label: entry.name })),
+    availabilityRegions: REGION_OPTIONS.filter((region) => availableRegions.has(region.value)).map((region) => ({ value: region.value, label: region.label })),
+    availabilityCountries: COUNTRY_SELECT_OPTIONS.filter((country) => availableCountries.has(country.value)).map((country) => ({
+      value: country.value,
+      label: country.label,
+    })),
   };
 }
 
@@ -265,6 +286,17 @@ export async function getPublicDealsFeed({
 
   if (filters.dealType) {
     query = query.eq('deal_types.code', filters.dealType);
+  }
+  if (filters.availabilityScope) {
+    query = query.eq('availability_scope', filters.availabilityScope);
+
+    if (filters.availabilityScope === 'region' && filters.availabilityRegion) {
+      query = query.eq('availability_region', filters.availabilityRegion);
+    }
+
+    if (filters.availabilityScope === 'country' && filters.availabilityCountry) {
+      query = query.eq('availability_country_code', filters.availabilityCountry.toUpperCase());
+    }
   }
 
   if (filters.query) {

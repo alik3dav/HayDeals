@@ -1,5 +1,6 @@
 import { updateDealAction } from '@/features/admin/mutations';
 import type { AdminDealEdit } from '@/features/admin/types';
+import { COUNTRY_SELECT_OPTIONS, REGION_OPTIONS } from '@/features/deals/availability';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -38,6 +39,29 @@ export function DealEditForm({ deal }: { deal: AdminDealEdit }) {
               {deal.storeOptions.map((store) => (
                 <option key={store.id} value={store.id}>
                   {store.name}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div className="grid gap-2 md:grid-cols-3">
+            <Select defaultValue={deal.availability_scope} name="availabilityScope">
+              <option value="worldwide">Worldwide</option>
+              <option value="region">Region</option>
+              <option value="country">Country</option>
+            </Select>
+            <Select defaultValue={deal.availability_region ?? ''} name="availabilityRegion">
+              <option value="">No region</option>
+              {REGION_OPTIONS.map((region) => (
+                <option key={region.value} value={region.value}>
+                  {region.label}
+                </option>
+              ))}
+            </Select>
+            <Select defaultValue={deal.availability_country_code ?? ''} name="availabilityCountryCode">
+              <option value="">No country</option>
+              {COUNTRY_SELECT_OPTIONS.map((country) => (
+                <option key={country.value} value={country.value}>
+                  {country.label}
                 </option>
               ))}
             </Select>

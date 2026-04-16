@@ -51,6 +51,9 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
     dealTypeCode: '',
     expiresAt: '',
     imageUrl: '',
+    availabilityScope: 'worldwide' as 'worldwide' | 'region' | 'country',
+    availabilityRegion: '',
+    availabilityCountryCode: '',
   });
 
   const selectedStore = meta.stores.find((store) => store.value === values.storeId);
@@ -180,6 +183,72 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
             </div>
           </SectionCard>
 
+          <SectionCard description="Define where users can actually redeem or use this deal." title="Availability">
+            <div className="grid gap-4 md:grid-cols-2">
+              <FormField error={state.errors?.availabilityScope?.[0]} htmlFor="availabilityScope" label="Availability type">
+                <select
+                  className={inputStyles}
+                  id="availabilityScope"
+                  name="availabilityScope"
+                  onChange={(event) => {
+                    const scope = event.target.value as 'worldwide' | 'region' | 'country';
+                    setValues((previous) => ({
+                      ...previous,
+                      availabilityScope: scope,
+                      availabilityRegion: scope === 'region' ? previous.availabilityRegion : '',
+                      availabilityCountryCode: scope === 'country' ? previous.availabilityCountryCode : '',
+                    }));
+                  }}
+                  value={values.availabilityScope}
+                >
+                  {meta.availabilityScopes.map((scope) => (
+                    <option key={scope.value} value={scope.value}>
+                      {scope.label}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+
+              {values.availabilityScope === 'region' ? (
+                <FormField error={state.errors?.availabilityRegion?.[0]} htmlFor="availabilityRegion" label="Region">
+                  <select
+                    className={inputStyles}
+                    id="availabilityRegion"
+                    name="availabilityRegion"
+                    onChange={(event) => setField('availabilityRegion', event.target.value)}
+                    value={values.availabilityRegion}
+                  >
+                    <option value="">Select region</option>
+                    {meta.availabilityRegions.map((region) => (
+                      <option key={region.value} value={region.value}>
+                        {region.label}
+                      </option>
+                    ))}
+                  </select>
+                </FormField>
+              ) : null}
+
+              {values.availabilityScope === 'country' ? (
+                <FormField error={state.errors?.availabilityCountryCode?.[0]} htmlFor="availabilityCountryCode" label="Country">
+                  <select
+                    className={inputStyles}
+                    id="availabilityCountryCode"
+                    name="availabilityCountryCode"
+                    onChange={(event) => setField('availabilityCountryCode', event.target.value)}
+                    value={values.availabilityCountryCode}
+                  >
+                    <option value="">Select country</option>
+                    {meta.availabilityCountries.map((country) => (
+                      <option key={country.value} value={country.value}>
+                        {country.label}
+                      </option>
+                    ))}
+                  </select>
+                </FormField>
+              ) : null}
+            </div>
+          </SectionCard>
+
           <SectionCard description="Explain why this is worth posting. Mention shipping, limits, or timing if needed." title="Description">
             <FormField error={state.errors?.description?.[0]} htmlFor="description" label="Post details">
               <RichTextArea
@@ -216,6 +285,9 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
               salePrice={toPriceDisplay(values.salePrice)}
               storeLabel={selectedStore?.label ?? ''}
               title={values.title}
+              availabilityScope={values.availabilityScope}
+              availabilityRegion={values.availabilityRegion}
+              availabilityCountryCode={values.availabilityCountryCode}
             />
           </SectionCard>
         </aside>
