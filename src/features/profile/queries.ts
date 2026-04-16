@@ -15,7 +15,7 @@ export async function getProfileSettings(profileId: string): Promise<ProfileSett
     supabase.auth.getUser(),
     supabase
       .from('profiles')
-      .select('id, username, display_name, first_name, last_name, avatar_url')
+      .select('id, username, display_name, first_name, last_name, avatar_url, points_total')
       .eq('id', profileId)
       .maybeSingle(),
   ]);

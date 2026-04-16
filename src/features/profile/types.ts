@@ -6,6 +6,7 @@ export type ProfileSettings = {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
+  points_total: number;
 };
 
 export type UserIdentity = {

@@ -26,7 +26,7 @@ export const getPublicProfileByUsername = cache(async (username: string): Promis
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('id, username, display_name, first_name, last_name, avatar_url, created_at')
+    .select('id, username, display_name, first_name, last_name, avatar_url, created_at, points_total')
     .ilike('username', normalizedUsername)
     .maybeSingle();
 
