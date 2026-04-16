@@ -74,7 +74,7 @@ export default async function PublicHomePage({
     getSidebarCommunityStats(),
     supabase
       .from('website_control_settings')
-      .select('sidebar_ad_background_image_url, sidebar_ad_title, sidebar_ad_description, sidebar_ad_button_text, sidebar_ad_image_only')
+      .select('sidebar_ad_background_image_url, sidebar_ad_title, sidebar_ad_description, sidebar_ad_button_text, sidebar_ad_href, sidebar_ad_image_only')
       .eq('id', 1)
       .maybeSingle(),
   ]);
@@ -106,6 +106,7 @@ export default async function PublicHomePage({
         title: settings.sidebar_ad_title ?? feedSidebarAd.title,
         description: settings.sidebar_ad_description ?? feedSidebarAd.description,
         ctaLabel: settings.sidebar_ad_button_text ?? feedSidebarAd.ctaLabel,
+        href: settings.sidebar_ad_href ?? feedSidebarAd.href,
         backgroundImageUrl: settings.sidebar_ad_background_image_url ?? undefined,
         imageOnly: settings.sidebar_ad_image_only ?? false,
       };
