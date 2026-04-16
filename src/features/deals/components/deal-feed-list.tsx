@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 
 import { loadMoreDealsFromFeedAction, toggleSaveFromFeedAction, voteOnDealFromFeedAction } from '@/features/deals/actions';
 import { DealCard } from '@/features/deals/components/deal-card';
@@ -21,6 +21,13 @@ export function DealFeedList({ deals, hasMore, nextCursor, sort, filters }: Deal
   const [canLoadMore, setCanLoadMore] = useState(hasMore);
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
   const [isLoadingMore, startLoadingMore] = useTransition();
+
+  useEffect(() => {
+    setItems(deals);
+    setFeedCursor(nextCursor);
+    setCanLoadMore(hasMore);
+    setLoadMoreError(null);
+  }, [deals, hasMore, nextCursor, sort, filters]);
 
   const handleLoadMore = () => {
     if (!feedCursor || isLoadingMore) {
