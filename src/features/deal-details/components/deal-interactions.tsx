@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { Flag, Bookmark } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { VoteControls } from '@/features/deal-details/components/vote-controls';
+import { applyOptimisticSave, applyOptimisticVote, type VoteState } from '@/features/deal-details/components/interaction-state';
 
 type DealInteractionsProps = {
   dealId: string;
@@ -36,82 +36,94 @@ export function DealInteractions({
   saveAction,
   reportAction,
 }: DealInteractionsProps) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [vote, setVote] = useState<-1 | 0 | 1>(initialVote);
-  const [score, setScore] = useState(initialScore);
-  const [upvotes, setUpvotes] = useState(initialUpvotes);
-  const [downvotes, setDownvotes] = useState(initialDownvotes);
+  const [voteState, setVoteState] = useState<VoteState>({
+    vote: initialVote,
+    score: initialScore,
+    upvotes: initialUpvotes,
+    downvotes: initialDownvotes,
+  });
   const [isSaved, setIsSaved] = useState(initiallySaved);
   const [bookmarks, setBookmarks] = useState(initialBookmarks);
   const [reports, setReports] = useState(initialReports);
+  const [isVotePending, setIsVotePending] = useState(false);
+  const [isSavePending, setIsSavePending] = useState(false);
+  const voteRequestIdRef = useRef(0);
+  const saveRequestIdRef = useRef(0);
+
+  useEffect(() => {
+    setVoteState({
+      vote: initialVote,
+      score: initialScore,
+      upvotes: initialUpvotes,
+      downvotes: initialDownvotes,
+    });
+    setIsSaved(initiallySaved);
+    setBookmarks(initialBookmarks);
+    setReports(initialReports);
+    voteRequestIdRef.current = 0;
+    saveRequestIdRef.current = 0;
+    setIsVotePending(false);
+    setIsSavePending(false);
+  }, [dealId, initialVote, initialScore, initialUpvotes, initialDownvotes, initiallySaved, initialBookmarks, initialReports]);
 
   const handleVote = async (nextVote: 1 | -1) => {
-    const prevVote = vote;
+    if (isVotePending) return;
 
-    let scoreDelta = 0;
-    let upvoteDelta = 0;
-    let downvoteDelta = 0;
+    const previousState = voteState;
+    const optimisticState = applyOptimisticVote(voteState, nextVote);
+    const requestId = voteRequestIdRef.current + 1;
+    voteRequestIdRef.current = requestId;
 
-    if (prevVote === nextVote) {
-      scoreDelta = -nextVote;
-      if (nextVote === 1) upvoteDelta = -1;
-      if (nextVote === -1) downvoteDelta = -1;
-      setVote(0);
-    } else if (prevVote === 0) {
-      scoreDelta = nextVote;
-      if (nextVote === 1) upvoteDelta = 1;
-      if (nextVote === -1) downvoteDelta = 1;
-      setVote(nextVote);
-    } else {
-      scoreDelta = nextVote * 2;
-      if (nextVote === 1) {
-        upvoteDelta = 1;
-        downvoteDelta = -1;
-      } else {
-        upvoteDelta = -1;
-        downvoteDelta = 1;
-      }
-      setVote(nextVote);
-    }
-
-    setScore((value) => value + scoreDelta);
-    setUpvotes((value) => Math.max(0, value + upvoteDelta));
-    setDownvotes((value) => Math.max(0, value + downvoteDelta));
+    setVoteState(optimisticState);
+    setIsVotePending(true);
 
     try {
       await voteAction(dealId, dealSlug, nextVote);
-      router.refresh();
     } catch {
-      setVote(prevVote);
-      setScore((value) => value - scoreDelta);
-      setUpvotes((value) => Math.max(0, value - upvoteDelta));
-      setDownvotes((value) => Math.max(0, value - downvoteDelta));
+      if (voteRequestIdRef.current === requestId) {
+        setVoteState(previousState);
+      }
+    } finally {
+      if (voteRequestIdRef.current === requestId) {
+        setIsVotePending(false);
+      }
     }
   };
 
   return (
     <section className="space-y-2 rounded-lg border border-border/60 bg-card/70 p-3">
-      <VoteControls currentVote={vote} downvotes={downvotes} onVote={handleVote} score={score} upvotes={upvotes} />
+      <VoteControls currentVote={voteState.vote} downvotes={voteState.downvotes} onVote={handleVote} score={voteState.score} upvotes={voteState.upvotes} />
 
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <Button
-          disabled={isPending}
-          onClick={() =>
-            startTransition(async () => {
-              const nextSaved = !isSaved;
-              setIsSaved(nextSaved);
-              setBookmarks((value) => Math.max(0, value + (nextSaved ? 1 : -1)));
+          disabled={isSavePending}
+          onClick={async () => {
+            if (isSavePending) return;
 
-              try {
-                await saveAction(dealId, dealSlug);
-                router.refresh();
-              } catch {
-                setIsSaved(!nextSaved);
-                setBookmarks((value) => Math.max(0, value + (nextSaved ? -1 : 1)));
+            const previousSaved = isSaved;
+            const previousBookmarks = bookmarks;
+            const optimisticSave = applyOptimisticSave(isSaved, bookmarks);
+            const requestId = saveRequestIdRef.current + 1;
+            saveRequestIdRef.current = requestId;
+
+            setIsSaved(optimisticSave.isSaved);
+            setBookmarks(optimisticSave.bookmarks);
+            setIsSavePending(true);
+
+            try {
+              await saveAction(dealId, dealSlug);
+            } catch {
+              if (saveRequestIdRef.current === requestId) {
+                setIsSaved(previousSaved);
+                setBookmarks(previousBookmarks);
               }
-            })
-          }
+            } finally {
+              if (saveRequestIdRef.current === requestId) {
+                setIsSavePending(false);
+              }
+            }
+          }}
           size="sm"
           variant={isSaved ? 'default' : 'secondary'}
         >
@@ -125,7 +137,6 @@ export function DealInteractions({
             setReports((value) => value + 1);
             try {
               await reportAction(dealId, dealSlug, formData);
-              router.refresh();
             } catch {
               setReports((value) => Math.max(0, value - 1));
             }
