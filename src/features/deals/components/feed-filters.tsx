@@ -106,7 +106,7 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
             <button
               aria-haspopup="menu"
               aria-expanded={openMenu === menu.name}
-              className="rounded-sm border border-border/70 bg-secondary px-3 py-2 text-xs text-foreground transition hover:bg-secondary/90"
+              className="rounded-full border border-border/70 bg-secondary px-4 py-2.5 text-xs text-foreground transition hover:bg-secondary/90"
               onClick={() => {
                 setOpenMenu((current) => (current === menu.name ? null : menu.name));
               }}
