@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { buildFeedUrl, sortOptions } from '@/features/deals/components/feed-filters';
+import { buildFeedUrl, sortOptions } from '@/features/deals/components/feed-filter-utils';
 import type { DealFeedFilters, DealSortOption } from '@/features/deals/types';
 import { cn } from '@/lib/utils';
 
