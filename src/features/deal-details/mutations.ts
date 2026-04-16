@@ -96,6 +96,10 @@ export async function addDealComment(dealId: string, body: string): Promise<Muta
     return { ok: false, error: 'Comment cannot be empty.' };
   }
 
+  if (normalizedBody.length > 2000) {
+    return { ok: false, error: 'Comment cannot exceed 2000 characters.' };
+  }
+
   const { error: commentError } = await supabase.from('deal_comments').insert({ deal_id: dealId, profile_id: profileId, body: normalizedBody });
   if (commentError) return { ok: false, error: commentError.message };
 

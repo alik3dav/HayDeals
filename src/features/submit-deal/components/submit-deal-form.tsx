@@ -3,6 +3,7 @@
 import { useActionState, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { RichTextArea } from '@/components/ui/rich-textarea';
 import { createDealAction } from '@/features/submit-deal/mutations';
 import { DEAL_FIELD_META, getAllowedFields, getDealTypeConfig } from '@/features/submit-deal/deal-type-config';
 import { DealImageUpload } from '@/features/submit-deal/components/deal-image-upload';
@@ -181,13 +182,13 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
 
           <SectionCard description="Explain why this is worth posting. Mention shipping, limits, or timing if needed." title="Description">
             <FormField error={state.errors?.description?.[0]} htmlFor="description" label="Post details">
-              <textarea
+              <RichTextArea
                 className={inputStyles}
                 id="description"
                 name="description"
                 onChange={(event) => setField('description', event.target.value)}
                 placeholder="Share key details that help others decide quickly."
-                rows={5}
+                rows={7}
                 value={values.description}
               />
             </FormField>

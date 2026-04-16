@@ -1,3 +1,4 @@
+import { FormattedText } from '@/components/ui/formatted-text';
 import type { DealComment } from '@/features/deal-details/types';
 import { compactId, formatRelativeTime } from '@/features/deal-details/components/deal-utils';
 import { PublicProfileLink } from '@/features/profile/components/public-profile-link';
@@ -29,7 +30,7 @@ export function CommentsSection({ comments }: { comments: DealComment[] }) {
                 <span>•</span>
                 <span>{formatRelativeTime(comment.created_at)}</span>
               </div>
-              <p className="text-sm text-foreground">{comment.is_deleted ? '[deleted]' : comment.body}</p>
+              {comment.is_deleted ? <p className="text-sm text-foreground">[deleted]</p> : <FormattedText compact className="max-w-none" content={comment.body} />}
             </li>
           );
         })}

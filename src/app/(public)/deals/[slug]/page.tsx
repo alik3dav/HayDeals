@@ -12,6 +12,7 @@ import { PricingSummary } from '@/features/deal-details/components/pricing-summa
 import { RelatedDeals } from '@/features/deal-details/components/related-deals';
 import { getDealComments, getDealDetailBySlug, getRelatedDeals, getViewerDealState } from '@/features/deal-details/queries';
 import { absoluteUrl, buildPageDescription, buildPageMetadata, getOptionalDealLocationLabel } from '@/lib/seo';
+import { toPlainText } from '@/lib/text-formatting';
 
 import { addCommentAction, reportDealAction, toggleSaveAction, voteOnDealAction } from './actions';
 
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   return buildPageMetadata({
     title: deal.title,
-    description: buildPageDescription(deal.description, `View details for ${deal.title}.`),
+    description: buildPageDescription(deal.description ? toPlainText(deal.description) : null, `View details for ${deal.title}.`),
     pathname: `/deals/${deal.slug}`,
   });
 }
@@ -60,7 +61,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ slu
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: deal.title,
-    description: deal.description || undefined,
+    description: deal.description ? toPlainText(deal.description) : undefined,
     category: deal.categories?.name || undefined,
     image: deal.image_url ? [deal.image_url] : undefined,
     url: absoluteUrl(`/deals/${deal.slug}`),

@@ -3,6 +3,7 @@ import { ExternalLink } from 'lucide-react';
 
 import type { DealDetail } from '@/features/deal-details/types';
 import { formatRelativeTime } from '@/features/deal-details/components/deal-utils';
+import { FormattedText } from '@/components/ui/formatted-text';
 import { PublicProfileLink } from '@/features/profile/components/public-profile-link';
 import { buildProfileDisplayName } from '@/features/profile/identity';
 
@@ -31,7 +32,7 @@ export function DealHeader({ deal }: { deal: DealDetail }) {
           <span>{formatRelativeTime(deal.created_at)}</span>
         </div>
 
-        {deal.description ? <p className="text-sm leading-relaxed text-muted-foreground">{deal.description}</p> : null}
+        {deal.description ? <FormattedText className="max-w-none" content={deal.description} /> : null}
 
         <Link className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline" href={deal.deal_url} rel="noreferrer" target="_blank">
           Visit deal <ExternalLink className="h-3.5 w-3.5" />
