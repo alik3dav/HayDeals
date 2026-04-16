@@ -6,7 +6,8 @@ import { UserAvatar } from '@/features/profile/components/user-avatar';
 import type { FeedFacetCollections, PublicDeal, SidebarCommunityStats } from '@/features/deals/types';
 
 type FeedSidebarProps = {
-  deals: PublicDeal[];
+  trendingDeals: PublicDeal[];
+  recentActivityDeals: PublicDeal[];
   facets: FeedFacetCollections;
   communityStats: SidebarCommunityStats;
 };
@@ -33,10 +34,9 @@ function buildCategoryHref(category: string) {
   return `/?${params.toString()}`;
 }
 
-export function FeedSidebar({ deals, facets, communityStats }: FeedSidebarProps) {
-  const trendingDeals = deals.slice(0, 5);
+export function FeedSidebar({ trendingDeals, recentActivityDeals, facets, communityStats }: FeedSidebarProps) {
   const topCategories = facets.categories.slice(0, 6);
-  const recentActivity = deals.slice(0, 4);
+  const recentActivity = recentActivityDeals.slice(0, 4);
   const overflowMembers = Math.max(communityStats.activeMembers - communityStats.recentMembers.length, 0);
   const formattedMemberCount = new Intl.NumberFormat('en-US').format(communityStats.activeMembers);
 
