@@ -4,6 +4,8 @@ import type { ReactNode } from 'react';
 
 import { UserAvatar } from '@/features/profile/components/user-avatar';
 import type { FeedFacetCollections, PublicDeal, SidebarCommunityStats } from '@/features/deals/types';
+import { SidebarAdModule } from '@/features/deals/components/sidebar-ad-module';
+import { feedSidebarAd } from '@/features/deals/components/sidebar-ad-data';
 
 type FeedSidebarProps = {
   trendingDeals: PublicDeal[];
@@ -68,6 +70,8 @@ export function FeedSidebar({ trendingDeals, facets, communityStats }: FeedSideb
           <p className="text-sm text-muted-foreground">No trending deals yet.</p>
         )}
       </SidebarSection>
+
+      <SidebarAdModule ad={feedSidebarAd} />
 
       <SidebarSection title="Top categories">
         {topCategories.length ? (
