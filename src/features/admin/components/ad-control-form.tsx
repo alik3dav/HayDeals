@@ -79,9 +79,9 @@ export function AdControlForm({ settings }: AdControlFormProps) {
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-2">
-        <label className="text-sm font-medium leading-none">Ad image (strict 4:5 ratio)</label>
+        <label className="text-sm font-medium leading-none">Ad image (strict 5:3 ratio)</label>
         <div className="rounded-lg border border-border/70 bg-card/70 p-3">
-          <div className="relative mx-auto w-full max-w-[220px] overflow-hidden rounded-md border border-border/70 bg-secondary/30 aspect-[4/5]">
+          <div className="relative mx-auto w-full max-w-[220px] overflow-hidden rounded-md border border-border/70 bg-secondary/30 aspect-[5/3]">
             {backgroundImageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img alt="Sidebar ad" className="h-full w-full object-cover" src={backgroundImageUrl} />

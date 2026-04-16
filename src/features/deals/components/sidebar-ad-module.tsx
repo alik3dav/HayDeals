@@ -24,7 +24,7 @@ export function SidebarAdModule({ ad }: SidebarAdModuleProps) {
     <section className="rounded-xl border border-border/70 bg-card/30 p-2">
       {ad.label ? <p className="mb-2 px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{ad.label}</p> : null}
       <Link aria-label={ad.title ? `Learn more about ${ad.title}` : 'Learn more'} className="group block" href={ad.href}>
-        <div className="relative aspect-[4/5] overflow-hidden rounded-lg border border-border/70 bg-secondary/50">
+        <div className="relative aspect-[5/3] overflow-hidden rounded-lg border border-border/70 bg-secondary/50">
           {ad.backgroundImageUrl ? (
             <Image alt={ad.imageAlt ?? ad.title ?? 'Sidebar advertisement'} className="object-cover transition-transform duration-300 group-hover:scale-[1.03]" fill sizes="320px" src={ad.backgroundImageUrl} />
           ) : (
