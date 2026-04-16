@@ -59,7 +59,7 @@ export function DealPreviewCard(props: DealPreviewCardProps) {
 
   return (
     <article className="flex items-center gap-4 overflow-hidden rounded-xl border border-border/70 bg-card/80 p-3">
-      <div className="h-22 w-22 shrink-0 overflow-hidden rounded-lg bg-secondary/60">
+      <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-secondary/60">
         {props.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img alt="Deal preview" className="h-full w-full object-cover" src={props.imageUrl} />
