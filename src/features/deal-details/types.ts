@@ -1,5 +1,6 @@
 export type DealDetail = {
   id: string;
+  slug: string;
   profile_id: string;
   title: string;
   description: string | null;
@@ -57,6 +58,7 @@ export type DealComment = {
 
 export type RelatedDeal = {
   id: string;
+  slug: string;
   title: string;
   score: number;
   comments_count: number;

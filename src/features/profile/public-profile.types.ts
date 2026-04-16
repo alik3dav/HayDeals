@@ -12,6 +12,7 @@ export type PublicProfile = {
 
 export type PublicProfileDeal = {
   id: string;
+  slug: string;
   title: string;
   created_at: string;
   score: number;
@@ -30,7 +31,7 @@ export type PublicProfileComment = {
   body: string;
   created_at: string;
   deal: {
-    id: string;
+    slug: string;
     title: string;
   };
 };

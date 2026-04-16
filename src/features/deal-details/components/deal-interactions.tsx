@@ -9,6 +9,7 @@ import { VoteControls } from '@/features/deal-details/components/vote-controls';
 
 type DealInteractionsProps = {
   dealId: string;
+  dealSlug: string;
   initialScore: number;
   initialUpvotes: number;
   initialDownvotes: number;
@@ -16,13 +17,14 @@ type DealInteractionsProps = {
   initialBookmarks: number;
   initialVote: -1 | 0 | 1;
   initiallySaved: boolean;
-  voteAction: (dealId: string, voteValue: 1 | -1) => Promise<void>;
-  saveAction: (dealId: string) => Promise<void>;
-  reportAction: (dealId: string, formData: FormData) => Promise<void>;
+  voteAction: (dealId: string, dealSlug: string, voteValue: 1 | -1) => Promise<void>;
+  saveAction: (dealId: string, dealSlug: string) => Promise<void>;
+  reportAction: (dealId: string, dealSlug: string, formData: FormData) => Promise<void>;
 };
 
 export function DealInteractions({
   dealId,
+  dealSlug,
   initialScore,
   initialUpvotes,
   initialDownvotes,
@@ -78,7 +80,7 @@ export function DealInteractions({
     setDownvotes((value) => Math.max(0, value + downvoteDelta));
 
     try {
-      await voteAction(dealId, nextVote);
+      await voteAction(dealId, dealSlug, nextVote);
       router.refresh();
     } catch {
       setVote(prevVote);
@@ -102,7 +104,7 @@ export function DealInteractions({
               setBookmarks((value) => Math.max(0, value + (nextSaved ? 1 : -1)));
 
               try {
-                await saveAction(dealId);
+                await saveAction(dealId, dealSlug);
                 router.refresh();
               } catch {
                 setIsSaved(!nextSaved);
@@ -122,7 +124,7 @@ export function DealInteractions({
           startTransition(async () => {
             setReports((value) => value + 1);
             try {
-              await reportAction(dealId, formData);
+              await reportAction(dealId, dealSlug, formData);
               router.refresh();
             } catch {
               setReports((value) => Math.max(0, value - 1));

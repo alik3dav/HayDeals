@@ -71,7 +71,7 @@ export default async function DashboardPage() {
                 {data.recentDeals.map((deal) => (
                   <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/70 bg-card/80 px-3 py-2" key={deal.id}>
                     <div className="min-w-0 flex-1">
-                      <Link className="block truncate text-sm font-medium hover:underline" href={`/deals/${deal.id}`}>
+                      <Link className="block truncate text-sm font-medium hover:underline" href={`/deals/${deal.slug}`}>
                         {deal.title}
                       </Link>
                       <p className="text-[11px] text-muted-foreground">{formatRelativeDate(deal.created_at)}</p>
@@ -103,7 +103,7 @@ export default async function DashboardPage() {
               <div className="space-y-2">
                 {data.recentSavedDeals.map((deal) => (
                   <div className="rounded-md border border-border/70 bg-card/80 px-3 py-2" key={`${deal.id}-${deal.bookmarked_at}`}>
-                    <Link className="block truncate text-sm font-medium hover:underline" href={`/deals/${deal.id}`}>
+                    <Link className="block truncate text-sm font-medium hover:underline" href={`/deals/${deal.slug}`}>
                       {deal.title}
                     </Link>
                     <p className="text-[11px] text-muted-foreground">Saved {formatRelativeDate(deal.bookmarked_at)}</p>
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
                   <div className="rounded-md border border-border/70 bg-card/80 px-3 py-2" key={comment.id}>
                     <p className="line-clamp-2 text-xs text-muted-foreground">{comment.body}</p>
                     {comment.deal ? (
-                      <Link className="mt-1 block truncate text-sm font-medium hover:underline" href={`/deals/${comment.deal.id}`}>
+                      <Link className="mt-1 block truncate text-sm font-medium hover:underline" href={`/deals/${comment.deal.slug}`}>
                         {comment.deal.title}
                       </Link>
                     ) : null}

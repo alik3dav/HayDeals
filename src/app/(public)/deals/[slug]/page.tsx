@@ -10,20 +10,20 @@ import { DealImageCard } from '@/features/deal-details/components/deal-image-car
 import { DealInteractions } from '@/features/deal-details/components/deal-interactions';
 import { PricingSummary } from '@/features/deal-details/components/pricing-summary';
 import { RelatedDeals } from '@/features/deal-details/components/related-deals';
-import { getDealComments, getDealDetailById, getRelatedDeals, getViewerDealState } from '@/features/deal-details/queries';
+import { getDealComments, getDealDetailBySlug, getRelatedDeals, getViewerDealState } from '@/features/deal-details/queries';
 import { absoluteUrl, buildPageDescription, buildPageMetadata, getOptionalDealLocationLabel } from '@/lib/seo';
 
 import { addCommentAction, reportDealAction, toggleSaveAction, voteOnDealAction } from './actions';
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const { id } = await params;
-  const deal = await getDealDetailById(id);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const deal = await getDealDetailBySlug(slug);
 
   if (!deal) {
     return buildPageMetadata({
       title: 'Deal not found',
       description: 'The requested deal could not be found.',
-      pathname: `/deals/${id}`,
+      pathname: `/deals/${slug}`,
       noIndex: true,
     });
   }
@@ -31,24 +31,24 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return buildPageMetadata({
     title: deal.title,
     description: buildPageDescription(deal.description, `View details for ${deal.title}.`),
-    pathname: `/deals/${deal.id}`,
+    pathname: `/deals/${deal.slug}`,
   });
 }
 
-export default async function DealDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function DealDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const user = await getCurrentUser();
 
-  const deal = await getDealDetailById(id);
+  const deal = await getDealDetailBySlug(slug);
 
   if (!deal) {
     notFound();
   }
 
   const [comments, relatedDeals, viewerState] = await Promise.all([
-    getDealComments(id),
+    getDealComments(deal.id),
     getRelatedDeals(deal),
-    getViewerDealState(id, user?.id ?? null),
+    getViewerDealState(deal.id, user?.id ?? null),
   ]);
   const dealLocation = getOptionalDealLocationLabel({
     city: (deal as { location_city?: string | null }).location_city,
@@ -63,7 +63,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
     description: deal.description || undefined,
     category: deal.categories?.name || undefined,
     image: deal.image_url ? [deal.image_url] : undefined,
-    url: absoluteUrl(`/deals/${deal.id}`),
+    url: absoluteUrl(`/deals/${deal.slug}`),
     brand: deal.stores?.name
       ? {
           '@type': 'Brand',
@@ -82,12 +82,11 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
   return (
     <PageContainer className="max-w-6xl space-y-4 py-4">
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} type="application/ld+json" />
-      
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
           <DealHeader deal={deal} />
-          <AddCommentForm canComment={Boolean(user)} dealId={deal.id} onAddComment={addCommentAction} />
+          <AddCommentForm canComment={Boolean(user)} dealId={deal.id} dealSlug={deal.slug} onAddComment={addCommentAction} />
           <CommentsSection comments={comments} />
           <RelatedDeals deals={relatedDeals} />
         </div>
@@ -99,6 +98,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
           </div>
           <DealInteractions
             dealId={deal.id}
+            dealSlug={deal.slug}
             initialBookmarks={deal.bookmarks_count}
             initialDownvotes={deal.downvotes_count}
             initialReports={deal.reports_count}

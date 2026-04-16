@@ -19,7 +19,7 @@ export default async function MyDealsPage() {
             <Card className="border-border/70 bg-card/60" key={deal.id}>
               <CardContent className="flex flex-wrap items-start justify-between gap-3 p-3">
                 <div className="min-w-0 flex-1">
-                  <Link className="block truncate text-sm font-semibold hover:underline" href={`/deals/${deal.id}`}>
+                  <Link className="block truncate text-sm font-semibold hover:underline" href={`/deals/${deal.slug}`}>
                     {deal.title}
                   </Link>
                   <p className="mt-1 text-xs text-muted-foreground">Posted {formatRelativeDate(deal.created_at)}</p>

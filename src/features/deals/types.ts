@@ -19,6 +19,7 @@ export type DealFeedCursor = {
 
 export type PublicDeal = {
   id: string;
+  slug: string;
   title: string;
   description: string | null;
   created_at: string;

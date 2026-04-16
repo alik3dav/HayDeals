@@ -12,7 +12,7 @@ export function RelatedDeals({ deals }: { deals: RelatedDeal[] }) {
       <ul className="space-y-2">
         {deals.map((deal) => (
           <li className="rounded-md border border-border/50 bg-background/50 p-2" key={deal.id}>
-            <Link className="text-sm text-foreground hover:text-primary" href={`/deals/${deal.id}`}>
+            <Link className="text-sm text-foreground hover:text-primary" href={`/deals/${deal.slug}`}>
               {deal.title}
             </Link>
             <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">

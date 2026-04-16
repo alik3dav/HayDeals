@@ -22,7 +22,7 @@ export default async function ActivityPage() {
                 <div className="inline-flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   <span>{formatRelativeDate(comment.created_at)}</span>
                   {comment.deal ? (
-                    <Link className="rounded-md border border-border/70 px-2 py-0.5 hover:bg-accent hover:text-accent-foreground" href={`/deals/${comment.deal.id}`}>
+                    <Link className="rounded-md border border-border/70 px-2 py-0.5 hover:bg-accent hover:text-accent-foreground" href={`/deals/${comment.deal.slug}`}>
                       {comment.deal.title}
                     </Link>
                   ) : null}

@@ -24,19 +24,19 @@ export async function getDashboardOverviewData(profileId: string): Promise<Dashb
     supabase.from('deal_comments').select('id', { count: 'exact', head: true }).eq('profile_id', profileId).eq('is_deleted', false),
     supabase
       .from('deals')
-      .select('id, title, created_at, moderation_status, score, comments_count')
+      .select('id, slug, title, created_at, moderation_status, score, comments_count')
       .eq('profile_id', profileId)
       .order('created_at', { ascending: false })
       .limit(RECENT_LIMIT),
     supabase
       .from('deal_bookmarks')
-      .select('created_at, deals:deals!deal_bookmarks_deal_id_fkey(id, title, created_at, score, comments_count)')
+      .select('created_at, deals:deals!deal_bookmarks_deal_id_fkey(id, slug, title, created_at, score, comments_count)')
       .eq('profile_id', profileId)
       .order('created_at', { ascending: false })
       .limit(RECENT_LIMIT),
     supabase
       .from('deal_comments')
-      .select('id, body, created_at, deals:deals!deal_comments_deal_id_fkey(id, title)')
+      .select('id, body, created_at, deals:deals!deal_comments_deal_id_fkey(id, slug, title)')
       .eq('profile_id', profileId)
       .eq('is_deleted', false)
       .order('created_at', { ascending: false })
@@ -62,6 +62,7 @@ export async function getDashboardOverviewData(profileId: string): Promise<Dashb
     return [
       {
         id: deal.id,
+        slug: deal.slug,
         title: deal.title,
         created_at: deal.created_at,
         score: deal.score,
@@ -78,7 +79,7 @@ export async function getDashboardOverviewData(profileId: string): Promise<Dashb
       id: comment.id,
       body: comment.body,
       created_at: comment.created_at,
-      deal: deal ? { id: deal.id, title: deal.title } : null,
+      deal: deal ? { id: deal.id, slug: deal.slug, title: deal.title } : null,
     };
   });
 
@@ -101,7 +102,7 @@ export async function getMyDeals(profileId: string): Promise<DashboardDealListIt
 
   const { data, error } = await supabase
     .from('deals')
-    .select('id, title, created_at, moderation_status, score, comments_count')
+    .select('id, slug, title, created_at, moderation_status, score, comments_count')
     .eq('profile_id', profileId)
     .order('created_at', { ascending: false })
     .limit(100);
@@ -118,7 +119,7 @@ export async function getSavedDeals(profileId: string): Promise<DashboardSavedDe
 
   const { data, error } = await supabase
     .from('deal_bookmarks')
-    .select('created_at, deals:deals!deal_bookmarks_deal_id_fkey(id, title, created_at, score, comments_count)')
+    .select('created_at, deals:deals!deal_bookmarks_deal_id_fkey(id, slug, title, created_at, score, comments_count)')
     .eq('profile_id', profileId)
     .order('created_at', { ascending: false })
     .limit(100);
@@ -137,6 +138,7 @@ export async function getSavedDeals(profileId: string): Promise<DashboardSavedDe
     return [
       {
         id: deal.id,
+        slug: deal.slug,
         title: deal.title,
         created_at: deal.created_at,
         score: deal.score,
@@ -152,7 +154,7 @@ export async function getActivity(profileId: string): Promise<DashboardCommentAc
 
   const { data, error } = await supabase
     .from('deal_comments')
-    .select('id, body, created_at, deals:deals!deal_comments_deal_id_fkey(id, title)')
+    .select('id, body, created_at, deals:deals!deal_comments_deal_id_fkey(id, slug, title)')
     .eq('profile_id', profileId)
     .eq('is_deleted', false)
     .order('created_at', { ascending: false })
@@ -169,7 +171,7 @@ export async function getActivity(profileId: string): Promise<DashboardCommentAc
       id: comment.id,
       body: comment.body,
       created_at: comment.created_at,
-      deal: deal ? { id: deal.id, title: deal.title } : null,
+      deal: deal ? { id: deal.id, slug: deal.slug, title: deal.title } : null,
     };
   });
 }

@@ -3,7 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { UserNotification } from '@/features/notifications/types';
 
 const NOTIFICATION_SELECT =
-  'id, type, message, is_read, created_at, deal_id, target_type, target_id, actor:profiles!notifications_actor_profile_id_fkey(username, display_name, avatar_url), deal:deals!notifications_deal_id_fkey(id, title)';
+  'id, type, message, is_read, created_at, deal_id, target_type, target_id, actor:profiles!notifications_actor_profile_id_fkey(username, display_name, avatar_url), deal:deals!notifications_deal_id_fkey(id, slug, title)';
 
 type RawNotification = {
   id: string;
@@ -34,6 +34,7 @@ function mapNotification(row: RawNotification): UserNotification {
     isRead: row.is_read,
     createdAt: row.created_at,
     dealId: row.deal_id,
+    dealSlug: toSingleRelation(row.deal)?.slug ?? null,
     targetType: row.target_type,
     targetId: row.target_id,
     actor: toSingleRelation(row.actor),
