@@ -74,7 +74,7 @@ function toNullableNumber(value: unknown): number | null {
   return null;
 }
 
-function decodeCursor(raw: string | undefined): DealFeedCursor | null {
+export function decodeFeedCursor(raw: string | undefined): DealFeedCursor | null {
   if (!raw) {
     return null;
   }
@@ -193,7 +193,7 @@ export function parseFeedQueryParams(params: Record<string, string | string[] | 
 
   return {
     sort: normalizedSort(getParam('sort')),
-    cursor: decodeCursor(getParam('cursor')),
+    cursor: decodeFeedCursor(getParam('cursor')),
     filters: {
       query: sanitizeSearchQuery(getParam('q')),
       category: getParam('category'),

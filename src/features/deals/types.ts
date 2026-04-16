@@ -1,4 +1,4 @@
-export const DEAL_FEED_PAGE_SIZE = 20;
+export const DEAL_FEED_PAGE_SIZE = 15;
 
 export const DEAL_SORT_OPTIONS = ['newest', 'hot', 'discussed'] as const;
 
