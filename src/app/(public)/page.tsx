@@ -4,8 +4,11 @@ import { PageContainer } from '@/components/layout/page-container';
 import { DealFeedList } from '@/features/deals/components/deal-feed-list';
 import { FeedSidebar } from '@/features/deals/components/feed-sidebar';
 import { FeedSortSubheader } from '@/features/deals/components/feed-sort-subheader';
+import { feedSidebarAd } from '@/features/deals/components/sidebar-ad-data';
+import type { SidebarAd } from '@/features/deals/components/sidebar-ad-module';
 import { getFeedFacets, getPublicDealsFeed, getSidebarCommunityStats, parseFeedQueryParams } from '@/features/deals/queries';
 import type { FeedFacetCollections, SidebarCommunityStats } from '@/features/deals/types';
+import { createClient } from '@/lib/supabase/server';
 import { SITE_NAME, absoluteUrl, buildPageMetadata } from '@/lib/seo';
 
 const EMPTY_FACETS: FeedFacetCollections = {
@@ -60,13 +63,20 @@ export default async function PublicHomePage({
   let communityStats = EMPTY_COMMUNITY_STATS;
   let deals: Awaited<ReturnType<typeof getPublicDealsFeed>> = { items: [], hasMore: false, nextCursor: null };
   let trendingDeals: Awaited<ReturnType<typeof getPublicDealsFeed>>['items'] = [];
+  let sidebarAd: SidebarAd = feedSidebarAd;
   let loadError = false;
+  const supabase = await createClient();
 
-  const [facetsResult, dealsResult, trendingDealsResult, communityStatsResult] = await Promise.allSettled([
+  const [facetsResult, dealsResult, trendingDealsResult, communityStatsResult, sidebarAdResult] = await Promise.allSettled([
     getFeedFacets(),
     getPublicDealsFeed({ sort, cursor, filters }),
     getPublicDealsFeed({ sort: 'hot', filters, pageSize: 5 }),
     getSidebarCommunityStats(),
+    supabase
+      .from('website_control_settings')
+      .select('sidebar_ad_background_image_url, sidebar_ad_title, sidebar_ad_description, sidebar_ad_button_text, sidebar_ad_image_only')
+      .eq('id', 1)
+      .maybeSingle(),
   ]);
 
   if (facetsResult.status === 'fulfilled') {
@@ -85,6 +95,21 @@ export default async function PublicHomePage({
 
   if (communityStatsResult.status === 'fulfilled') {
     communityStats = communityStatsResult.value;
+  }
+
+  if (sidebarAdResult.status === 'fulfilled') {
+    const settings = sidebarAdResult.value.data;
+
+    if (settings) {
+      sidebarAd = {
+        ...feedSidebarAd,
+        title: settings.sidebar_ad_title ?? feedSidebarAd.title,
+        description: settings.sidebar_ad_description ?? feedSidebarAd.description,
+        ctaLabel: settings.sidebar_ad_button_text ?? feedSidebarAd.ctaLabel,
+        backgroundImageUrl: settings.sidebar_ad_background_image_url ?? undefined,
+        imageOnly: settings.sidebar_ad_image_only ?? false,
+      };
+    }
   }
 
   const structuredData = {
@@ -121,7 +146,7 @@ export default async function PublicHomePage({
             <DealFeedList deals={deals.items} filters={filters} hasMore={deals.hasMore} nextCursor={deals.nextCursor} sort={sort} />
           </section>
 
-          <FeedSidebar trendingDeals={trendingDeals} facets={facets} communityStats={communityStats} />
+          <FeedSidebar trendingDeals={trendingDeals} facets={facets} communityStats={communityStats} sidebarAd={sidebarAd} />
         </main>
       </PageContainer>
     </>

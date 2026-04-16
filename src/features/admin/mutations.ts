@@ -149,6 +149,11 @@ export async function saveWebsiteControlAction(prevState: WebsiteControlState, f
     primary_color: String(formData.get('primaryColor') ?? '#22c55e'),
     accent_color: String(formData.get('accentColor') ?? '#0f172a'),
     site_announcement: String(formData.get('siteAnnouncement') ?? '').trim() || null,
+    sidebar_ad_background_image_url: String(formData.get('sidebarAdBackgroundImageUrl') ?? '').trim() || null,
+    sidebar_ad_title: String(formData.get('sidebarAdTitle') ?? '').trim() || null,
+    sidebar_ad_description: String(formData.get('sidebarAdDescription') ?? '').trim() || null,
+    sidebar_ad_button_text: String(formData.get('sidebarAdButtonText') ?? '').trim() || null,
+    sidebar_ad_image_only: String(formData.get('sidebarAdImageOnly') ?? '') === 'on',
   };
 
   const { error } = await supabase.from('website_control_settings').upsert(payload, { onConflict: 'id' });
