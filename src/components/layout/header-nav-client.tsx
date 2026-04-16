@@ -118,13 +118,13 @@ export function HeaderNavClient({
     }
   }, [close, loadNotifications, markAllVisibleAsRead, notificationsLoadedOnce, open, openKey]);
 
-  const openNotification = useCallback((dealId: string | null) => {
-    if (!dealId) {
+  const openNotification = useCallback((dealSlug: string | null) => {
+    if (!dealSlug) {
       return;
     }
 
     if (typeof window !== "undefined") {
-      window.location.href = `/deals/${dealId}`;
+      window.location.href = `/deals/${dealSlug}`;
     }
   }, []);
 
@@ -370,7 +370,7 @@ export function HeaderNavClient({
                             <li key={notification.id}>
                               <button
                                 className="flex w-full items-start gap-2 rounded-md px-2 py-2 text-left transition-colors duration-150 hover:bg-muted/45"
-                                onClick={() => void openNotification(notification.dealId)}
+                                onClick={() => void openNotification(notification.dealSlug)}
                                 type="button"
                               >
                                 {!notification.isRead ? (

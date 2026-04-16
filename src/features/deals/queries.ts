@@ -14,6 +14,7 @@ import {
 const MAX_PAGE_SIZE = 50;
 const DEAL_FEED_SELECT = `
   id,
+  slug,
   title,
   description,
   created_at,

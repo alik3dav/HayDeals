@@ -8,6 +8,7 @@ export type DashboardOverviewStats = {
 
 export type DashboardDealListItem = {
   id: string;
+  slug: string;
   title: string;
   created_at: string;
   moderation_status: 'pending' | 'approved' | 'rejected';
@@ -17,6 +18,7 @@ export type DashboardDealListItem = {
 
 export type DashboardSavedDealListItem = {
   id: string;
+  slug: string;
   title: string;
   created_at: string;
   score: number;
@@ -30,6 +32,7 @@ export type DashboardCommentActivityItem = {
   created_at: string;
   deal: {
     id: string;
+    slug: string;
     title: string;
   } | null;
 };

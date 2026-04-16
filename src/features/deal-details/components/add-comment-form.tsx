@@ -8,12 +8,14 @@ import { Button } from '@/components/ui/button';
 
 export function AddCommentForm({
   dealId,
+  dealSlug,
   canComment,
   onAddComment,
 }: {
   dealId: string;
+  dealSlug: string;
   canComment: boolean;
-  onAddComment: (dealId: string, formData: FormData) => Promise<void>;
+  onAddComment: (dealId: string, dealSlug: string, formData: FormData) => Promise<void>;
 }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -37,7 +39,7 @@ export function AddCommentForm({
     <form
       action={(formData) => {
         startTransition(async () => {
-          await onAddComment(dealId, formData);
+          await onAddComment(dealId, dealSlug, formData);
           router.refresh();
         });
       }}

@@ -8,14 +8,15 @@ import { Button } from '@/components/ui/button';
 
 type DealCardInteractionsProps = {
   dealId: string;
+  dealSlug: string;
   initialLikeCount: number;
   initialVote: -1 | 0 | 1;
   initiallySaved: boolean;
-  voteAction: (dealId: string, voteValue: 1 | -1) => Promise<void>;
-  saveAction: (dealId: string) => Promise<void>;
+  voteAction: (dealId: string, dealSlug: string, voteValue: 1 | -1) => Promise<void>;
+  saveAction: (dealId: string, dealSlug: string) => Promise<void>;
 };
 
-export function DealCardInteractions({ dealId, initialLikeCount, initialVote, initiallySaved, voteAction, saveAction }: DealCardInteractionsProps) {
+export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initialVote, initiallySaved, voteAction, saveAction }: DealCardInteractionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [likeCount, setLikeCount] = useState(initialLikeCount);
@@ -41,7 +42,7 @@ export function DealCardInteractions({ dealId, initialLikeCount, initialVote, in
       setLikeCount((currentLikeCount) => Math.max(0, currentLikeCount + likeDelta));
 
       try {
-        await voteAction(dealId, nextVote);
+        await voteAction(dealId, dealSlug, nextVote);
         router.refresh();
       } catch {
         setVote(previousVote);
@@ -56,7 +57,7 @@ export function DealCardInteractions({ dealId, initialLikeCount, initialVote, in
       setIsSaved(nextSavedValue);
 
       try {
-        await saveAction(dealId);
+        await saveAction(dealId, dealSlug);
         router.refresh();
       } catch {
         setIsSaved(!nextSavedValue);

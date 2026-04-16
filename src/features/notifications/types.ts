@@ -8,6 +8,7 @@ export type NotificationActor = {
 
 export type NotificationDeal = {
   id: string;
+  slug: string;
   title: string;
 };
 
@@ -18,6 +19,7 @@ export type UserNotification = {
   isRead: boolean;
   createdAt: string;
   dealId: string | null;
+  dealSlug: string | null;
   targetType: string | null;
   targetId: string | null;
   actor: NotificationActor | null;

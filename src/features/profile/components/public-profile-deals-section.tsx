@@ -14,7 +14,7 @@ export function PublicProfileDealsSection({ deals }: { deals: PublicProfileDeal[
       <ul className="space-y-2">
         {deals.map((deal) => (
           <li className="rounded-lg border border-border/50 bg-background/40 p-3" key={deal.id}>
-            <Link className="line-clamp-2 text-sm font-medium text-foreground hover:text-primary" href={`/deals/${deal.id}`}>
+            <Link className="line-clamp-2 text-sm font-medium text-foreground hover:text-primary" href={`/deals/${deal.slug}`}>
               {deal.title}
             </Link>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

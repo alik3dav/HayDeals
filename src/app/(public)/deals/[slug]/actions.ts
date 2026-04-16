@@ -4,22 +4,22 @@ import { revalidatePath } from 'next/cache';
 
 import { addDealComment, reportDeal, toggleDealSave, voteOnDeal } from '@/features/deal-details/mutations';
 
-function refresh(dealId: string) {
-  revalidatePath(`/deals/${dealId}`);
+function refresh(dealSlug: string) {
+  revalidatePath(`/deals/${dealSlug}`);
   revalidatePath('/');
 }
 
-export async function voteOnDealAction(dealId: string, voteValue: 1 | -1) {
+export async function voteOnDealAction(dealId: string, dealSlug: string, voteValue: 1 | -1) {
   const result = await voteOnDeal(dealId, voteValue);
 
   if (!result.ok) {
     throw new Error(result.error ?? 'Unable to submit vote.');
   }
 
-  refresh(dealId);
+  refresh(dealSlug);
 }
 
-export async function addCommentAction(dealId: string, formData: FormData) {
+export async function addCommentAction(dealId: string, dealSlug: string, formData: FormData) {
   const body = String(formData.get('body') ?? '');
   const result = await addDealComment(dealId, body);
 
@@ -27,20 +27,20 @@ export async function addCommentAction(dealId: string, formData: FormData) {
     throw new Error(result.error ?? 'Unable to submit comment.');
   }
 
-  refresh(dealId);
+  refresh(dealSlug);
 }
 
-export async function toggleSaveAction(dealId: string) {
+export async function toggleSaveAction(dealId: string, dealSlug: string) {
   const result = await toggleDealSave(dealId);
 
   if (!result.ok) {
     throw new Error(result.error ?? 'Unable to save deal.');
   }
 
-  refresh(dealId);
+  refresh(dealSlug);
 }
 
-export async function reportDealAction(dealId: string, formData: FormData) {
+export async function reportDealAction(dealId: string, dealSlug: string, formData: FormData) {
   const reason = String(formData.get('reason') ?? 'other');
   const details = String(formData.get('details') ?? '');
 
@@ -50,5 +50,5 @@ export async function reportDealAction(dealId: string, formData: FormData) {
     throw new Error(result.error ?? 'Unable to report deal.');
   }
 
-  refresh(dealId);
+  refresh(dealSlug);
 }

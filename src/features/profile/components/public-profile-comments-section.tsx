@@ -13,7 +13,7 @@ export function PublicProfileCommentsSection({ comments }: { comments: PublicPro
         {comments.map((comment) => (
           <li className="rounded-lg border border-border/50 bg-background/40 p-3" key={comment.id}>
             <p className="line-clamp-3 text-sm text-foreground">{comment.body}</p>
-            <Link className="mt-2 inline-block text-xs text-primary hover:underline" href={`/deals/${comment.deal.id}`}>
+            <Link className="mt-2 inline-block text-xs text-primary hover:underline" href={`/deals/${comment.deal.slug}`}>
               View on {comment.deal.title}
             </Link>
           </li>

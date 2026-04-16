@@ -21,7 +21,7 @@ function toRelationValue<T>(value: T | T[] | null): T | null {
   return value;
 }
 
-export const getDealDetailById = cache(async (dealId: string): Promise<DealDetail | null> => {
+export const getDealDetailBySlug = cache(async (dealSlug: string): Promise<DealDetail | null> => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -29,6 +29,7 @@ export const getDealDetailById = cache(async (dealId: string): Promise<DealDetai
     .select(
       `
       id,
+      slug,
       profile_id,
       title,
       description,
@@ -53,7 +54,7 @@ export const getDealDetailById = cache(async (dealId: string): Promise<DealDetai
       profiles:profiles!deals_profile_id_fkey(username, display_name, first_name, last_name, avatar_url)
     `,
     )
-    .eq('id', dealId)
+    .eq('slug', dealSlug)
     .single<RawDealDetail>();
 
   if (error) {
@@ -63,7 +64,7 @@ export const getDealDetailById = cache(async (dealId: string): Promise<DealDetai
     throw error;
   }
 
-  const { data: voteData, error: voteError } = await supabase.from('deal_votes').select('vote_value').eq('deal_id', dealId);
+  const { data: voteData, error: voteError } = await supabase.from('deal_votes').select('vote_value').eq('deal_id', data.id);
 
   if (voteError) {
     throw voteError;
@@ -148,7 +149,7 @@ export async function getRelatedDeals(deal: DealDetail): Promise<RelatedDeal[]> 
 
   let query = supabase
     .from('deals')
-    .select('id, title, score, comments_count, sale_price, currency_code')
+    .select('id, slug, title, score, comments_count, sale_price, currency_code')
     .neq('id', deal.id)
     .eq('moderation_status', 'approved')
     .limit(4)

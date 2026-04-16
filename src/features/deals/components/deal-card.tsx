@@ -15,8 +15,8 @@ import { formatExpiryLabel, formatRelativeTime, getExpiryBadgeClassName } from '
 
 type DealCardProps = {
   deal: PublicDeal;
-  voteAction: (dealId: string, voteValue: 1 | -1) => Promise<void>;
-  saveAction: (dealId: string) => Promise<void>;
+  voteAction: (dealId: string, dealSlug: string, voteValue: 1 | -1) => Promise<void>;
+  saveAction: (dealId: string, dealSlug: string) => Promise<void>;
 };
 
 export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
@@ -56,7 +56,7 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
               ) : null}
             </div>
           
-              <Link className="line-clamp-1 text-xl font-semibold leading-tight text-foreground hover:text-primary md:self-center" href={`/deals/${deal.id}`}>
+              <Link className="line-clamp-1 text-xl font-semibold leading-tight text-foreground hover:text-primary md:self-center" href={`/deals/${deal.slug}`}>
                 {deal.title}
               </Link>
               
@@ -81,6 +81,7 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
 
           <DealCardInteractions
             dealId={deal.id}
+            dealSlug={deal.slug}
             initialLikeCount={deal.upvotes_count}
             initialVote={deal.current_user_vote}
             initiallySaved={deal.is_saved_by_current_user}

@@ -46,7 +46,7 @@ export function FeedSidebar({ deals, facets, communityStats }: FeedSidebarProps)
           <ul className="space-y-2">
             {trendingDeals.map((deal) => (
               <li key={`trending-${deal.id}`}>
-                <Link className="line-clamp-2 text-sm text-muted-foreground transition-colors hover:text-foreground" href={`/deals/${deal.id}`}>
+                <Link className="line-clamp-2 text-sm text-muted-foreground transition-colors hover:text-foreground" href={`/deals/${deal.slug}`}>
                   {deal.title}
                 </Link>
               </li>
@@ -80,7 +80,7 @@ export function FeedSidebar({ deals, facets, communityStats }: FeedSidebarProps)
           <ul className="space-y-2">
             {recentActivity.map((deal) => (
               <li className="text-sm text-muted-foreground" key={`activity-${deal.id}`}>
-                <Link className="transition-colors hover:text-foreground" href={`/deals/${deal.id}`}>
+                <Link className="transition-colors hover:text-foreground" href={`/deals/${deal.slug}`}>
                   {deal.title}
                 </Link>
                 <p className="text-xs text-muted-foreground/80">{deal.comments_count} comments • score {deal.score}</p>

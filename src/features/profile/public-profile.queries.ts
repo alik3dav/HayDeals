@@ -63,7 +63,7 @@ export async function getPublicProfileDeals(profileId: string, limit = 12): Prom
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('deals')
-    .select('id, title, created_at, score, comments_count, sale_price, original_price, currency_code, stores:stores!deals_store_id_fkey(name, slug)')
+    .select('id, slug, title, created_at, score, comments_count, sale_price, original_price, currency_code, stores:stores!deals_store_id_fkey(name, slug)')
     .eq('profile_id', profileId)
     .eq('moderation_status', 'approved')
     .order('created_at', { ascending: false })
@@ -86,11 +86,13 @@ type RawPublicProfileCommentRow = {
   deals:
     | {
         id: string;
+        slug: string;
         title: string;
         moderation_status: string;
       }
     | {
         id: string;
+        slug: string;
         title: string;
         moderation_status: string;
       }[]
@@ -101,7 +103,7 @@ export async function getPublicProfileComments(profileId: string, limit = 12): P
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('deal_comments')
-    .select('id, body, created_at, deals!inner(id, title, moderation_status)')
+    .select('id, body, created_at, deals!inner(id, slug, title, moderation_status)')
     .eq('profile_id', profileId)
     .eq('is_deleted', false)
     .eq('deals.moderation_status', 'approved')
@@ -117,13 +119,13 @@ export async function getPublicProfileComments(profileId: string, limit = 12): P
       ...comment,
       deals: toRelationValue(comment.deals),
     }))
-    .filter((comment) => Boolean(comment.deals?.id))
+    .filter((comment) => Boolean(comment.deals?.slug))
     .map((comment) => ({
       id: comment.id,
       body: comment.body,
       created_at: comment.created_at,
       deal: {
-        id: comment.deals?.id ?? '',
+        slug: comment.deals?.slug ?? '',
         title: comment.deals?.title ?? 'Deal',
       },
     }));

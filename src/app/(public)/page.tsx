@@ -91,7 +91,7 @@ export default async function PublicHomePage({
       itemListElement: deals.items.map((deal, index) => ({
         '@type': 'ListItem',
         position: index + 1,
-        url: absoluteUrl(`/deals/${deal.id}`),
+        url: absoluteUrl(`/deals/${deal.slug}`),
         name: deal.title,
       })),
     },
