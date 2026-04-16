@@ -93,7 +93,7 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
   return (
     <>
       <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
-        <div className="flex items-center justify-between gap-2 rounded-full border border-[#252C3A] bg-[#191d25] px-1 py-1">
+        <div className="flex items-center justify-between gap-2 rounded-full border-border bg-secondary/70 px-1 py-1">
           <button
             aria-label="Upvote deal"
             className="inline-flex items-center rounded-full p-2 transition-colors hover:bg-emerald-500/15"

@@ -49,7 +49,7 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
 
       <div className="flex min-w-0 flex-1 flex-col gap-2 p-4 md:grid md:h-60 md:grid-rows-5 md:gap-2">
           <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground/60 md:mt-0 md:self-center">
-              <span className="inline-flex items-center gap-1.5  bg-[#191d25] py-1.5 px-3 rounded-[4px]" >
+              <span className="inline-flex items-center gap-1.5  border border-border bg-secondary py-1.5 px-3 rounded-[4px]" >
                 <Store className="h-3 w-3" />
                 {deal.stores?.name ?? deal.merchant_name ?? 'Unknown store'}
               </span>
