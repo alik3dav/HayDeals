@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 import type { DealFeedFilters, DealSortOption, FeedFacetCollections } from '@/features/deals/types';
@@ -47,6 +50,24 @@ function getOptionLabel(items: { label: string; value: string }[], value?: strin
 }
 
 export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const containerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!containerRef.current) return;
+      if (!containerRef.current.contains(event.target as Node)) {
+        setOpenMenu(null);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, []);
+
   const categoryOptions = optionList('categories', facets.categories);
   const storeOptions = optionList('stores', facets.stores);
   const dealTypeOptions = optionList('deal types', facets.dealTypes);
@@ -116,23 +137,37 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
   ];
 
   return (
-    <section className="relative z-30 overflow-visible rounded-xl border border-border/70 bg-card/80 p-3">
+    <section
+      className="relative z-30 overflow-visible rounded-xl border border-border/70 bg-card p-3"
+      ref={containerRef}
+    >
       <div className="flex flex-wrap items-center gap-2">
         {filterMenus.map((menu) => (
-          <div className="group relative shrink-0" key={menu.name}>
+          <div className="relative shrink-0" key={menu.name}>
             <button
               aria-haspopup="menu"
-              className="rounded-full border border-border/70 bg-secondary/60 px-3 py-1 text-xs text-foreground transition hover:bg-secondary"
+              aria-expanded={openMenu === menu.name}
+              className="rounded-full border border-border/70 bg-secondary px-3 py-1 text-xs text-foreground transition hover:bg-secondary/90"
+              onClick={() => {
+                setOpenMenu((current) => (current === menu.name ? null : menu.name));
+              }}
               type="button"
             >
               <span className="font-medium">{menu.name}:</span> {menu.activeValue}
             </button>
-            <div className="invisible absolute left-0 z-50 mt-2 max-h-72 min-w-52 overflow-auto rounded-lg border border-border/70 bg-popover p-1 opacity-0 shadow-lg transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+            <div
+              className={`absolute left-0 z-50 mt-2 max-h-72 min-w-52 overflow-auto rounded-lg border border-border/80 bg-background p-1 shadow-lg transition ${
+                openMenu === menu.name
+                  ? 'visible opacity-100'
+                  : 'pointer-events-none invisible opacity-0'
+              }`}
+            >
               {menu.options.map((option) => (
                 <Link
                   className="block rounded-md px-3 py-1.5 text-xs text-popover-foreground hover:bg-accent hover:text-accent-foreground"
                   href={menu.apply(option.value)}
                   key={`${menu.name}-${option.value || 'all'}`}
+                  onClick={() => setOpenMenu(null)}
                 >
                   {option.label}
                 </Link>
