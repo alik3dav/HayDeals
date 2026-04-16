@@ -149,11 +149,6 @@ export async function saveWebsiteControlAction(prevState: WebsiteControlState, f
     primary_color: String(formData.get('primaryColor') ?? '#22c55e'),
     accent_color: String(formData.get('accentColor') ?? '#0f172a'),
     site_announcement: String(formData.get('siteAnnouncement') ?? '').trim() || null,
-    sidebar_ad_background_image_url: String(formData.get('sidebarAdBackgroundImageUrl') ?? '').trim() || null,
-    sidebar_ad_title: String(formData.get('sidebarAdTitle') ?? '').trim() || null,
-    sidebar_ad_description: String(formData.get('sidebarAdDescription') ?? '').trim() || null,
-    sidebar_ad_button_text: String(formData.get('sidebarAdButtonText') ?? '').trim() || null,
-    sidebar_ad_image_only: String(formData.get('sidebarAdImageOnly') ?? '') === 'on',
   };
 
   const { error } = await supabase.from('website_control_settings').upsert(payload, { onConflict: 'id' });
@@ -169,5 +164,38 @@ export async function saveWebsiteControlAction(prevState: WebsiteControlState, f
   return {
     ok: true,
     message: 'Changes saved successfully. Branding settings are now persisted in Supabase.',
+  };
+}
+
+export async function saveSidebarAdControlAction(prevState: WebsiteControlState, formData: FormData): Promise<WebsiteControlState> {
+  await requireRole(['admin']);
+  const supabase = await createClient();
+
+  void prevState;
+
+  const payload = {
+    id: 1,
+    sidebar_ad_background_image_url: String(formData.get('sidebarAdBackgroundImageUrl') ?? '').trim() || null,
+    sidebar_ad_title: String(formData.get('sidebarAdTitle') ?? '').trim() || null,
+    sidebar_ad_description: String(formData.get('sidebarAdDescription') ?? '').trim() || null,
+    sidebar_ad_button_text: String(formData.get('sidebarAdButtonText') ?? '').trim() || null,
+    sidebar_ad_href: String(formData.get('sidebarAdHref') ?? '').trim() || null,
+    sidebar_ad_image_only: String(formData.get('sidebarAdImageOnly') ?? '') === 'on',
+  };
+
+  const { error } = await supabase.from('website_control_settings').upsert(payload, { onConflict: 'id' });
+  if (error) {
+    return {
+      ok: false,
+      message: `Unable to save ad settings: ${error.message}`,
+    };
+  }
+
+  revalidatePath('/admin/ad-control');
+  revalidatePath('/');
+
+  return {
+    ok: true,
+    message: 'Ad settings saved successfully.',
   };
 }

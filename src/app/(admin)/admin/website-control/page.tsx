@@ -11,6 +11,7 @@ const DEFAULT_SETTINGS: WebsiteControlSettings = {
   primary_color: '#22c55e',
   accent_color: '#0f172a',
   site_announcement: null,
+  sidebar_ad_href: null,
   sidebar_ad_background_image_url: null,
   sidebar_ad_title: null,
   sidebar_ad_description: null,
@@ -22,9 +23,7 @@ export default async function AdminWebsiteControlPage() {
   const supabase = await createClient();
   const { data: settingsRow } = await supabase
     .from('website_control_settings')
-    .select(
-      'logotype_url, logo_alt, logo_size, primary_color, accent_color, site_announcement, sidebar_ad_background_image_url, sidebar_ad_title, sidebar_ad_description, sidebar_ad_button_text, sidebar_ad_image_only',
-    )
+    .select('logotype_url, logo_alt, logo_size, primary_color, accent_color, site_announcement')
     .eq('id', 1)
     .maybeSingle();
 
@@ -36,11 +35,12 @@ export default async function AdminWebsiteControlPage() {
         primary_color: settingsRow.primary_color,
         accent_color: settingsRow.accent_color,
         site_announcement: settingsRow.site_announcement,
-        sidebar_ad_background_image_url: settingsRow.sidebar_ad_background_image_url,
-        sidebar_ad_title: settingsRow.sidebar_ad_title,
-        sidebar_ad_description: settingsRow.sidebar_ad_description,
-        sidebar_ad_button_text: settingsRow.sidebar_ad_button_text,
-        sidebar_ad_image_only: settingsRow.sidebar_ad_image_only ?? false,
+        sidebar_ad_href: null,
+        sidebar_ad_background_image_url: null,
+        sidebar_ad_title: null,
+        sidebar_ad_description: null,
+        sidebar_ad_button_text: null,
+        sidebar_ad_image_only: false,
       }
     : DEFAULT_SETTINGS;
 

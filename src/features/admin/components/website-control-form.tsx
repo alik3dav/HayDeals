@@ -87,57 +87,6 @@ export function WebsiteControlForm({ settings }: WebsiteControlFormProps) {
         />
       </div>
 
-      <div className="space-y-3 rounded-md border border-border/70 p-4">
-        <h3 className="text-sm font-semibold text-foreground">Sidebar ad settings</h3>
-        <p className="text-xs text-muted-foreground">Control the sidebar ad image and optional text shown on the public homepage.</p>
-
-        <div className="space-y-2">
-          <label htmlFor="sidebar-ad-background-image-url" className="text-sm font-medium leading-none">
-            Ad background image URL
-          </label>
-          <Input
-            id="sidebar-ad-background-image-url"
-            name="sidebarAdBackgroundImageUrl"
-            placeholder="https://cdn.example.com/ads/sidebar-promo.jpg"
-            defaultValue={settings.sidebar_ad_background_image_url ?? ''}
-          />
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <label htmlFor="sidebar-ad-title" className="text-sm font-medium leading-none">
-              Ad title text
-            </label>
-            <Input id="sidebar-ad-title" name="sidebarAdTitle" placeholder="Build your stack with vetted tools" defaultValue={settings.sidebar_ad_title ?? ''} />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="sidebar-ad-button-text" className="text-sm font-medium leading-none">
-              Ad button text
-            </label>
-            <Input id="sidebar-ad-button-text" name="sidebarAdButtonText" placeholder="Explore picks" defaultValue={settings.sidebar_ad_button_text ?? ''} />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="sidebar-ad-description" className="text-sm font-medium leading-none">
-            Ad description text
-          </label>
-          <Textarea
-            id="sidebar-ad-description"
-            name="sidebarAdDescription"
-            placeholder="Describe the promotion shown in the sidebar ad."
-            rows={3}
-            defaultValue={settings.sidebar_ad_description ?? ''}
-          />
-        </div>
-
-        <label className="inline-flex items-center gap-2 text-sm text-foreground">
-          <input defaultChecked={settings.sidebar_ad_image_only} name="sidebarAdImageOnly" type="checkbox" />
-          Show only image (hide title, description, and button)
-        </label>
-      </div>
-
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Branding changes are saved to Supabase website settings.</p>
         <Button disabled={isPending} type="submit">

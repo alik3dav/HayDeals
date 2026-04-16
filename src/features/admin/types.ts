@@ -84,5 +84,6 @@ export type WebsiteControlSettings = {
   sidebar_ad_title: string | null;
   sidebar_ad_description: string | null;
   sidebar_ad_button_text: string | null;
+  sidebar_ad_href: string | null;
   sidebar_ad_image_only: boolean;
 };
