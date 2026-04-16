@@ -4,14 +4,19 @@ import { PageContainer } from '@/components/layout/page-container';
 import { DealFeedList } from '@/features/deals/components/deal-feed-list';
 import { FeedSidebar } from '@/features/deals/components/feed-sidebar';
 import { FeedSortSubheader } from '@/features/deals/components/feed-sort-subheader';
-import { getFeedFacets, getPublicDealsFeed, parseFeedQueryParams } from '@/features/deals/queries';
-import type { FeedFacetCollections } from '@/features/deals/types';
+import { getFeedFacets, getPublicDealsFeed, getSidebarCommunityStats, parseFeedQueryParams } from '@/features/deals/queries';
+import type { FeedFacetCollections, SidebarCommunityStats } from '@/features/deals/types';
 import { SITE_NAME, absoluteUrl, buildPageMetadata } from '@/lib/seo';
 
 const EMPTY_FACETS: FeedFacetCollections = {
   categories: [],
   stores: [],
   dealTypes: [],
+};
+
+const EMPTY_COMMUNITY_STATS: SidebarCommunityStats = {
+  activeMembers: 0,
+  recentMembers: [],
 };
 
 export async function generateMetadata({
@@ -52,12 +57,14 @@ export default async function PublicHomePage({
   const { sort, cursor, filters } = parseFeedQueryParams(resolvedParams);
 
   let facets = EMPTY_FACETS;
+  let communityStats = EMPTY_COMMUNITY_STATS;
   let deals: Awaited<ReturnType<typeof getPublicDealsFeed>> = { items: [], hasMore: false, nextCursor: null };
   let loadError = false;
 
-  const [facetsResult, dealsResult] = await Promise.allSettled([
+  const [facetsResult, dealsResult, communityStatsResult] = await Promise.allSettled([
     getFeedFacets(),
     getPublicDealsFeed({ sort, cursor, filters }),
+    getSidebarCommunityStats(),
   ]);
 
   if (facetsResult.status === 'fulfilled') {
@@ -68,6 +75,10 @@ export default async function PublicHomePage({
     deals = dealsResult.value;
   } else {
     loadError = true;
+  }
+
+  if (communityStatsResult.status === 'fulfilled') {
+    communityStats = communityStatsResult.value;
   }
 
   const structuredData = {
@@ -104,7 +115,7 @@ export default async function PublicHomePage({
             <DealFeedList deals={deals.items} filters={filters} hasMore={deals.hasMore} nextCursor={deals.nextCursor} sort={sort} />
           </section>
 
-          <FeedSidebar deals={deals.items} facets={facets} />
+          <FeedSidebar deals={deals.items} facets={facets} communityStats={communityStats} />
         </main>
       </PageContainer>
     </>

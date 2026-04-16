@@ -8,6 +8,7 @@ import {
   type DealSortOption,
   type FeedFacetCollections,
   type PublicDeal,
+  type SidebarCommunityStats,
 } from '@/features/deals/types';
 
 const MAX_PAGE_SIZE = 50;
@@ -337,5 +338,55 @@ export async function getPublicDealsFeed({
     items,
     hasMore,
     nextCursor,
+  };
+}
+
+export async function getSidebarCommunityStats(): Promise<SidebarCommunityStats> {
+  const supabase = await createClient();
+
+  const [{ count: profileCount }, { data: recentDeals, error: recentDealsError }] = await Promise.all([
+    supabase.from('profiles').select('id', { count: 'exact', head: true }),
+    supabase
+      .from('deals')
+      .select('profiles:profiles!deals_profile_id_fkey(username, display_name, first_name, last_name, avatar_url)')
+      .eq('moderation_status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(20),
+  ]);
+
+  if (recentDealsError) {
+    throw recentDealsError;
+  }
+
+  const recentMembers = new Map<string, SidebarCommunityStats['recentMembers'][number]>();
+
+  for (const entry of recentDeals ?? []) {
+    const profile = toRelationValue(entry.profiles);
+    if (!profile) {
+      continue;
+    }
+
+    const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ').trim();
+    const displayName = profile.display_name ?? fullName ?? profile.username ?? 'Member';
+    const memberKey = profile.username ?? displayName;
+
+    if (!memberKey || recentMembers.has(memberKey)) {
+      continue;
+    }
+
+    recentMembers.set(memberKey, {
+      username: profile.username,
+      displayName: displayName.length > 0 ? displayName : 'Member',
+      avatarUrl: profile.avatar_url,
+    });
+
+    if (recentMembers.size >= 3) {
+      break;
+    }
+  }
+
+  return {
+    activeMembers: profileCount ?? 0,
+    recentMembers: Array.from(recentMembers.values()),
   };
 }
