@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import type { FeedFacetCollections, PublicDeal } from '@/features/deals/types';
+import { UserAvatar } from '@/features/profile/components/user-avatar';
+import type { FeedFacetCollections, PublicDeal, SidebarCommunityStats } from '@/features/deals/types';
 
 type FeedSidebarProps = {
   deals: PublicDeal[];
   facets: FeedFacetCollections;
+  communityStats: SidebarCommunityStats;
 };
 
 type SidebarSectionProps = {
@@ -30,10 +32,12 @@ function buildCategoryHref(category: string) {
   return `/?${params.toString()}`;
 }
 
-export function FeedSidebar({ deals, facets }: FeedSidebarProps) {
+export function FeedSidebar({ deals, facets, communityStats }: FeedSidebarProps) {
   const trendingDeals = deals.slice(0, 5);
   const topCategories = facets.categories.slice(0, 6);
   const recentActivity = deals.slice(0, 4);
+  const overflowMembers = Math.max(communityStats.activeMembers - communityStats.recentMembers.length, 0);
+  const formattedMemberCount = new Intl.NumberFormat('en-US').format(communityStats.activeMembers);
 
   return (
     <aside className="space-y-3 lg:sticky lg:top-[5.25rem] lg:self-start">
@@ -88,26 +92,28 @@ export function FeedSidebar({ deals, facets }: FeedSidebarProps) {
         )}
       </SidebarSection>
 
-      <SidebarSection title="Community stats">
-        <dl className="grid grid-cols-2 gap-3 text-sm">
-          <div>
-            <dt className="text-muted-foreground">Visible deals</dt>
-            <dd className="text-base font-semibold text-foreground">{deals.length}</dd>
-          </div>
-          <div>
-            <dt className="text-muted-foreground">Categories</dt>
-            <dd className="text-base font-semibold text-foreground">{facets.categories.length}</dd>
-          </div>
-          <div>
-            <dt className="text-muted-foreground">Stores</dt>
-            <dd className="text-base font-semibold text-foreground">{facets.stores.length}</dd>
-          </div>
-          <div>
-            <dt className="text-muted-foreground">Deal types</dt>
-            <dd className="text-base font-semibold text-foreground">{facets.dealTypes.length}</dd>
-          </div>
-        </dl>
-      </SidebarSection>
+      <section className="rounded-xl border border-border/70 bg-gradient-to-b from-card/60 to-card/20 p-5 shadow-[0_0_0_1px_hsl(var(--background)/0.2)_inset]">
+        <h2 className="text-[2rem] font-semibold leading-tight text-foreground">{formattedMemberCount}+ active members</h2>
+        <p className="mt-1 text-lg text-muted-foreground">Sharing deals from around the world</p>
+
+        <div className="mt-5 flex items-center">
+          {communityStats.recentMembers.map((member, index) => (
+            <div className={index === 0 ? '' : '-ml-2.5'} key={`${member.username ?? member.displayName}-${index}`}>
+              <UserAvatar
+                avatarUrl={member.avatarUrl}
+                fallbackText={member.displayName}
+                className="h-12 w-12 border border-background/60 bg-muted text-sm shadow"
+                textClassName="text-sm"
+              />
+            </div>
+          ))}
+          {overflowMembers > 0 ? (
+            <span className="-ml-2.5 inline-flex h-12 w-12 items-center justify-center rounded-full border border-background/60 bg-muted text-lg font-semibold text-foreground shadow">
+              +{Math.min(overflowMembers, 99)}
+            </span>
+          ) : null}
+        </div>
+      </section>
     </aside>
   );
 }

@@ -69,3 +69,14 @@ export type FeedFacetCollections = {
   stores: FeedFacetOption[];
   dealTypes: FeedFacetOption[];
 };
+
+export type SidebarCommunityMember = {
+  username: string | null;
+  displayName: string;
+  avatarUrl: string | null;
+};
+
+export type SidebarCommunityStats = {
+  activeMembers: number;
+  recentMembers: SidebarCommunityMember[];
+};
