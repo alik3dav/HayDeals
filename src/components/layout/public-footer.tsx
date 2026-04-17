@@ -5,6 +5,7 @@ import { getFeedFacets } from '@/features/deals/queries';
 import { createClient } from '@/lib/supabase/server';
 
 const PLATFORM_LINKS = [
+  { href: '/', label: 'Home feed' },
   { href: '/deals', label: 'All deals' },
   { href: '/categories', label: 'All categories' },
   { href: '/deals?sort=hot', label: 'Hot deals' },

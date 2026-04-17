@@ -6,8 +6,8 @@ import { getFeedFacets, getPublicDealsFeed } from '@/features/deals/queries';
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Home',
-  description: 'Discover trending deals, browse categories, and explore the CipiDeals platform structure.',
+  title: 'CipiDeals Home Feed | Community Deals, Discounts, and Offers',
+  description: 'Browse the main CipiDeals deals feed with newest and hot community-verified discounts across categories.',
   pathname: '/',
 });
 
@@ -22,16 +22,48 @@ export default async function PublicHomePage() {
 
   const structuredData = {
     '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: 'CipiDeals Home',
-    url: absoluteUrl('/'),
-    mainEntity: {
-      '@type': 'ItemList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Deals', url: absoluteUrl('/deals') },
-        { '@type': 'ListItem', position: 2, name: 'Categories', url: absoluteUrl('/categories') },
-      ],
-    },
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': absoluteUrl('/#website'),
+        name: 'CipiDeals',
+        url: absoluteUrl('/'),
+        description: 'Community-powered deals feed for verified discounts and offers.',
+        inLanguage: 'en',
+      },
+      {
+        '@type': 'Organization',
+        '@id': absoluteUrl('/#organization'),
+        name: 'CipiDeals',
+        url: absoluteUrl('/'),
+      },
+      {
+        '@type': 'CollectionPage',
+        '@id': absoluteUrl('/#homepage-feed'),
+        name: 'CipiDeals Home Deals Feed',
+        url: absoluteUrl('/'),
+        isPartOf: { '@id': absoluteUrl('/#website') },
+        about: 'Community-verified deals and discounts',
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListOrder: 'https://schema.org/ItemListOrderDescending',
+          numberOfItems: newestDeals.items.length,
+          itemListElement: newestDeals.items.map((deal, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: absoluteUrl(`/deals/${deal.slug}`),
+            name: deal.title,
+          })),
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home Feed', item: absoluteUrl('/') },
+          { '@type': 'ListItem', position: 2, name: 'Categories', item: absoluteUrl('/categories') },
+        ],
+      },
+    ],
   };
 
   return (
@@ -45,7 +77,7 @@ export default async function PublicHomePage() {
           </p>
           <div className="mt-5 flex flex-wrap gap-2.5">
             <Link className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground" href="/deals">
-              Browse all deals
+              Explore filtered deals
             </Link>
             <Link className="rounded-md border border-border px-4 py-2 text-sm font-semibold" href="/categories">
               Browse categories

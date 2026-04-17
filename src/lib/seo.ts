@@ -4,7 +4,7 @@ const DEFAULT_SITE_URL = 'https://cipideals.com';
 const DEFAULT_LANGUAGE_TAG = 'en';
 
 export const SITE_NAME = 'CipiDeals';
-export const SITE_DESCRIPTION = 'Discover and share verified deals from the community.';
+export const SITE_DESCRIPTION = 'CipiDeals is a community-powered deals feed to discover, vote on, and share verified offers.';
 
 export function getSiteUrl() {
   return process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? DEFAULT_SITE_URL;
