@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { MessageSquare, Store } from 'lucide-react';
+import { ExternalLink, MessageSquare, Store } from 'lucide-react';
 
 import type { PublicDeal } from '@/features/deals/types';
 import { getAvailabilityLabel } from '@/features/deals/availability';
@@ -109,8 +109,9 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
             href={deal.deal_url}
             rel="noreferrer"
             target="_blank"
+            aria-label="See deal"
           >
-            See Deal
+            <ExternalLink className="h-4 w-4" />
           </Link>
         </div>
       </div>
