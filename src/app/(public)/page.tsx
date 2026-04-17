@@ -146,7 +146,7 @@ export default async function PublicHomePage({
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} type="application/ld+json" />
       <FeedSortSubheader filters={filters} sort={sort} />
 
-      <PageContainer className="space-y-2">
+      <PageContainer className="space-y-3">
       
         <FeedFilters facets={facets} filters={filters} sort={sort} />
 
