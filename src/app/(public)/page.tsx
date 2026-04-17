@@ -146,12 +146,8 @@ export default async function PublicHomePage({
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} type="application/ld+json" />
       <FeedSortSubheader filters={filters} sort={sort} />
 
-      <PageContainer className="space-y-4">
-        <header className="rounded-xl border border-border/70 bg-card/30 p-4">
-          <h1 className="text-xl font-semibold text-foreground">Find the best community-verified deals</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Explore deal streams, browse categories, and jump to the most active sections of the platform.</p>
-        </header>
-
+      <PageContainer className="space-y-2">
+      
         <FeedFilters facets={facets} filters={filters} sort={sort} />
 
         {loadError ? (
