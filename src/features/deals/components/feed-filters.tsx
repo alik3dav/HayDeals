@@ -12,6 +12,7 @@ type FeedFiltersProps = {
   filters: DealFeedFilters;
   facets: FeedFacetCollections;
   autoLocationLabel?: string | null;
+  disableAutoLocationHref?: string | null;
 };
 type AvailabilityScopeOptionValue = NonNullable<DealFeedFilters['availabilityScope']>;
 
@@ -24,7 +25,7 @@ function getOptionLabel(items: { label: string; value: string }[], value?: strin
   return items.find((item) => item.value === value)?.label ?? value;
 }
 
-export function FeedFilters({ sort, filters, facets, autoLocationLabel }: FeedFiltersProps) {
+export function FeedFilters({ sort, filters, facets, autoLocationLabel, disableAutoLocationHref }: FeedFiltersProps) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const containerRef = useRef<HTMLElement>(null);
 
@@ -108,6 +109,21 @@ export function FeedFilters({ sort, filters, facets, autoLocationLabel }: FeedFi
       ref={containerRef}
     >
       <div className="flex flex-wrap items-center gap-2">
+        {autoLocationLabel && disableAutoLocationHref ? (
+          <div className="relative max-w-full shrink-0">
+            <span className="max-w-full truncate rounded-full border border-primary/30 bg-primary/10 px-4 py-2.5 pr-9 text-xs text-foreground transition">
+              {autoLocationLabel}
+            </span>
+            <Link
+              aria-label="Remove location filter"
+              className="absolute right-3 top-1/2 flex size-4 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition hover:bg-primary/20 hover:text-foreground"
+              href={disableAutoLocationHref}
+            >
+              <X aria-hidden="true" className="size-3" />
+            </Link>
+          </div>
+        ) : null}
+
         {filterMenus.map((menu) => (
           <div className="relative max-w-full shrink-0" key={menu.name}>
             <button
@@ -172,12 +188,6 @@ export function FeedFilters({ sort, filters, facets, autoLocationLabel }: FeedFi
           Reset
         </Link>
       </div>
-        {autoLocationLabel ? (
-          <p className="text-xs text-muted-foreground">
-            Prioritizing deals for {autoLocationLabel}
-          </p>
-        ) : null}
-
     </section>
   );
 }

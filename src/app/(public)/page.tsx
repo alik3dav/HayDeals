@@ -3,6 +3,7 @@ import { cookies, headers } from 'next/headers';
 
 import { PageContainer } from '@/components/layout/page-container';
 import { DealFeedList } from '@/features/deals/components/deal-feed-list';
+import { buildFeedUrl } from '@/features/deals/components/feed-filter-utils';
 import { FeedFilters } from '@/features/deals/components/feed-filters';
 import { FeedSidebar } from '@/features/deals/components/feed-sidebar';
 import { FeedSortSubheader } from '@/features/deals/components/feed-sort-subheader';
@@ -71,7 +72,7 @@ export default async function PublicHomePage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const resolvedParams = await searchParams;
-  const { sort, cursor, filters } = parseFeedQueryParams(resolvedParams);
+  const { sort, cursor, filters, includeAutoLocation } = parseFeedQueryParams(resolvedParams);
   const requestHeaders = await headers();
   const requestCookies = await cookies();
   const detectedLocation = resolveDetectedLocation({ headers: requestHeaders, cookies: requestCookies });
@@ -86,8 +87,8 @@ export default async function PublicHomePage({
 
   const [facetsResult, dealsResult, trendingDealsResult, communityStatsResult, sidebarAdResult] = await Promise.allSettled([
     getFeedFacets(),
-    getPublicDealsFeed({ sort, cursor, filters, location: detectedLocation }),
-    getPublicDealsFeed({ sort: 'hot', filters, pageSize: 5, location: detectedLocation }),
+    getPublicDealsFeed({ sort, cursor, filters, location: includeAutoLocation ? detectedLocation : null }),
+    getPublicDealsFeed({ sort: 'hot', filters, pageSize: 5, location: includeAutoLocation ? detectedLocation : null }),
     getSidebarCommunityStats(),
     supabase
       .from('website_control_settings')
@@ -154,7 +155,12 @@ export default async function PublicHomePage({
       <PageContainer className="space-y-3">
       
         <FeedFilters
-          autoLocationLabel={detectedLocation && !filters.availabilityScope && !filters.availabilityRegion && !filters.availabilityCountry ? detectedLocation.countryLabel : null}
+          autoLocationLabel={
+            includeAutoLocation && detectedLocation && !filters.availabilityScope && !filters.availabilityRegion && !filters.availabilityCountry
+              ? `Country: ${detectedLocation.countryLabel}`
+              : null
+          }
+          disableAutoLocationHref={buildFeedUrl({ sort, filters, extraParams: { location: 'off' } })}
           facets={facets}
           filters={filters}
           sort={sort}
