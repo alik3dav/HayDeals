@@ -55,7 +55,7 @@ export function DealFeedList({ deals, hasMore, nextCursor, sort, filters }: Deal
 
   if (!items.length) {
     return (
-      <div className="rounded-xl border border-border/70 bg-card/60 px-4 py-8 text-center text-sm text-muted-foreground">
+      <div className="rounded-xl border border-border/70 bg-card/60 px-4 py-4 text-center text-sm text-muted-foreground">
         No deals found for this filter combination.
       </div>
     );
