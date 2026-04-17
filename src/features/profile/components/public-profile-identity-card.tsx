@@ -4,6 +4,7 @@ import { PointsTotalDisplay } from '@/features/points/components/points-total-di
 import { UserAvatar } from '@/features/profile/components/user-avatar';
 import { buildProfileDisplayName } from '@/features/profile/identity';
 import type { PublicProfile } from '@/features/profile/public-profile.types';
+import { ProfileDisplayName } from '@/features/profile/components/profile-display-name';
 
 function formatJoinDate(value: string) {
   return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(new Date(value));
@@ -18,7 +19,9 @@ export function PublicProfileIdentityCard({ profile }: { profile: PublicProfile 
         <UserAvatar avatarUrl={profile.avatar_url} className="h-16 w-16" fallbackText={displayName} textClassName="text-lg" />
 
         <div className="min-w-0 flex-1 space-y-1">
-          <h1 className="truncate text-2xl font-semibold text-foreground">{displayName}</h1>
+          <h1 className="truncate text-2xl font-semibold text-foreground">
+            <ProfileDisplayName isVerified={profile.is_verified} name={displayName} />
+          </h1>
           <p className="truncate text-sm text-muted-foreground">@{profile.username}</p>
         </div>
       </div>

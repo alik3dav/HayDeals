@@ -39,7 +39,7 @@ const DEAL_FEED_SELECT = `
   stores:stores!deals_store_id_fkey(name, slug),
   categories:categories!deals_category_id_fkey(name, slug),
   deal_types:deal_types!deals_deal_type_id_fkey(name, code),
-  profiles:profiles!deals_profile_id_fkey(username, display_name, first_name, last_name, avatar_url)
+  profiles:profiles!deals_profile_id_fkey(username, display_name, first_name, last_name, avatar_url, is_verified)
 `;
 
 type RawDeal = Omit<PublicDeal, 'stores' | 'categories' | 'deal_types' | 'profiles'> & {
@@ -47,13 +47,21 @@ type RawDeal = Omit<PublicDeal, 'stores' | 'categories' | 'deal_types' | 'profil
   categories: { name: string; slug: string } | { name: string; slug: string }[] | null;
   deal_types: { name: string; code: string } | { name: string; code: string }[] | null;
   profiles:
-    | { username: string | null; display_name: string | null; first_name: string | null; last_name: string | null; avatar_url: string | null }
     | {
         username: string | null;
         display_name: string | null;
         first_name: string | null;
         last_name: string | null;
         avatar_url: string | null;
+        is_verified: boolean;
+      }
+    | {
+        username: string | null;
+        display_name: string | null;
+        first_name: string | null;
+        last_name: string | null;
+        avatar_url: string | null;
+        is_verified: boolean;
       }[]
     | null;
 };

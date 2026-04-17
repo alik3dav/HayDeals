@@ -40,6 +40,7 @@ export type DealDetail = {
     first_name: string | null;
     last_name: string | null;
     avatar_url: string | null;
+    is_verified: boolean;
   } | null;
 };
 
@@ -56,6 +57,7 @@ export type DealComment = {
     first_name: string | null;
     last_name: string | null;
     avatar_url: string | null;
+    is_verified: boolean;
   } | null;
 };
 

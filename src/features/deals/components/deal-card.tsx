@@ -7,6 +7,7 @@ import { getAvailabilityLabel } from '@/features/deals/availability';
 import { UserAvatar } from '@/features/profile/components/user-avatar';
 import { PublicProfileLink } from '@/features/profile/components/public-profile-link';
 import { buildProfileDisplayName } from '@/features/profile/identity';
+import { ProfileDisplayName } from '@/features/profile/components/profile-display-name';
 import { toPlainText } from '@/lib/text-formatting';
 
 import { DealValueDisplay } from './deal-value-display';
@@ -77,7 +78,7 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
         <div className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground/70 md:self-center">
           <UserAvatar avatarUrl={deal.profiles?.avatar_url} className="h-6 w-6" fallbackText={authorName} textClassName="text-[10px]" />
           <PublicProfileLink className="font-small text-[13px] text-foreground/85 hover:text-primary" username={deal.profiles?.username}>
-            {authorName}
+            <ProfileDisplayName isVerified={deal.profiles?.is_verified} name={authorName} />
           </PublicProfileLink>
           <span>•</span>
           <span>{formatRelativeTime(deal.created_at)}</span>

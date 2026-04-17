@@ -61,6 +61,7 @@ export type PublicDeal = {
     first_name: string | null;
     last_name: string | null;
     avatar_url: string | null;
+    is_verified: boolean;
   } | null;
   current_user_vote: -1 | 0 | 1;
   is_saved_by_current_user: boolean;

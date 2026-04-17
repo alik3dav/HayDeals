@@ -57,7 +57,7 @@ export async function getUsers(): Promise<AdminUser[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, display_name, username, role, reputation, created_at')
+    .select('id, display_name, username, role, is_verified, reputation, created_at')
     .order('created_at', { ascending: false })
     .limit(200);
 
