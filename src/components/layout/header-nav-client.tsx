@@ -246,13 +246,13 @@ export function HeaderNavClient({
             </Link>
             <Link
               className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
-              href="/deals"
+              href="/"
             >
               Deal explorer
             </Link>
             <Link
               className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
-              href="/deals?sort=hot"
+              href="/?sort=hot"
             >
               Hot
             </Link>
@@ -597,7 +597,7 @@ export function HeaderNavClient({
 
             <div className="grid grid-cols-1 gap-1">
               <Button asChild className="h-9 justify-start text-sm" variant="ghost">
-                <Link href="/deals" onClick={() => setMobileOpen(false)}>
+                <Link href="/" onClick={() => setMobileOpen(false)}>
                   <BookOpen className="h-4 w-4" />
                   Deals
                 </Link>
