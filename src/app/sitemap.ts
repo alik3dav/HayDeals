@@ -19,11 +19,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: absoluteUrl('/deals'),
-      changeFrequency: 'daily',
-      priority: 0.85,
-    },
-    {
       url: absoluteUrl('/categories'),
       changeFrequency: 'daily',
       priority: 0.9,
