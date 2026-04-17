@@ -118,7 +118,7 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
 
       <Button
         aria-label="Save deal"
-        className="h-10 w-10 shrink-0 rounded-full border border-border bg-secondary/70 text-muted-foreground hover:bg-secondary hover:text-foreground"
+        className="absolute right-4 top-4 z-10 h-10 w-10 shrink-0 rounded-full border border-border bg-secondary/70 text-muted-foreground hover:bg-secondary hover:text-foreground"
         disabled={isSavePending}
         onClick={handleSave}
         size="icon"
@@ -126,6 +126,8 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
       >
         <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
       </Button>
+
+      <div aria-hidden className="h-10 w-10 shrink-0" />
     </>
   );
 }
