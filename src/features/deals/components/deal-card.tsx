@@ -10,7 +10,7 @@ import { buildProfileDisplayName } from '@/features/profile/identity';
 import { toPlainText } from '@/lib/text-formatting';
 
 import { DealValueDisplay } from './deal-value-display';
-import { DealCardInteractions } from './deal-card-interactions';
+import { DealCardInteractions, DealCardSaveButton } from './deal-card-interactions';
 
 
 import { formatExpiryLabel, formatRelativeTime, getExpiryBadgeClassName } from '@/features/deals/utils/formatters';
@@ -45,6 +45,14 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-secondary/70 text-xs text-muted-foreground">No image</div>
           )}
+          <div className="absolute left-2 top-2 z-10">
+            <DealCardSaveButton
+              dealId={deal.id}
+              dealSlug={deal.slug}
+              initiallySaved={deal.is_saved_by_current_user}
+              saveAction={saveAction}
+            />
+          </div>
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-2 p-4 md:grid md:h-60 md:grid-rows-5 md:gap-2">
@@ -93,8 +101,6 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
             dealSlug={deal.slug}
             initialLikeCount={deal.upvotes_count}
             initialVote={deal.current_user_vote}
-            initiallySaved={deal.is_saved_by_current_user}
-            saveAction={saveAction}
             voteAction={voteAction}
           />
 

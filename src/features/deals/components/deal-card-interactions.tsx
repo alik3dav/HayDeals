@@ -10,23 +10,25 @@ type DealCardInteractionsProps = {
   dealSlug: string;
   initialLikeCount: number;
   initialVote: -1 | 0 | 1;
-  initiallySaved: boolean;
   voteAction: (dealId: string, dealSlug: string, voteValue: 1 | -1) => Promise<void>;
+};
+
+type DealCardSaveButtonProps = {
+  dealId: string;
+  dealSlug: string;
+  initiallySaved: boolean;
   saveAction: (dealId: string, dealSlug: string) => Promise<void>;
 };
 
-export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initialVote, initiallySaved, voteAction, saveAction }: DealCardInteractionsProps) {
+export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initialVote, voteAction }: DealCardInteractionsProps) {
   const [voteState, setVoteState] = useState<VoteState>({
     vote: initialVote,
     score: initialLikeCount,
     upvotes: initialLikeCount,
     downvotes: 0,
   });
-  const [isSaved, setIsSaved] = useState(initiallySaved);
   const [isVotePending, setIsVotePending] = useState(false);
-  const [isSavePending, setIsSavePending] = useState(false);
   const voteRequestIdRef = useRef(0);
-  const saveRequestIdRef = useRef(0);
 
   useEffect(() => {
     setVoteState({
@@ -35,12 +37,9 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
       upvotes: initialLikeCount,
       downvotes: 0,
     });
-    setIsSaved(initiallySaved);
     voteRequestIdRef.current = 0;
-    saveRequestIdRef.current = 0;
     setIsVotePending(false);
-    setIsSavePending(false);
-  }, [dealId, initialLikeCount, initialVote, initiallySaved]);
+  }, [dealId, initialLikeCount, initialVote]);
 
   const handleVote = async (nextVote: 1 | -1) => {
     if (isVotePending) return;
@@ -65,6 +64,44 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
       }
     }
   };
+
+  return (
+    <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
+      <div className="flex items-center justify-between gap-2 rounded-full border-border bg-secondary/70 px-1 py-1">
+        <button
+          aria-label="Upvote deal"
+          className="inline-flex items-center rounded-full p-2 transition-colors hover:bg-primary/10"
+          disabled={isVotePending}
+          onClick={() => handleVote(1)}
+          type="button"
+        >
+          <ThumbsUp className={`h-4 w-4 ${voteState.vote === 1 ? 'fill-current text-primary' : ''}`} />
+        </button>
+        <span className="text-base font-primary text-primary">{voteState.upvotes}</span>
+        <button
+          aria-label="Downvote deal"
+          className="inline-flex items-center rounded-full p-2 text-rose-500 transition-colors hover:bg-rose-500/15"
+          disabled={isVotePending}
+          onClick={() => handleVote(-1)}
+          type="button"
+        >
+          <ThumbsDown className={`h-4 w-4 ${voteState.vote === -1 ? 'fill-current text-rose-500' : ''}`} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function DealCardSaveButton({ dealId, dealSlug, initiallySaved, saveAction }: DealCardSaveButtonProps) {
+  const [isSaved, setIsSaved] = useState(initiallySaved);
+  const [isSavePending, setIsSavePending] = useState(false);
+  const saveRequestIdRef = useRef(0);
+
+  useEffect(() => {
+    setIsSaved(initiallySaved);
+    saveRequestIdRef.current = 0;
+    setIsSavePending(false);
+  }, [dealId, initiallySaved]);
 
   const handleSave = async () => {
     if (isSavePending) return;
@@ -91,41 +128,15 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
   };
 
   return (
-    <>
-      <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
-        <div className="flex items-center justify-between gap-2 rounded-full border-border bg-secondary/70 px-1 py-1">
-          <button
-            aria-label="Upvote deal"
-            className="inline-flex items-center rounded-full p-2 transition-colors hover:bg-primary/10"
-            disabled={isVotePending}
-            onClick={() => handleVote(1)}
-            type="button"
-          >
-            <ThumbsUp className={`h-4 w-4 ${voteState.vote === 1 ? 'fill-current text-primary' : ''}`} />
-          </button>
-          <span className="text-base font-primary text-primary">{voteState.upvotes}</span>
-          <button
-            aria-label="Downvote deal"
-            className="inline-flex items-center rounded-full p-2 text-rose-500 transition-colors hover:bg-rose-500/15"
-            disabled={isVotePending}
-            onClick={() => handleVote(-1)}
-            type="button"
-          >
-            <ThumbsDown className={`h-4 w-4 ${voteState.vote === -1 ? 'fill-current text-rose-500' : ''}`} />
-          </button>
-        </div>
-      </div>
-
-      <Button
-        aria-label="Save deal"
-        className="h-10 w-10 shrink-0 rounded-full border border-border bg-secondary/70 text-muted-foreground hover:bg-secondary hover:text-foreground"
-        disabled={isSavePending}
-        onClick={handleSave}
-        size="icon"
-        variant={isSaved ? 'default' : 'ghost'}
-      >
-        <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
-      </Button>
-    </>
+    <Button
+      aria-label="Save deal"
+      className="h-10 w-10 shrink-0 rounded-full border border-border bg-secondary/70 text-muted-foreground hover:bg-secondary hover:text-foreground"
+      disabled={isSavePending}
+      onClick={handleSave}
+      size="icon"
+      variant={isSaved ? 'default' : 'ghost'}
+    >
+      <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
+    </Button>
   );
 }
