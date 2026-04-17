@@ -13,9 +13,9 @@ export function ManageUsers({ users, isAdmin }: { users: AdminUser[]; isAdmin: b
       <CardContent className="space-y-2">
         {users.map((user) => (
           <form key={user.id} action={updateUserRoleAction} className="grid items-center gap-2 rounded-md border p-2 md:grid-cols-[1fr_160px_90px]">
-            <div>
-              <p className="text-sm font-medium">{user.display_name || user.username || user.id}</p>
-              <p className="text-xs text-muted-foreground">@{user.username || 'unknown'} • Rep {user.reputation}</p>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium">{user.display_name || user.username || user.id}</p>
+              <p className="truncate text-xs text-muted-foreground">@{user.username || 'unknown'} • Rep {user.reputation}</p>
             </div>
             <input name="userId" type="hidden" value={user.id} />
             <Select defaultValue={user.role} disabled={!isAdmin} name="role">

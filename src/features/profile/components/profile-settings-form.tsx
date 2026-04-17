@@ -50,7 +50,7 @@ export function ProfileSettingsForm({ profile }: { profile: ProfileSettings }) {
       </section>
 
       <section className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/70 bg-card/40 px-4 py-3">
-        <p className="text-xs text-muted-foreground">Signed in as {profile.email ?? profile.username ?? 'user'}.</p>
+        <p className="min-w-0 break-all text-xs text-muted-foreground">Signed in as {profile.email ?? profile.username ?? 'user'}.</p>
         <Button disabled={isPending} size="sm" type="submit">
           {isPending ? 'Saving…' : 'Save changes'}
         </Button>

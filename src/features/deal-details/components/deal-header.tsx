@@ -19,8 +19,8 @@ export function DealHeader({ deal }: { deal: DealDetail }) {
   return (
     <header className="rounded-2xl border border-border/60 bg-card/80 p-5">
       <div className="space-y-4">
-        <div className="flex items-start justify-between gap-3">
-          <h1 className="text-xl font-semibold leading-tight text-foreground md:text-2xl">{deal.title}</h1>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <h1 className="min-w-0 flex-1 text-xl font-semibold leading-tight text-foreground md:text-2xl">{deal.title}</h1>
           {deal.deal_types?.name ? (
             <span className="shrink-0 rounded border border-primary/30 bg-primary/10 px-2 py-1 text-[11px] text-primary">{deal.deal_types.name}</span>
           ) : null}
@@ -42,7 +42,7 @@ export function DealHeader({ deal }: { deal: DealDetail }) {
 
         {deal.description ? <FormattedText className="max-w-none" content={deal.description} /> : null}
 
-        <Link className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline" href={deal.deal_url} rel="noreferrer" target="_blank">
+        <Link className="inline-flex max-w-full items-center gap-1 break-all text-sm font-medium text-primary hover:underline" href={deal.deal_url} rel="noreferrer" target="_blank">
           Visit deal <ExternalLink className="h-3.5 w-3.5" />
         </Link>
       </div>

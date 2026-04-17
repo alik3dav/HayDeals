@@ -12,7 +12,8 @@ type FeedSortSubheaderProps = {
 export function FeedSortSubheader({ sort, filters }: FeedSortSubheaderProps) {
   return (
     <div className="border-b border-border/60 bg-background/95">
-      <div className="container flex h-10 items-center gap-2 text-sm">
+      <div className="container h-10 overflow-x-auto">
+        <div className="flex h-full min-w-max items-center gap-2 whitespace-nowrap text-sm">
         {sortOptions.map((option, index) => {
           const isActive = sort === option.value;
 
@@ -32,6 +33,7 @@ export function FeedSortSubheader({ sort, filters }: FeedSortSubheaderProps) {
             </div>
           );
         })}
+        </div>
       </div>
     </div>
   );

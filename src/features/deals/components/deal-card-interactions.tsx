@@ -118,7 +118,7 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
 
       <Button
         aria-label="Save deal"
-        className="absolute right-4 top-4 z-10 h-10 w-10 shrink-0 rounded-full border border-border bg-secondary/70 text-muted-foreground hover:bg-secondary hover:text-foreground"
+        className="absolute right-3 top-3 z-10 h-9 w-9 shrink-0 rounded-full border border-border bg-secondary/70 text-muted-foreground hover:bg-secondary hover:text-foreground md:right-4 md:top-4 md:h-10 md:w-10"
         disabled={isSavePending}
         onClick={handleSave}
         size="icon"

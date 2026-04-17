@@ -158,7 +158,7 @@ export default async function CategoryDealsPage({
         ) : null}
 
         <main className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
-          <section>
+          <section className="min-w-0">
             <DealFeedList deals={deals.items} filters={filters} hasMore={deals.hasMore} nextCursor={deals.nextCursor} sort={sort} />
           </section>
 

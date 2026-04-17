@@ -108,11 +108,11 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
     >
       <div className="flex flex-wrap items-center gap-2">
         {filterMenus.map((menu) => (
-          <div className="relative shrink-0" key={menu.name}>
+          <div className="relative max-w-full shrink-0" key={menu.name}>
             <button
               aria-haspopup="menu"
               aria-expanded={openMenu === menu.name}
-              className={`rounded-full border px-4 py-2.5 pr-9 text-xs text-foreground transition ${
+              className={`max-w-full truncate rounded-full border px-4 py-2.5 pr-9 text-xs text-foreground transition ${
                 menu.selectedValue
                   ? 'border-primary/30 bg-primary/10 hover:bg-primary/15'
                   : 'border-border/70 bg-secondary hover:bg-secondary/90'
@@ -142,7 +142,9 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
               </span>
             )}
             <div
-              className={`absolute left-0 z-50 mt-2 max-h-72 min-w-52 overflow-auto rounded-lg border border-border/80 bg-background p-1 shadow-lg transition ${
+              className={`absolute z-50 mt-2 max-h-72 w-[min(22rem,calc(100vw-2rem))] max-w-[22rem] overflow-auto rounded-lg border border-border/80 bg-background p-1 shadow-lg transition sm:min-w-52 ${
+                menu.name === 'Country' ? 'right-0' : 'left-0'
+              } ${
                 openMenu === menu.name
                   ? 'visible opacity-100'
                   : 'pointer-events-none invisible opacity-0'

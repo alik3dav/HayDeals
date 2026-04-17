@@ -86,7 +86,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ slu
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} type="application/ld+json" />
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           <DealHeader deal={deal} />
           <AddCommentForm canComment={Boolean(user)} dealId={deal.id} dealSlug={deal.slug} onAddComment={addCommentAction} />
           <CommentsSection comments={comments} />

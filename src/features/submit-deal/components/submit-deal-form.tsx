@@ -73,8 +73,8 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
       <input name="intent" type="hidden" value={intent} />
       <input name="dealTypeCode" type="hidden" value={dealTypeCode} />
 
-      <div className="grid gap-5 lg:grid-cols-[1.5fr_minmax(320px,1fr)] lg:items-start">
-        <div className="space-y-5">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,1fr)] lg:items-start">
+        <div className="min-w-0 space-y-5">
           <SectionCard description="Write a clear headline and direct URL so members can validate the offer quickly." title="Core details">
             <div className="grid gap-4">
               <FormField error={state.errors?.title?.[0]} htmlFor="title" label="Deal title">
@@ -264,7 +264,7 @@ export function SubmitDealForm({ meta }: SubmitDealFormProps) {
           </SectionCard>
         </div>
 
-        <aside className="space-y-5 lg:sticky lg:top-20">
+        <aside className="min-w-0 space-y-5 lg:sticky lg:top-20">
           <SectionCard description="One main image improves trust and feed engagement." title="Deal image">
             <DealImageUpload error={state.errors?.imageUrl?.[0]} onChange={(nextUrl) => setField('imageUrl', nextUrl)} value={values.imageUrl} />
             <input name="imageUrl" type="hidden" value={values.imageUrl} />

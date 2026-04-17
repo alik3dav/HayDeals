@@ -49,7 +49,7 @@ export function EntityUpsertPanel<T extends EntityRecord>({
             <label className="flex items-center gap-2 text-sm">
               <input defaultChecked name="isActive" type="checkbox" /> Active
             </label>
-            <Button type="submit">Create</Button>
+            <Button className="max-md:w-full" type="submit">Create</Button>
           </form>
         </CardContent>
       </Card>
@@ -68,7 +68,7 @@ export function EntityUpsertPanel<T extends EntityRecord>({
               <label className="flex items-center gap-2 text-sm">
                 <input defaultChecked={item.is_active} name="isActive" type="checkbox" /> Active
               </label>
-              <Button size="sm" type="submit" variant="secondary">
+              <Button className="max-md:w-full" size="sm" type="submit" variant="secondary">
                 Save
               </Button>
             </form>
