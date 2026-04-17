@@ -18,27 +18,25 @@ export function DashboardLayoutHeader({
   const resolvedName = displayName || userEmail || 'User';
 
   return (
-    <header className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/70 bg-card/60 px-3 py-2">
-      <div>
-        <p className="text-sm font-semibold">CipiDeals Dashboard</p>
-        <p className="text-xs text-muted-foreground">Manage your submissions, saves, and activity</p>
-      </div>
-
-      <div className="inline-flex items-center gap-2">
-        <div className="hidden items-center gap-2 lg:inline-flex">
-          <UserAvatar avatarUrl={avatarUrl} className="h-7 w-7" fallbackText={resolvedName} />
-          <span className="text-xs text-muted-foreground">{resolvedName}</span>
+    <aside className="flex flex-col gap-3 rounded-xl border border-border/70 bg-card/60 p-3">
+      <div className="flex items-center gap-2">
+        <UserAvatar avatarUrl={avatarUrl} className="h-8 w-8" fallbackText={resolvedName} />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold">{resolvedName}</p>
+          <p className="truncate text-xs text-muted-foreground">{userEmail}</p>
         </div>
-        <Button asChild size="sm" variant="outline">
+      </div>
+      <div className="grid gap-2">
+        <Button asChild className="w-full justify-start" size="sm" variant="outline">
           <Link href="/">Public feed</Link>
         </Button>
         <form action={signOutAction}>
-          <Button size="sm" variant="ghost" type="submit">
+          <Button className="w-full justify-start" size="sm" variant="ghost" type="submit">
             <LogOut className="h-4 w-4" />
             Sign out
           </Button>
         </form>
       </div>
-    </header>
+    </aside>
   );
 }
