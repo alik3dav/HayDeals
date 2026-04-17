@@ -46,7 +46,7 @@ export async function getStores(): Promise<AdminStore[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('stores')
-    .select('id, name, slug, website_url, is_active, created_at')
+    .select('id, name, slug, website_url, logo_url, is_active, created_at')
     .order('name', { ascending: true });
 
   if (error) throw error;

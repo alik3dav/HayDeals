@@ -27,6 +27,7 @@ export type AdminStore = {
   name: string;
   slug: string;
   website_url: string | null;
+  logo_url: string | null;
   is_active: boolean;
   created_at: string;
 };
