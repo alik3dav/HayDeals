@@ -11,6 +11,7 @@ type FeedFiltersProps = {
   sort: DealSortOption;
   filters: DealFeedFilters;
   facets: FeedFacetCollections;
+  autoLocationLabel?: string | null;
 };
 type AvailabilityScopeOptionValue = NonNullable<DealFeedFilters['availabilityScope']>;
 
@@ -23,7 +24,7 @@ function getOptionLabel(items: { label: string; value: string }[], value?: strin
   return items.find((item) => item.value === value)?.label ?? value;
 }
 
-export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
+export function FeedFilters({ sort, filters, facets, autoLocationLabel }: FeedFiltersProps) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const containerRef = useRef<HTMLElement>(null);
 
@@ -171,6 +172,12 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
           Reset
         </Link>
       </div>
+        {autoLocationLabel ? (
+          <p className="text-xs text-muted-foreground">
+            Prioritizing deals for {autoLocationLabel}
+          </p>
+        ) : null}
+
     </section>
   );
 }

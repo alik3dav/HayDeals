@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { COUNTRY_SELECT_OPTIONS, REGION_OPTIONS } from '@/features/deals/availability';
+import { getAvailabilityPriority, type DetectedLocation } from '@/features/deals/location';
 
 import {
   DEAL_FEED_PAGE_SIZE,
@@ -273,11 +274,13 @@ export async function getPublicDealsFeed({
   filters,
   cursor,
   pageSize = DEAL_FEED_PAGE_SIZE,
+  location,
 }: {
   sort: DealSortOption;
   filters: DealFeedFilters;
   cursor?: DealFeedCursor | null;
   pageSize?: number;
+  location?: DetectedLocation | null;
 }) {
   const supabase = await createClient();
   const safePageSize = Math.min(Math.max(pageSize, 1), MAX_PAGE_SIZE);
@@ -329,7 +332,23 @@ export async function getPublicDealsFeed({
     };
   }
 
+  const availabilityPriority = getAvailabilityPriority(filters, location ?? null);
+
   let query = supabase.from('deals').select(DEAL_FEED_SELECT).eq('moderation_status', 'approved').limit(safePageSize + 1);
+
+  if (availabilityPriority.autoApplied) {
+    const availabilitySegments = [
+      `and(availability_scope.eq.country,availability_country_code.eq.${availabilityPriority.countryCode})`,
+      'availability_scope.eq.worldwide',
+    ];
+
+    if (availabilityPriority.region) {
+      availabilitySegments.splice(1, 0, `and(availability_scope.eq.region,availability_region.eq.${availabilityPriority.region})`);
+    }
+
+    query = query.or(availabilitySegments.join(','));
+    query = query.order('availability_scope', { ascending: true });
+  }
 
   if (categoryId) {
     query = query.eq('category_id', categoryId);
