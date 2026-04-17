@@ -32,7 +32,7 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
   });
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40 md:grid md:min-h-60 md:grid-cols-[15rem_minmax(0,1fr)]">
+    <article className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-colors hover:border-primary/40 md:grid md:min-h-60 md:grid-cols-[15rem_minmax(0,1fr)]">
       <div className="relative aspect-square w-full shrink-0 overflow-hidden border-b border-border/60 bg-secondary/50 md:h-60 md:w-60 md:border-b-0 md:border-r">
           {deal.image_url ? (
             <Image
