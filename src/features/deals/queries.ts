@@ -274,18 +274,65 @@ export async function getPublicDealsFeed({
   const supabase = await createClient();
   const safePageSize = Math.min(Math.max(pageSize, 1), MAX_PAGE_SIZE);
 
+  const [categoryId, storeId, dealTypeId] = await Promise.all([
+    filters.category
+      ? supabase
+          .from('categories')
+          .select('id')
+          .eq('slug', filters.category)
+          .eq('is_active', true)
+          .maybeSingle()
+          .then(({ data, error }) => {
+            if (error) throw error;
+            return data?.id ?? null;
+          })
+      : Promise.resolve<string | null>(null),
+    filters.store
+      ? supabase
+          .from('stores')
+          .select('id')
+          .eq('slug', filters.store)
+          .eq('is_active', true)
+          .maybeSingle()
+          .then(({ data, error }) => {
+            if (error) throw error;
+            return data?.id ?? null;
+          })
+      : Promise.resolve<string | null>(null),
+    filters.dealType
+      ? supabase
+          .from('deal_types')
+          .select('id')
+          .eq('code', filters.dealType)
+          .eq('is_active', true)
+          .maybeSingle()
+          .then(({ data, error }) => {
+            if (error) throw error;
+            return data?.id ?? null;
+          })
+      : Promise.resolve<string | null>(null),
+  ]);
+
+  if ((filters.category && !categoryId) || (filters.store && !storeId) || (filters.dealType && !dealTypeId)) {
+    return {
+      items: [],
+      hasMore: false,
+      nextCursor: null,
+    };
+  }
+
   let query = supabase.from('deals').select(DEAL_FEED_SELECT).eq('moderation_status', 'approved').limit(safePageSize + 1);
 
-  if (filters.category) {
-    query = query.eq('categories.slug', filters.category);
+  if (categoryId) {
+    query = query.eq('category_id', categoryId);
   }
 
-  if (filters.store) {
-    query = query.eq('stores.slug', filters.store);
+  if (storeId) {
+    query = query.eq('store_id', storeId);
   }
 
-  if (filters.dealType) {
-    query = query.eq('deal_types.code', filters.dealType);
+  if (dealTypeId) {
+    query = query.eq('deal_type_id', dealTypeId);
   }
   if (filters.availabilityScope) {
     query = query.eq('availability_scope', filters.availabilityScope);
