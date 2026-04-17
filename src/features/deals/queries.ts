@@ -219,7 +219,10 @@ export function parseFeedQueryParams(params: Record<string, string | string[] | 
     return Array.isArray(value) ? value[0] : value;
   };
 
+  const includeAutoLocation = getParam('location') !== 'off';
+
   return {
+    includeAutoLocation,
     sort: normalizedSort(getParam('sort')),
     cursor: decodeFeedCursor(getParam('cursor')),
     filters: {
