@@ -80,26 +80,38 @@ export async function getReports(): Promise<AdminReport[]> {
 export async function getDealForEdit(dealId: string): Promise<AdminDealEdit | null> {
   const supabase = await createClient();
 
-  const [{ data: deal, error: dealError }, { data: categories, error: categoriesError }, { data: stores, error: storesError }] = await Promise.all([
+  const [
+    { data: deal, error: dealError },
+    { data: categories, error: categoriesError },
+    { data: stores, error: storesError },
+    { data: dealTypes, error: dealTypesError },
+  ] = await Promise.all([
     supabase
       .from('deals')
       .select(
-        'id, title, description, deal_url, coupon_code, moderation_note, sale_price, original_price, expires_at, moderation_status, is_featured, category_id, store_id, availability_scope, availability_region, availability_country_code',
+        'id, title, description, deal_url, coupon_code, moderation_note, sale_price, original_price, discount_percent, bundle_text, image_url, deal_type_id, expires_at, moderation_status, is_featured, category_id, store_id, availability_scope, availability_region, availability_country_code',
       )
       .eq('id', dealId)
       .maybeSingle(),
     supabase.from('categories').select('id, name').eq('is_active', true).order('name', { ascending: true }),
     supabase.from('stores').select('id, name').eq('is_active', true).order('name', { ascending: true }),
+    supabase.from('deal_types').select('id, name, code').eq('is_active', true).order('name', { ascending: true }),
   ]);
 
   if (dealError) throw dealError;
   if (categoriesError) throw categoriesError;
   if (storesError) throw storesError;
+  if (dealTypesError) throw dealTypesError;
   if (!deal) return null;
 
   return {
-    ...(deal as Omit<AdminDealEdit, 'categoryOptions' | 'storeOptions'>),
+    ...(deal as Omit<AdminDealEdit, 'categoryOptions' | 'storeOptions' | 'dealTypeOptions'>),
     categoryOptions: categories ?? [],
     storeOptions: stores ?? [],
+    dealTypeOptions: (dealTypes ?? []).map((dealType) => ({
+      id: dealType.id,
+      label: dealType.name,
+      code: String(dealType.code),
+    })),
   };
 }
