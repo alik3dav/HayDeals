@@ -237,47 +237,21 @@ export function HeaderNavClient({
             )}
           </Link>
 
-          <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+          <div className="relative hidden items-center gap-1 lg:flex" ref={categoriesRef}>
             <Link
-              className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
-              href="/"
-            >
-              Home feed
-            </Link>
-            <Link
-              className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
-              href="/"
-            >
-              Deal explorer
-            </Link>
-            <Link
-              className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
-              href="/?sort=hot"
-            >
-              Hot
-            </Link>
-            <Link
-              className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
-              href="/categories"
-            >
-              Categories
-            </Link>
-          </nav>
-
-          <div
-            className="relative hidden lg:block"
-            onMouseEnter={() => open("categories")}
-            onMouseLeave={() => close()}
-            ref={categoriesRef}
-          >
-            <button
-              aria-expanded={openKey === "categories"}
               className="inline-flex h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              onClick={() => toggle("categories")}
-              type="button"
+              href="/categories"
             >
               <LayoutGrid className="h-3.5 w-3.5" />
               Categories
+            </Link>
+            <button
+              aria-expanded={openKey === "categories"}
+              aria-label="Toggle categories dropdown"
+              className="inline-flex h-8 items-center rounded-md px-2 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              onClick={() => toggle("categories")}
+              type="button"
+            >
               <ChevronDown
                 className={cn(
                   "h-3.5 w-3.5 transition-transform duration-150",
