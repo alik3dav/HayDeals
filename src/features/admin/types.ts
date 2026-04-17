@@ -37,6 +37,7 @@ export type AdminUser = {
   display_name: string | null;
   username: string | null;
   role: 'user' | 'moderator' | 'admin';
+  is_verified: boolean;
   reputation: number;
   created_at: string;
 };

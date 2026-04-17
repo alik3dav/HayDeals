@@ -7,6 +7,7 @@ import { formatRelativeTime } from '@/features/deal-details/components/deal-util
 import { FormattedText } from '@/components/ui/formatted-text';
 import { PublicProfileLink } from '@/features/profile/components/public-profile-link';
 import { buildProfileDisplayName } from '@/features/profile/identity';
+import { ProfileDisplayName } from '@/features/profile/components/profile-display-name';
 
 export function DealHeader({ deal }: { deal: DealDetail }) {
   const authorName = buildProfileDisplayName(deal.profiles ?? {}, 'User');
@@ -34,7 +35,7 @@ export function DealHeader({ deal }: { deal: DealDetail }) {
           <span>{availabilityLabel}</span>
           <span>•</span>
           <PublicProfileLink className="hover:text-primary" username={deal.profiles?.username}>
-            {authorName}
+            <ProfileDisplayName isVerified={deal.profiles?.is_verified} name={authorName} />
           </PublicProfileLink>
           <span>•</span>
           <span>{formatRelativeTime(deal.created_at)}</span>

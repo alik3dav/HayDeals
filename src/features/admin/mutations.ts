@@ -118,10 +118,15 @@ export async function upsertStoreAction(formData: FormData) {
 export async function updateUserRoleAction(formData: FormData) {
   await requireRole(['admin']);
   const supabase = await createClient();
+  const nextRole = String(formData.get('role') ?? 'user');
+  const isVerifiedInput = String(formData.get('isVerified') ?? '') === 'on';
 
   const { error } = await supabase
     .from('profiles')
-    .update({ role: String(formData.get('role') ?? 'user') })
+    .update({
+      role: nextRole,
+      is_verified: nextRole === 'admin' ? true : isVerifiedInput,
+    })
     .eq('id', String(formData.get('userId') ?? ''));
 
   if (error) throw error;

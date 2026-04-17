@@ -4,6 +4,7 @@ import { compactId, formatRelativeTime } from '@/features/deal-details/component
 import { PublicProfileLink } from '@/features/profile/components/public-profile-link';
 import { UserAvatar } from '@/features/profile/components/user-avatar';
 import { buildProfileDisplayName } from '@/features/profile/identity';
+import { ProfileDisplayName } from '@/features/profile/components/profile-display-name';
 
 function getCommentAuthor(comment: DealComment) {
   return buildProfileDisplayName(comment.profiles ?? {}, compactId(comment.profile_id));
@@ -25,7 +26,7 @@ export function CommentsSection({ comments }: { comments: DealComment[] }) {
               <div className="mb-1 flex items-center gap-2 text-[11px] text-muted-foreground">
                 <UserAvatar avatarUrl={comment.profiles?.avatar_url} className="h-5 w-5" fallbackText={authorName} />
                 <PublicProfileLink className="text-foreground/90 hover:text-primary" username={comment.profiles?.username}>
-                  {authorName}
+                  <ProfileDisplayName isVerified={comment.profiles?.is_verified} name={authorName} />
                 </PublicProfileLink>
                 <span>•</span>
                 <span>{formatRelativeTime(comment.created_at)}</span>
