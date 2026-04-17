@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cookies, headers } from 'next/headers';
 
 import { PageContainer } from '@/components/layout/page-container';
 import { DealFeedList } from '@/features/deals/components/deal-feed-list';
@@ -7,6 +8,7 @@ import { FeedSidebar } from '@/features/deals/components/feed-sidebar';
 import { FeedSortSubheader } from '@/features/deals/components/feed-sort-subheader';
 import { feedSidebarAd } from '@/features/deals/components/sidebar-ad-data';
 import type { SidebarAd } from '@/features/deals/components/sidebar-ad-module';
+import { resolveDetectedLocation } from '@/features/deals/location';
 import { getFeedFacets, getPublicDealsFeed, getSidebarCommunityStats, parseFeedQueryParams } from '@/features/deals/queries';
 import type { FeedFacetCollections, SidebarCommunityStats } from '@/features/deals/types';
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo';
@@ -70,6 +72,9 @@ export default async function PublicHomePage({
 }) {
   const resolvedParams = await searchParams;
   const { sort, cursor, filters } = parseFeedQueryParams(resolvedParams);
+  const requestHeaders = await headers();
+  const requestCookies = await cookies();
+  const detectedLocation = resolveDetectedLocation({ headers: requestHeaders, cookies: requestCookies });
 
   let facets = EMPTY_FACETS;
   let communityStats = EMPTY_COMMUNITY_STATS;
@@ -81,8 +86,8 @@ export default async function PublicHomePage({
 
   const [facetsResult, dealsResult, trendingDealsResult, communityStatsResult, sidebarAdResult] = await Promise.allSettled([
     getFeedFacets(),
-    getPublicDealsFeed({ sort, cursor, filters }),
-    getPublicDealsFeed({ sort: 'hot', filters, pageSize: 5 }),
+    getPublicDealsFeed({ sort, cursor, filters, location: detectedLocation }),
+    getPublicDealsFeed({ sort: 'hot', filters, pageSize: 5, location: detectedLocation }),
     getSidebarCommunityStats(),
     supabase
       .from('website_control_settings')
@@ -148,7 +153,12 @@ export default async function PublicHomePage({
 
       <PageContainer className="space-y-3">
       
-        <FeedFilters facets={facets} filters={filters} sort={sort} />
+        <FeedFilters
+          autoLocationLabel={detectedLocation && !filters.availabilityScope && !filters.availabilityRegion && !filters.availabilityCountry ? detectedLocation.countryLabel : null}
+          facets={facets}
+          filters={filters}
+          sort={sort}
+        />
 
         {loadError ? (
           <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
