@@ -163,7 +163,7 @@ export function FeedFilters({ sort, filters, facets }: FeedFiltersProps) {
         ))}
 
         <Link
-          className="shrink-0 rounded-full border border-border/70 bg-secondary px-3 py-1 text-xs text-secondary-foreground"
+          className="shrink-0 px-2 py-1 text-xs text-secondary-foreground/70"
           href={buildFeedUrl({ sort, filters: {} })}
         >
           Reset
