@@ -104,6 +104,7 @@ export async function upsertStoreAction(formData: FormData) {
     name: String(formData.get('name') ?? ''),
     slug: String(formData.get('slug') ?? ''),
     website_url: String(formData.get('websiteUrl') ?? '') || null,
+    logo_url: String(formData.get('logoUrl') ?? '') || null,
     is_active: String(formData.get('isActive') ?? '') === 'on',
   };
 
