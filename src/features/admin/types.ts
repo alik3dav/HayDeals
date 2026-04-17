@@ -59,6 +59,10 @@ export type AdminDealEdit = {
   moderation_note: string | null;
   sale_price: number | null;
   original_price: number | null;
+  discount_percent: number | null;
+  bundle_text: string | null;
+  image_url: string | null;
+  deal_type_id: string;
   expires_at: string | null;
   moderation_status: 'draft' | 'pending' | 'approved' | 'rejected';
   is_featured: boolean;
@@ -69,6 +73,7 @@ export type AdminDealEdit = {
   availability_country_code: string | null;
   categoryOptions: Array<{ id: string; name: string }>;
   storeOptions: Array<{ id: string; name: string }>;
+  dealTypeOptions: Array<{ id: string; label: string; code: string }>;
 };
 
 export type WebsiteControlState = {
