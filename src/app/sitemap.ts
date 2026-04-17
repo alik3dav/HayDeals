@@ -20,23 +20,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: absoluteUrl('/deals'),
-      changeFrequency: 'hourly',
-      priority: 0.95,
+      changeFrequency: 'daily',
+      priority: 0.85,
     },
     {
       url: absoluteUrl('/categories'),
       changeFrequency: 'daily',
       priority: 0.9,
-    },
-    {
-      url: absoluteUrl('/deals?sort=hot'),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: absoluteUrl('/deals?sort=discussed'),
-      changeFrequency: 'daily',
-      priority: 0.75,
     },
   ];
 

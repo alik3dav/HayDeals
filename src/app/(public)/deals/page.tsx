@@ -51,10 +51,15 @@ export async function generateMetadata({
   if (filters.availabilityCountry) canonicalQuery.set('availabilityCountry', filters.availabilityCountry);
   if (sort !== 'newest') canonicalQuery.set('sort', sort);
 
+  const isDefaultFeedView = canonicalQuery.size === 0;
+
   return buildPageMetadata({
-    title: titleParts.join(' | '),
-    description: 'Browse all verified community deals by category, store, and availability.',
-    pathname: canonicalQuery.size ? `/deals?${canonicalQuery.toString()}` : '/deals',
+    title: isDefaultFeedView ? 'Deals Explorer | Filters, Categories, and Stores' : titleParts.join(' | '),
+    description: isDefaultFeedView
+      ? 'Use advanced filters to explore community deals by category, store, deal type, and availability.'
+      : 'Filtered deal results in the CipiDeals explorer.',
+    pathname: '/deals',
+    noIndex: !isDefaultFeedView,
   });
 }
 

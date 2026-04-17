@@ -240,9 +240,21 @@ export function HeaderNavClient({
           <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
             <Link
               className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
+              href="/"
+            >
+              Home feed
+            </Link>
+            <Link
+              className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
               href="/deals"
             >
-              Deals
+              Deal explorer
+            </Link>
+            <Link
+              className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
+              href="/deals?sort=hot"
+            >
+              Hot
             </Link>
             <Link
               className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-all duration-150 hover:bg-muted/40 hover:text-foreground"
