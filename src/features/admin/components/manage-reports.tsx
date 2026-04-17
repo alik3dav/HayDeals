@@ -13,9 +13,9 @@ export function ManageReports({ reports }: { reports: AdminReport[] }) {
       <CardContent className="space-y-2">
         {reports.map((report) => (
           <form key={report.id} action={updateReportStatusAction} className="grid gap-2 rounded-md border p-2 md:grid-cols-[1fr_140px_90px]">
-            <div>
-              <p className="text-sm font-medium">{report.deals?.[0]?.title ?? 'Unknown deal'}</p>
-              <p className="text-xs text-muted-foreground">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium">{report.deals?.[0]?.title ?? 'Unknown deal'}</p>
+              <p className="truncate text-xs text-muted-foreground">
                 {report.reason} • by {report.profiles?.[0]?.username ?? 'unknown'}
               </p>
             </div>

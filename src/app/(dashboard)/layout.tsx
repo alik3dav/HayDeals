@@ -33,7 +33,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
             />
             <DashboardSidebarShell />
           </div>
-          <main className="rounded-xl border border-border/70 bg-card/45 p-3 md:p-4">{children}</main>
+          <main className="min-w-0 rounded-xl border border-border/70 bg-card/45 p-3 md:p-4">{children}</main>
         </div>
       </div>
     </div>

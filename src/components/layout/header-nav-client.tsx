@@ -220,7 +220,7 @@ export function HeaderNavClient({
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="container flex h-14 items-center gap-3">
+        <div className="container flex h-14 min-w-0 items-center gap-3">
           <Link className="shrink-0" href="/">
             {logotypeUrl ? (
               <Image
@@ -262,7 +262,7 @@ export function HeaderNavClient({
 
             <div
               className={cn(
-                "absolute left-0 top-full w-[420px] origin-top-left pt-2 transition-all duration-150",
+                "absolute left-0 top-full w-[min(92vw,420px)] origin-top-left pt-2 transition-all duration-150",
                 openKey === "categories"
                   ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
                   : "pointer-events-none -translate-y-1 scale-[0.98] opacity-0",
@@ -296,7 +296,7 @@ export function HeaderNavClient({
           </div>
 
           <form
-            className="hidden flex-1 lg:block"
+            className="hidden min-w-0 flex-1 lg:block"
             method="get"
             onSubmit={handleSearchSubmit}
           >
@@ -314,7 +314,7 @@ export function HeaderNavClient({
             </div>
           </form>
 
-          <div className="ml-auto hidden items-center gap-1.5 lg:flex">
+          <div className="ml-auto hidden shrink-0 items-center gap-1.5 lg:flex">
             <Button
               asChild
               className="h-8 gap-1.5 px-3 text-xs"
@@ -345,13 +345,13 @@ export function HeaderNavClient({
 
                   <div
                     className={cn(
-                      "absolute right-0 top-full z-10 w-80 origin-top-right pt-2 transition-all duration-150",
+                      "absolute right-0 top-full z-10 w-[min(92vw,20rem)] origin-top-right pt-2 transition-all duration-150",
                       openKey === "notifications"
                         ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
                         : "pointer-events-none -translate-y-1 scale-[0.98] opacity-0",
                     )}
                   >
-                    <div className="rounded-xl border border-border/70 bg-background p-1.5 shadow-lg">
+                    <div className="max-h-[70vh] overflow-auto rounded-xl border border-border/70 bg-background p-1.5 shadow-lg">
                       <div className="mb-1 flex items-center justify-between px-2 py-1">
                         <span className="text-xs font-semibold text-foreground">
                           Notifications
@@ -510,7 +510,7 @@ export function HeaderNavClient({
           )}
           ref={mobileRef}
         >
-          <div className="container space-y-2 py-2.5">
+          <div className="container max-h-[calc(100vh-3.5rem)] space-y-2 overflow-y-auto py-2.5">
             <form className="pb-1" method="get" onSubmit={handleSearchSubmit}>
               <label className="sr-only" htmlFor="mobile-header-search">
                 Search deals

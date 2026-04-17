@@ -87,7 +87,7 @@ export function WebsiteControlForm({ settings }: WebsiteControlFormProps) {
         />
       </div>
 
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Branding changes are saved to Supabase website settings.</p>
         <Button disabled={isPending} type="submit">
           {isPending ? 'Saving…' : 'Save changes'}

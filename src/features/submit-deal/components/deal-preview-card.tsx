@@ -68,7 +68,7 @@ export function DealPreviewCard(props: DealPreviewCardProps) {
   });
 
   return (
-    <article className="flex items-center gap-4 overflow-hidden rounded-xl border border-border/70 bg-card/80 p-3">
+    <article className="flex flex-col gap-3 overflow-hidden rounded-xl border border-border/70 bg-card/80 p-3 sm:flex-row sm:items-center sm:gap-4">
       <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-secondary/60">
         {props.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -100,7 +100,7 @@ export function DealPreviewCard(props: DealPreviewCardProps) {
         </div>
       </div>
 
-      <div className="shrink-0 text-right text-xs">
+      <div className="w-full shrink-0 text-left text-xs sm:w-auto sm:text-right">
         <p className="text-sm font-semibold">{primaryDisplay.headline}</p>
         {primaryDisplay.subline ? <p className="text-muted-foreground line-through">{primaryDisplay.subline}</p> : null}
         <a className={cn('mt-1 inline-flex items-center gap-1 text-primary')} href={props.dealUrl || '#'} rel="noreferrer" target="_blank">

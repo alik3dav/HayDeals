@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { ShieldCheck } from 'lucide-react';
 
+import { AdminMobileNav } from '@/features/admin/components/admin-mobile-nav';
 import { AdminSidebarShell } from '@/features/admin/components/admin-sidebar-shell';
 import { requireRole } from '@/lib/auth/session';
 
@@ -25,16 +26,19 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             <p className="text-sm font-semibold">CipiDeals Admin</p>
             <span className="rounded-md bg-secondary px-1.5 py-0.5 text-[11px] uppercase text-muted-foreground">{role}</span>
           </div>
-          <div className="inline-flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="hidden md:inline">{user.email}</span>
+          <div className="inline-flex min-w-0 items-center gap-3 text-xs text-muted-foreground">
+            <span className="hidden max-w-[16rem] truncate md:inline">{user.email}</span>
             <Link className="rounded-md border border-border/70 px-2 py-1 hover:bg-accent hover:text-accent-foreground" href="/">
               View site
             </Link>
           </div>
         </div>
+        <AdminMobileNav />
         <div className="grid gap-3 md:grid-cols-[240px_1fr]">
-          <AdminSidebarShell />
-          <div className="rounded-xl border border-border/70 bg-card/40 p-3 md:p-4">{children}</div>
+          <div className="hidden md:block">
+            <AdminSidebarShell />
+          </div>
+          <div className="min-w-0 rounded-xl border border-border/70 bg-card/40 p-3 md:p-4">{children}</div>
         </div>
       </div>
     </div>
