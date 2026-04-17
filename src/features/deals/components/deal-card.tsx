@@ -87,7 +87,12 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
           <div className="min-w-0 text-left">
             <DealValueDisplay deal={deal} />
           </div>
-
+          <div className="flex items-center gap-2.5 text-emerald-600">
+            <span className="ml-auto inline-flex items-center gap-1.5 text-muted-foreground">
+              <MessageSquare className="h-4 w-4" />
+              <span className="text-sm">{deal.comments_count}</span>
+            </span>
+          </div>
           <DealCardInteractions
             dealId={deal.id}
             dealSlug={deal.slug}
@@ -98,12 +103,7 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
             voteAction={voteAction}
           />
 
-          <div className="flex items-center gap-2.5 text-emerald-600">
-            <span className="ml-2 inline-flex items-center gap-1.5 text-muted-foreground">
-              <MessageSquare className="h-4 w-4" />
-              <span className="text-sm">{deal.comments_count}</span>
-            </span>
-          </div>
+         
           <Link
             className="inline-flex items-center rounded-full bg-[#F5F5F5] px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-[#E8E8E8]"
             href={deal.deal_url}
