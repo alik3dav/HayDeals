@@ -148,8 +148,8 @@ export default async function PublicHomePage({
 
       <PageContainer className="space-y-4">
         <header className="rounded-xl border border-border/70 bg-card/30 p-4">
-          <h1 className="text-xl font-semibold text-foreground">Deals directory</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Explore verified discounts by category, store, and location.</p>
+          <h1 className="text-xl font-semibold text-foreground">Find the best community-verified deals</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Explore deal streams, browse categories, and jump to the most active sections of the platform.</p>
         </header>
 
         <FeedFilters facets={facets} filters={filters} sort={sort} />
