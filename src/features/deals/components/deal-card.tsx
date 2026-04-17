@@ -87,8 +87,8 @@ export function DealCard({ deal, voteAction, saveAction }: DealCardProps) {
           <div className="min-w-0 text-left">
             <DealValueDisplay deal={deal} />
           </div>
-          <div className="flex items-center gap-2.5 text-emerald-600">
-            <span className="ml-auto inline-flex items-center gap-1.5 text-muted-foreground">
+          <div className="ml-auto flex items-center gap-2.5 text-emerald-600">
+            <span className="inline-flex items-center gap-1.5 text-muted-foreground">
               <MessageSquare className="h-4 w-4" />
               <span className="text-sm">{deal.comments_count}</span>
             </span>

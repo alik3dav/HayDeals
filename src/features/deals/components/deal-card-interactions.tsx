@@ -127,7 +127,7 @@ export function DealCardInteractions({ dealId, dealSlug, initialLikeCount, initi
         <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
       </Button>
 
-      <div aria-hidden className="h-10 w-10 shrink-0" />
+     
     </>
   );
 }
